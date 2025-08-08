@@ -3,19 +3,22 @@ import 'package:DReader/main.dart';
 import 'LeftDrawer.dart';
 
 class TopTool extends StatefulWidget {
-  const TopTool(
-      {super.key,
-      required this.child,
-      required this.title,
-      this.show = true,
-      this.floatingActionButton,
-      this.endDrawer});
+  const TopTool({
+    super.key,
+    required this.child,
+    required this.title,
+    this.show = true,
+    this.floatingActionButton,
+    this.endDrawer,
+    this.actions,
+  });
 
   final Widget child;
   final String title;
   final bool show;
   final Widget? endDrawer;
   final Widget? floatingActionButton;
+  final List<Widget>? actions;
 
   @override
   State<StatefulWidget> createState() => TopToolState();
@@ -28,12 +31,7 @@ class TopToolState extends State<TopTool> {
     return Scaffold(
         appBar: (widget.show && width < MyApp.width)
             ? AppBar(
-                actions: const [
-                  Offstage(
-                    offstage: true,
-                  )
-                  // Icon(Icons.filter_list)
-                ],
+                actions: widget.actions ?? [],
                 title: Text(widget.title),
                 centerTitle: true,
               )

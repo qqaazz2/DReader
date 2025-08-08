@@ -1,3 +1,4 @@
+import 'package:DReader/routes/LogPage.dart';
 import 'package:DReader/widgets/SettingsBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -102,7 +103,7 @@ class _MyAppState extends ConsumerState<MyApp> {
                 GoRoute(
                     path: "/logs",
                     name: "logs",
-                    builder: (context, state) => const HomePage()),
+                    builder: (context, state) => const LogPage()),
               ]),
               StatefulShellBranch(routes: [
                 GoRoute(
