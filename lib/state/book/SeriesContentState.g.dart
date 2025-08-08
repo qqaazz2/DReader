@@ -7,7 +7,7 @@ part of 'SeriesContentState.dart';
 // **************************************************************************
 
 String _$seriesContentStateHash() =>
-    r'ffbcdddd8fb0cef33e9cfe16e3b0f84d0a77d143';
+    r'02016e8cf4d629b73cea20bd99612afc8ce3a65c';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -158,6 +158,8 @@ class SeriesContentStateProvider
   }
 }
 
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
 mixin SeriesContentStateRef on AutoDisposeNotifierProviderRef<SeriesContent> {
   /// The parameter `id` of this provider.
   dynamic get id;
@@ -172,4 +174,4 @@ class _SeriesContentStateProviderElement
   dynamic get id => (origin as SeriesContentStateProvider).id;
 }
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

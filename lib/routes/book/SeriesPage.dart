@@ -42,7 +42,7 @@ class SeriesPageState extends ConsumerState<SeriesPage> {
       child: LayoutBuilder(builder: (context, constraints) {
         return Column(
           children: [
-            if (constraints.maxWidth > MyApp.width) ToolBar(widgetList: [
+            if (constraints.maxWidth > MyApp.width) ToolBar(title: "图书",widgetList: [
               Text("共${state.count}本图书"),
               IconButton(onPressed: (){
                 ref.read(seriesListStateProvider.notifier).reload();

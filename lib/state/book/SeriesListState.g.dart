@@ -6,7 +6,7 @@ part of 'SeriesListState.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$seriesListStateHash() => r'9b1111440903f38a5b6251caf79eae75704c2c3c';
+String _$seriesListStateHash() => r'e32ec36aa80ebf6eb8bca9b71a130af94de2632a';
 
 /// See also [SeriesListState].
 @ProviderFor(SeriesListState)
@@ -23,4 +23,4 @@ final seriesListStateProvider =
 
 typedef _$SeriesListState = AutoDisposeNotifier<SeriesList>;
 // ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member
+// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

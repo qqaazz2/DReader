@@ -48,7 +48,7 @@ class BookItemsState extends ConsumerState<BookItems> {
               ? getBookWidget(data)
               : Column(
                   children: [
-                    Image.asset("images/1.png", fit: BoxFit.fill),
+                    Image.asset("images/img.png", fit: BoxFit.fill),
                     Padding(
                       padding: const EdgeInsets.only(top: 5),
                       child: Text(
