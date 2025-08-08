@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:DReader/main.dart';
 
 class ToolBar extends StatefulWidget {
-  const ToolBar({super.key, this.addButton, this.isShowList = true,this.widgetList,this.showBack = false});
+  const ToolBar({super.key, this.addButton, this.isShowList = true,this.widgetList,this.showBack = false,this.title});
 
   final Widget? addButton;
+  final String? title;
   final bool isShowList;
   final List<Widget>? widgetList;
   final bool showBack;
@@ -25,6 +26,7 @@ class ToolBarState extends State<ToolBar> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           if(widget.showBack) IconButton(onPressed: () => Navigator.of(context).pop(), icon: const Icon(Icons.arrow_back)),
+          if(widget.title != null) Text(widget.title!,style: Theme.of(context).textTheme.titleLarge),
           Container(),
           // SearchBar(
           //   padding: const WidgetStatePropertyAll<EdgeInsets>(

@@ -36,7 +36,7 @@ class BookItem extends Object {
   @JsonKey(name: 'cover')
   String? cover;
 
-  @JsonKey(name: 'minio')
+  @JsonKey(name: 'minioCover')
   String? minioCover;
 
   @JsonKey(name: 'parentId')

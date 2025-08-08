@@ -1,3 +1,4 @@
+import 'package:DReader/common/Global.dart';
 import 'package:flutter/material.dart';
 
 class PlaceholderWidget extends StatefulWidget {
@@ -85,6 +86,7 @@ class _PlaceholderWidgetState extends State<PlaceholderWidget>
                 ),
                 textAlign: TextAlign.center,
               ),
+              IconButton(onPressed: () => Global.logout(context), icon: const Icon(Icons.logout))
             ],
           ),
         ),
