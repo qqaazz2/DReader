@@ -9,6 +9,9 @@ class BookItem extends Object {
   @JsonKey(name: 'id')
   int id;
 
+  @JsonKey(name: 'filesId')
+  int filesId;
+
   @JsonKey(name: 'filePath')
   String filePath;
 
@@ -45,7 +48,10 @@ class BookItem extends Object {
   @JsonKey(name: 'readTagNum')
   int readTagNum;
 
-  BookItem(this.id,this.filePath,this.isFolder,this.progress,this.name,this.author,this.profile,this.publishing,this.status,this.cover,this.minioCover,this.parentId,this.readTagNum);
+  @JsonKey(name: 'readTime')
+  String? readTime;
+
+  BookItem(this.id,this.filesId,this.filePath,this.isFolder,this.progress,this.name,this.author,this.profile,this.publishing,this.status,this.cover,this.minioCover,this.parentId,this.readTagNum,this.readTime);
 
   factory BookItem.fromJson(Map<String, dynamic> srcJson) => _$BookItemFromJson(srcJson);
 

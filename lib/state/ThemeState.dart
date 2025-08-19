@@ -23,7 +23,7 @@ class ThemeState extends _$ThemeState {
     state = state.copyWith(light: Global.setting.light);
   }
 
-  void changeServerConfig(ServerConfig config ) {
+  void changeServerConfig(ServerConfig config) {
     Global.setServerConfig(config);
     state = state.copyWith(serverConfig: config);
   }
@@ -32,7 +32,17 @@ class ThemeState extends _$ThemeState {
     state = state.copyWith(userInfo: userInfo);
   }
 
-  Future<bool> changeMystery({required int mystery, String? mysteryPassword}) async {
+  void getUserInfo() async{
+    BaseResult baseResult = await HttpApi.request("/user/info", (json) => UserInfo.fromJson(json));
+    print('baseResult.result${baseResult.code}');
+    if(baseResult.code == "2000"){
+      print('baseResult.result${baseResult.result}');
+      Global.setting.userInfo = baseResult.result;
+    }
+  }
+
+  Future<bool> changeMystery(
+      {required int mystery, String? mysteryPassword}) async {
     // BaseResult baseResult = await HttpApi.request(
     //   "/series/getList",
     //   (json) => SeriesList.fromJson(json),

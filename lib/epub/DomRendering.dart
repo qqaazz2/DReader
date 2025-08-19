@@ -132,7 +132,7 @@ class DomRendering {
         .toList();
   }
 
-  Future<List<List<ReaderNode>>> start(List<int> epubBytes) async {
+   Future<List<List<ReaderNode>>> start(List<int> epubBytes) async {
     try {
       epubParsing = EpubParsing();
       List<String>? list = await epubParsing.parseEpubFromBytes(epubBytes);

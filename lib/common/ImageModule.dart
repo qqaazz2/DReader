@@ -16,6 +16,10 @@ class ImageModule {
     return modifiedString;
   }
 
+  static Widget minioImage(String? path,{fit = BoxFit.contain}){
+    return imageModule(path,fit: fit,baseUrl: false);
+  }
+
   static Widget imageModule(String? path,
       {fit = BoxFit.contain, baseUrl = true}) {
     // if(kIsWeb){

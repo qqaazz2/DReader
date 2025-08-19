@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:DReader/widgets/SideNotice.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -52,7 +53,8 @@ class HttpApi {
       headers["Authorization"] = "Bearer ${Global.token}";
     }
 
-    final options = Options(method: method, headers: headers, responseType: responseType);
+    final options =
+        Options(method: method, headers: headers, responseType: responseType);
     Interceptor inter = InterceptorsWrapper(
       onRequest: (options, handler) {
         return handler.next(options);
@@ -98,30 +100,28 @@ class HttpApi {
           EasyLoading.dismiss();
           return response.data;
         }
-        print('response.data["code"]${response.data}');
         if (response.data["code"] == "2000") {
           if (!isList) {
             BaseResult<T> result =
                 BaseResult<T>.fromJson(response.data, (json) => fromJson(json));
-            if (successMsg) EasyLoading.showSuccess(result.message);
+            if (successMsg) SideNoticeOverlay.success(text: result.message);
             return result;
           } else {
             BaseListResult<T> result = BaseListResult<T>.fromJson(
                 response.data, (json) => fromJson(json));
-            if (successMsg) EasyLoading.showSuccess(result.message);
+            if (successMsg) SideNoticeOverlay.success(text: result.message);
             return result;
           }
         } else {
           BaseResult result = BaseResult.fromJson(response.data, (json) => {});
-          EasyLoading.showError(result.message);
-          Future.delayed(const Duration(seconds: 3), () => {EasyLoading.dismiss()});
+          SideNoticeOverlay.error(text: result.message);
           return result;
         }
       } else {
         _handleHttpError(response.statusCode!);
       }
     } catch (e) {
-      EasyLoading.showError(e.toString());
+      SideNoticeOverlay.error(text: e.toString());
       return Future.error(e);
     }
   }
@@ -166,6 +166,6 @@ class HttpApi {
       default:
         message = '请求失败，错误码：$errorCode';
     }
-    EasyLoading.showError(message);
+    SideNoticeOverlay.error(text: message);
   }
 }

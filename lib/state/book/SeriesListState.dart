@@ -1,3 +1,5 @@
+import 'package:DReader/main.dart';
+import 'package:DReader/widgets/ScanningIndicator.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:DReader/common/HttpApi.dart';
 import 'package:DReader/entity/book/SeriesItem.dart';
@@ -5,6 +7,8 @@ import 'package:DReader/entity/book/SeriesList.dart';
 import 'package:DReader/entity/book/SeriesList.dart';
 import 'package:DReader/entity/BaseResult.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+import '../../widgets/SideNotice.dart';
 
 part 'SeriesListState.g.dart';
 
@@ -28,6 +32,12 @@ class SeriesListState extends _$SeriesListState {
     state.data = [];
   }
 
+  void getListByCreateTime() {
+    seriesParam.sortField = "createTime";
+    seriesParam.sortOrder = "desc";
+    getList();
+  }
+
   void getList() async {
     BaseResult baseResult = await HttpApi.request(
       "/series/getList",
@@ -40,6 +50,8 @@ class SeriesListState extends _$SeriesListState {
         "overStatus": seriesParam.overStatus,
         "love": seriesParam.love,
         "status": seriesParam.status,
+        "sortField": seriesParam.sortField,
+        "sortOrder": seriesParam.sortOrder,
       },
     );
 
@@ -49,7 +61,8 @@ class SeriesListState extends _$SeriesListState {
       newList.addAll(state.data);
       newList.addAll(baseResult.result!.data);
 
-      SeriesList seriesList = SeriesList(10, state.page + 1,baseResult.result!.pages, baseResult.result!.count, newList);
+      SeriesList seriesList = SeriesList(50, state.page + 1,
+          baseResult.result!.pages, baseResult.result!.count, newList);
       state = seriesList;
     }
   }
@@ -75,7 +88,10 @@ class SeriesListState extends _$SeriesListState {
   void scanning() async {
     BaseResult baseResult =
         await HttpApi.request("/book/scanning", () => {}, params: {});
-    if (baseResult.code == "2000") EasyLoading.showSuccess("开始扫描图书文件");
+    if (baseResult.code == "2000") {
+      SideNoticeOverlay.success(text: "开始扫描图书文件");
+      ScanningIndicatorOverlay.open();
+    }
   }
 
   Future<void> updateData(SeriesItem seriesItem, int index) async {
@@ -112,6 +128,7 @@ class SeriesListState extends _$SeriesListState {
       index++;
     }
 
+    if(state.data.isEmpty) return;
     state.data[index] = seriesItem;
     state = state.copyWith(
         data: state.data,
@@ -127,25 +144,31 @@ class SeriesParam {
   int? overStatus;
   int? love;
   int? status;
+  String? sortField;
+  String? sortOrder;
 
-  SeriesParam({
-    this.name,
-    this.overStatus,
-    this.love,
-    this.status,
-  });
+  SeriesParam(
+      {this.name,
+      this.overStatus,
+      this.love,
+      this.status,
+      this.sortField,
+      this.sortOrder});
 
   SeriesParam copyWith({
     String? name,
     int? overStatus,
     int? love,
     int? status,
+    String? sortField,
+    String? sortOrder,
   }) {
     return SeriesParam(
-      name: name ?? this.name,
-      overStatus: overStatus ?? this.overStatus,
-      love: love ?? this.love,
-      status: status ?? this.status,
-    );
+        name: name ?? this.name,
+        overStatus: overStatus ?? this.overStatus,
+        love: love ?? this.love,
+        status: status ?? this.status,
+        sortField: sortField ?? this.sortField,
+        sortOrder: sortOrder ?? this.sortOrder);
   }
 }
