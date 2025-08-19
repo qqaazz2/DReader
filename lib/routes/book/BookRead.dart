@@ -166,30 +166,33 @@ class BookReadState extends ConsumerState<BookRead> {
   }
 
   Widget buildWidget() {
-    return SafeArea(child: LayoutBuilder(builder: (context, constraints) {
-      if (lastMaxWidth == null) {
-        lastMaxWidth = constraints.maxWidth;
-        constraintsPage(constraints);
-      } else if(lastMaxWidth != constraints.maxWidth){
-        isLoading = true;
-        _resetDebounceTimer(constraints);
-      }
+    return SafeArea(
+        child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10),
+            child: LayoutBuilder(builder: (context, constraints) {
+              if (lastMaxWidth == null) {
+                lastMaxWidth = constraints.maxWidth;
+                constraintsPage(constraints);
+              } else if (lastMaxWidth != constraints.maxWidth) {
+                isLoading = true;
+                _resetDebounceTimer(constraints);
+              }
 
-      if (isLoading) {
-        return const Center(
-          child: SizedBox(
-            width: 100,
-            height: 100,
-            child: CircularProgressIndicator(),
-          ),
-        );
-      }
+              if (isLoading) {
+                return const Center(
+                  child: SizedBox(
+                    width: 100,
+                    height: 100,
+                    child: CircularProgressIndicator(),
+                  ),
+                );
+              }
 
-      if (isError) return errorWidget();
-      return constraints.maxWidth < MyApp.width
-          ? getMobile(constraints)
-          : getPc(constraints);
-    }));
+              if (isError) return errorWidget();
+              return constraints.maxWidth < MyApp.width
+                  ? getMobile(constraints)
+                  : getPc(constraints);
+            })));
   }
 
   Widget getPc(BoxConstraints constraints) {
@@ -230,17 +233,15 @@ class BookReadState extends ConsumerState<BookRead> {
           }
         },
         child: pageWidget(
-            Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: PageView(
-                  controller: pageController,
-                  onPageChanged: (value) {
-                    currentPage.value = value + 1;
-                    readTagNum = getReadTagNum(pageNodes.list[value * 2].first);
-                    progress = currentPage.value / widgetList.length;
-                  },
-                  children: widgetList,
-                )),
+            PageView(
+              controller: pageController,
+              onPageChanged: (value) {
+                currentPage.value = value + 1;
+                readTagNum = getReadTagNum(pageNodes.list[value * 2].first);
+                progress = currentPage.value / widgetList.length;
+              },
+              children: widgetList,
+            ),
             constraints.maxWidth));
   }
 
@@ -248,23 +249,21 @@ class BookReadState extends ConsumerState<BookRead> {
     return GestureDetector(
         onTap: () => currentValue.value = !currentValue.value,
         child: pageWidget(
-            Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: PageView(
-                  controller: pageController,
-                  onPageChanged: (value) {
-                    currentPage.value = value + 1;
-                    readTagNum = getReadTagNum(pageNodes.list[value + 1].first);
-                    progress = currentPage.value / pageNodes.pageCount;
-                  },
-                  children: pageNodes.list
-                      .map(
-                        (value) => CustomPaint(
-                          painter: ReaderPainter(value),
-                        ),
-                      )
-                      .toList(),
-                )),
+            PageView(
+              controller: pageController,
+              onPageChanged: (value) {
+                currentPage.value = value + 1;
+                readTagNum = getReadTagNum(pageNodes.list[value + 1].first);
+                progress = currentPage.value / pageNodes.pageCount;
+              },
+              children: pageNodes.list
+                  .map(
+                    (value) => CustomPaint(
+                      painter: ReaderPainter(value),
+                    ),
+                  )
+                  .toList(),
+            ),
             constraints.maxWidth));
   }
 

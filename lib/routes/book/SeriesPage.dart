@@ -1,3 +1,4 @@
+import 'package:DReader/widgets/ScanningIndicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:go_router/go_router.dart';
@@ -31,26 +32,37 @@ class SeriesPageState extends ConsumerState<SeriesPage> {
     return TopTool(
       title: "图书",
       endDrawer: const SeriesDrawer(),
-      floatingActionButton: Builder(builder: (context) {
-        return FloatingActionButton(
-          onPressed: () {
-            Scaffold.of(context).openEndDrawer();
-          },
-          child: const Icon(Icons.list),
-        );
-      }),
+      actions: [
+        Builder(builder: (context) {
+          return IconButton(
+              onPressed: () {
+                Scaffold.of(context).openEndDrawer();
+              },
+              icon: const Icon(Icons.filter_list));
+        })
+      ],
       child: LayoutBuilder(builder: (context, constraints) {
         return Column(
           children: [
-            if (constraints.maxWidth > MyApp.width) ToolBar(title: "图书",widgetList: [
-              Text("共${state.count}本图书"),
-              IconButton(onPressed: (){
-                ref.read(seriesListStateProvider.notifier).reload();
-              }, icon: const Icon(Icons.refresh),tooltip: "刷新列表",),
-              IconButton(onPressed: (){
-                ref.read(seriesListStateProvider.notifier).scanning();
-              }, icon: const Icon(Icons.featured_play_list_sharp),tooltip: "扫描图书",)
-            ]),
+            if (constraints.maxWidth > MyApp.width)
+              ToolBar(title: "图书", widgetList: [
+                Text("共${state.count}本图书"),
+                IconButton(
+                    onPressed: () {
+                      ref.read(seriesListStateProvider.notifier).reload();
+                    },
+                    icon: const Icon(Icons.refresh),
+                    tooltip: "刷新列表"),
+                IconButton(
+                    onPressed: () {
+                      ref.read(seriesListStateProvider.notifier).scanning();
+                    },
+                    icon: const Icon(Icons.featured_play_list_sharp),
+                    tooltip: "扫描图书"),
+                IconButton(
+                    onPressed: () => Scaffold.of(context).openEndDrawer(),
+                    icon: const Icon(Icons.filter_list))
+              ]),
             Expanded(
                 child: ListWidget<SeriesItem>(
                     list: state.data,

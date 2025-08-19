@@ -11,9 +11,9 @@ import 'package:DReader/state/book/SeriesListState.dart';
 import 'package:DReader/widgets/ListWidget.dart';
 
 class SeriesChangeCover extends ConsumerStatefulWidget {
-  SeriesChangeCover({super.key, required this.seriesId});
+  const SeriesChangeCover({super.key, required this.seriesId});
 
-  int seriesId;
+  final int seriesId;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>

@@ -7,14 +7,41 @@ class EpubParsing {
   late final files;
   String _opfDir = "";
 
-  Future<List<String>?> parseEpubFromBytes(List<int> epubBytes) async {
-    try {
+  Future<Map<String, dynamic>> _getOptData(List<int> epubBytes) async {
     files = await extractEpubFromBytes(epubBytes);
     final opfPath = locateOpfFile(files);
     final opfContent = utf8.decode(files[opfPath]!);
-    final opfData = parseOpf(opfContent);
-    final chapters = readChapters(files, opfData['manifest'], opfData['spine']);
-    return chapters;
+    final Map<String, dynamic> opfData = parseOpf(opfContent);
+    return opfData;
+  }
+
+  Future<List<String>?> parseEpubFromBytes(List<int> epubBytes) async {
+    try {
+      Map<String, dynamic> opfData = await _getOptData(epubBytes);
+      print('opfData$opfData');
+      List<String> chapters =
+          readChapters(files, opfData['manifest'], opfData['spine']);
+      return chapters;
+    } catch (e) {
+      throw Exception('Error: $e');
+    }
+  }
+
+  Future<List<String>> parseEpubImageFromBytes(List<int> epubBytes) async {
+    try {
+      Map<String, dynamic> opfData = await _getOptData(epubBytes);
+      List<String> images = [];
+      opfData["manifest"].forEach((id, path) {
+        final lower = path.toLowerCase();
+        if (lower.endsWith('.jpg') ||
+            lower.endsWith('.jpeg') ||
+            lower.endsWith('.png') ||
+            lower.endsWith('.gif') ||
+            lower.endsWith('.svg')) {
+          images.add(path);
+        }
+      });
+      return images;
     } catch (e) {
       throw Exception('Error: $e');
     }
@@ -43,12 +70,14 @@ class EpubParsing {
     final containerContent = utf8.decode(files[containerPath]!);
     final document = XmlDocument.parse(containerContent);
     final opfPath =
-    document.findAllElements('rootfile').first.getAttribute('full-path');
+        document.findAllElements('rootfile').first.getAttribute('full-path');
     if (opfPath == null) {
       throw Exception('OPF file path not found in container.xml!');
     }
 
-    _opfDir = opfPath.contains("/") ? opfPath.substring(0,opfPath.lastIndexOf("/")) : "";
+    _opfDir = opfPath.contains("/")
+        ? opfPath.substring(0, opfPath.lastIndexOf("/"))
+        : "";
     return opfPath;
   }
 
@@ -69,8 +98,8 @@ class EpubParsing {
     final spine = document
         .findAllElements('itemref')
         .map((itemRef) {
-      return itemRef.getAttribute('idref');
-    })
+          return itemRef.getAttribute('idref');
+        })
         .where((idref) => idref != null)
         .toList();
 
@@ -78,10 +107,10 @@ class EpubParsing {
   }
 
   List<String> readChapters(
-      Map<String, List<int>> files,
-      Map<String, String> manifest,
-      List<String?> spine,
-      ) {
+    Map<String, List<int>> files,
+    Map<String, String> manifest,
+    List<String?> spine,
+  ) {
     final chapters = <String>[];
 
     for (final idref in spine) {
@@ -103,12 +132,12 @@ class EpubParsing {
     return chapters;
   }
 
-  List<int>? getImage(String path){
+  List<int>? getImage(String path) {
     return files["$_opfDir/$path"];
   }
 
-  Map<String,String> getAllCss() {
-    Map<String,String> cssTexts = {};
+  Map<String, String> getAllCss() {
+    Map<String, String> cssTexts = {};
 
     for (final entry in files.entries) {
       if (entry.key.endsWith('.css')) {

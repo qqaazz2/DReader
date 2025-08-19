@@ -1,4 +1,6 @@
 import 'package:DReader/routes/LogPage.dart';
+import 'package:DReader/routes/setting/SettingPage.dart';
+import 'package:DReader/widgets/ScanningIndicator.dart';
 import 'package:DReader/widgets/SettingsBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -20,13 +22,13 @@ import 'entity/BaseResult.dart';
 import 'entity/UserInfo.dart';
 
 void main() =>
-    Global.init().then((value) => runApp(ProviderScope(child: MyApp())));
+    Global.init().then((value) => runApp(const ProviderScope(child: MyApp())));
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 class MyApp extends ConsumerStatefulWidget {
-  MyApp({super.key});
+  const MyApp({super.key});
 
-  static double width = 600;
+  static double width = 768;
   static final rootNavigatorKey = GlobalKey<NavigatorState>();
   static final GlobalKey<ScaffoldState> scaffoldKey =
       GlobalKey<ScaffoldState>();
@@ -109,7 +111,7 @@ class _MyAppState extends ConsumerState<MyApp> {
                 GoRoute(
                     path: "/setting",
                     name: "setting",
-                    builder: (context, state) => const HomePage()),
+                    builder: (context, state) => const SettingPage()),
               ]),
             ]),
       ],
@@ -145,30 +147,28 @@ class _MyAppState extends ConsumerState<MyApp> {
   }
 }
 
-class MainApp extends StatefulWidget {
+class MainApp extends ConsumerStatefulWidget {
   const MainApp({super.key, required this.navigationShell});
 
   final StatefulNavigationShell navigationShell;
 
   @override
-  State<StatefulWidget> createState() => MainAppState();
+  ConsumerState<MainApp> createState() => MainAppState();
 }
 
-class MainAppState extends State<MainApp> {
+class MainAppState extends ConsumerState<MainApp> {
   bool extended = false;
 
   @override
   void initState() {
     super.initState();
-    HttpApi.request("/user/info", (json) => UserInfo.fromJson(json))
-        .then((baseResult) {
-      Global.setting.userInfo = baseResult.result;
-    });
+    ref.read(themeStateProvider.notifier).getUserInfo();
   }
 
   @override
   Widget build(BuildContext context) {
-      return LayoutBuilder(builder: (context, constraints) {
+    return Stack(children: [
+      LayoutBuilder(builder: (context, constraints) {
         if (constraints.maxWidth < MyApp.width) {
           return widget.navigationShell;
         } else {
@@ -195,7 +195,7 @@ class MainAppState extends State<MainApp> {
                   extended: extended,
                   onDestinationSelected: (int index) {
                     if (widget.navigationShell.currentIndex == index) return;
-                    widget.navigationShell.goBranch(index);
+                    widget.navigationShell.goBranch(index,initialLocation: index == 0);
                   },
                 )),
                 const SettingsBar(),
@@ -204,6 +204,7 @@ class MainAppState extends State<MainApp> {
             ]),
           );
         }
-      });
+      }),
+    ]);
   }
 }

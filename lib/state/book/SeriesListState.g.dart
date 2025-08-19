@@ -6,7 +6,7 @@ part of 'SeriesListState.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$seriesListStateHash() => r'e32ec36aa80ebf6eb8bca9b71a130af94de2632a';
+String _$seriesListStateHash() => r'ddeb50b35875f8a7639ee6ad9db662bae83d4505';
 
 /// See also [SeriesListState].
 @ProviderFor(SeriesListState)

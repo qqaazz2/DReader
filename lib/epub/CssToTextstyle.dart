@@ -1,10 +1,10 @@
 import 'dart:ui';
 
+import 'package:DReader/widgets/SideNotice.dart';
 import 'package:csslib/parser.dart' as css_parser;
 import 'package:csslib/visitor.dart' as css_parser;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 import 'DomRendering.dart';
 
@@ -79,7 +79,7 @@ class CssToTextstyle {
         }
       }
     }catch(e){
-      EasyLoading.showError("css文件解析错误");
+      SideNoticeOverlay.error(text: "css文件解析错误");
     }
     return styleMap;
   }

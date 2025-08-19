@@ -86,7 +86,6 @@ class _PlaceholderWidgetState extends State<PlaceholderWidget>
                 ),
                 textAlign: TextAlign.center,
               ),
-              IconButton(onPressed: () => Global.logout(context), icon: const Icon(Icons.logout))
             ],
           ),
         ),

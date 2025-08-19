@@ -8,7 +8,10 @@ import 'package:DReader/entity/book/SeriesItem.dart';
 import 'package:DReader/entity/book/SeriesContent.dart';
 import 'package:DReader/entity/book/SeriesContent.dart';
 import 'package:DReader/entity/BaseResult.dart';
+import 'package:DReader/state/home/BookRecentState.dart';
+import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:http_parser/http_parser.dart';
 
 part 'SeriesContentState.g.dart';
 
@@ -70,7 +73,8 @@ class SeriesContentState extends _$SeriesContentState {
     });
     if (baseResult.code == "2000") {
       state.seriesItem!.love = love;
-      state = SeriesContent(seriesItem: state.seriesItem, bookItem: state.bookItem ?? []);
+      state = SeriesContent(
+          seriesItem: state.seriesItem, bookItem: state.bookItem ?? []);
     }
   }
 
@@ -83,7 +87,8 @@ class SeriesContentState extends _$SeriesContentState {
     if (baseResult.code == "2000") {
       state.seriesItem!.cover = bookItem.cover;
       state.seriesItem!.minioCover = bookItem.minioCover;
-      state = SeriesContent(seriesItem: state.seriesItem, bookItem: state.bookItem ?? []);
+      state = SeriesContent(
+          seriesItem: state.seriesItem, bookItem: state.bookItem ?? []);
     }
   }
 
@@ -131,6 +136,7 @@ class SeriesContentState extends _$SeriesContentState {
         state.bookItem![index] = item;
       }
 
+      ref.read(bookRecentStateProvider.notifier).setData(item);
       state = state.copyWith(
           seriesItem: state.seriesItem, bookItem: state.bookItem ?? []);
     }
@@ -142,6 +148,35 @@ class SeriesContentState extends _$SeriesContentState {
         successMsg: true, params: {"id": seriesId});
     if (baseResult.code == "2000") {
       state.seriesItem?.lastReadTime = baseResult.result;
+      state = state.copyWith(
+          seriesItem: state.seriesItem, bookItem: state.bookItem ?? []);
+    }
+  }
+
+  void changeCover(int id, List<int> bytes, int index) async {
+    FormData formData = FormData.fromMap({
+      "id": id,
+      "file": MultipartFile.fromBytes(bytes,
+          filename: "cover.jpg", contentType: MediaType('image', 'jpeg'))
+    });
+    BaseResult baseResult = await HttpApi.request(
+        "/book/changeCover",
+        method: "post",
+        (json) => json,
+        formData: formData);
+    if (baseResult.code == "2000") {
+      if (state.bookItem != null && state.bookItem!.isNotEmpty) {
+        state.bookItem![index].cover = baseResult.result["cover"];
+        state.bookItem![index].minioCover = baseResult.result["minioUrl"];
+        BookItem? recentBooks = ref.read(bookRecentStateProvider);
+        if (recentBooks != null &&
+            recentBooks.id == state.bookItem![index].id) {
+          ref
+              .read(bookRecentStateProvider.notifier)
+              .setData(state.bookItem![index]);
+        }
+      }
+
       state = state.copyWith(
           seriesItem: state.seriesItem, bookItem: state.bookItem ?? []);
     }
