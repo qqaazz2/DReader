@@ -113,6 +113,7 @@ class SettingPageState extends ConsumerState<SettingPage>
                                     aspectRatio: 1,
                                     child: ClipOval(
                                         child: ImageModule.minioImage(
+                                            Global.setting.userInfo?.minioCover,
                                             Global.setting.userInfo?.cover,
                                             fit: BoxFit.cover)),
                                   ),
@@ -222,6 +223,7 @@ class SettingPageState extends ConsumerState<SettingPage>
                             height: getWidth() - 100,
                             child: ClipOval(
                                 child: ImageModule.minioImage(
+                                    Global.setting.userInfo?.minioCover,
                                     Global.setting.userInfo?.cover,
                                     fit: BoxFit.cover)),
                           ),
@@ -665,7 +667,7 @@ class SettingPageState extends ConsumerState<SettingPage>
           (json) => json);
       if ("2000" == baseResult.code) {
         UserInfo userInfo = Global.setting.userInfo!;
-        userInfo.cover = baseResult.result;
+        userInfo.minioCover = baseResult.result;
         ref.read(themeStateProvider.notifier).changeUserInfo(userInfo);
       }
     }

@@ -103,9 +103,9 @@ class BookReadState extends ConsumerState<BookRead> {
   void getEpub(double maxWidth, double maxHeight,
       {isColumn = false, columnNum = 2}) async {
     try {
-      Directory directory = await getTemporaryDirectory();
-      folder = Directory("${directory.path}/$temporaryFolder");
-      if (!folder.existsSync()) folder.createSync();
+      // Directory directory = await getTemporaryDirectory();
+      // folder = Directory("${directory.path}/$temporaryFolder");
+      // if (!folder.existsSync()) folder.createSync();
 
       if (bytes.isEmpty) {
         String encodedFilePath = Uri.encodeFull(
@@ -238,6 +238,8 @@ class BookReadState extends ConsumerState<BookRead> {
               onPageChanged: (value) {
                 currentPage.value = value + 1;
                 readTagNum = getReadTagNum(pageNodes.list[value * 2].first);
+                print('currentPage.value${currentPage.value}');
+                print('pageNodes.pageCount${widgetList.length}');
                 progress = currentPage.value / widgetList.length;
               },
               children: widgetList,
@@ -253,8 +255,11 @@ class BookReadState extends ConsumerState<BookRead> {
               controller: pageController,
               onPageChanged: (value) {
                 currentPage.value = value + 1;
-                readTagNum = getReadTagNum(pageNodes.list[value + 1].first);
+                readTagNum = getReadTagNum(pageNodes.list[value].first);
+                print('currentPage.value${currentPage.value}');
+                print('pageNodes.pageCount${pageNodes.pageCount}');
                 progress = currentPage.value / pageNodes.pageCount;
+                print('progress$progress');
               },
               children: pageNodes.list
                   .map(

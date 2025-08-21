@@ -48,12 +48,13 @@ class HttpApi {
     bool isList = false,
     FormData? formData,
   }) async {
+    if(options.baseUrl.isEmpty)  SideNoticeOverlay.error(text: "请先设置服务端地址");
     if (Global.token.isNotEmpty) {
       headers ??= {};
       headers["Authorization"] = "Bearer ${Global.token}";
     }
 
-    final options =
+    final optionsData =
         Options(method: method, headers: headers, responseType: responseType);
     Interceptor inter = InterceptorsWrapper(
       onRequest: (options, handler) {
@@ -84,13 +85,13 @@ class HttpApi {
       if (method == "get") {
         response = await dio.request(
           url,
-          options: options,
+          options: optionsData,
           queryParameters: params,
         );
       } else {
         response = await dio.request(
           url,
-          options: options,
+          options: optionsData,
           data: formData ?? params,
         );
       }
