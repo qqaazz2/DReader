@@ -137,7 +137,8 @@ class HomePageState extends ConsumerState<HomePage> {
                                         child: AspectRatio(
                                             aspectRatio: .7,
                                             child: ImageModule.minioImage(
-                                                bookRecentState.minioCover)),
+                                                bookRecentState.minioCover,
+                                                bookRecentState.cover)),
                                       ),
                                       Expanded(
                                           child: Container(
@@ -170,7 +171,7 @@ class HomePageState extends ConsumerState<HomePage> {
                                                       value: bookRecentState
                                                           .progress,
                                                       min: 0,
-                                                      max: 10,
+                                                      max: 1,
                                                       onChanged: (value) {},
                                                     ),
                                                   )),
@@ -285,7 +286,8 @@ class HomePageState extends ConsumerState<HomePage> {
                                       SeriesItem seriesItem =
                                           seriesListState.data[index];
                                       return GestureDetector(
-                                          onTap: () => context.push("/books/content?seriesId=${seriesItem.id}&filesId=${seriesItem.filesId}&index=0"),
+                                          onTap: () => context.push(
+                                              "/books/content?seriesId=${seriesItem.id}&filesId=${seriesItem.filesId}&index=0"),
                                           child: Card(
                                               clipBehavior: Clip.hardEdge,
                                               child: AspectRatio(
@@ -294,8 +296,11 @@ class HomePageState extends ConsumerState<HomePage> {
                                                     children: [
                                                       Expanded(
                                                           child: ImageModule
-                                                              .minioImage(seriesItem
-                                                                  .minioCover)),
+                                                              .minioImage(
+                                                                  seriesItem
+                                                                      .minioCover,
+                                                                  seriesItem
+                                                                      .cover)),
                                                       Padding(
                                                           padding:
                                                               const EdgeInsets
