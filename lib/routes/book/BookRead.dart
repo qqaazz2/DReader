@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:isolate';
 
+import 'package:DReader/widgets/SideNotice.dart';
 import 'package:csslib/visitor.dart' hide MediaQuery;
 import 'package:dio/dio.dart';
 
@@ -134,7 +135,7 @@ class BookReadState extends ConsumerState<BookRead> {
         isLoading = false;
         isError = true;
       });
-      EasyLoading.showError(e.toString());
+      SideNoticeOverlay.error(text: e.toString());
     }
   }
 
@@ -168,7 +169,7 @@ class BookReadState extends ConsumerState<BookRead> {
   Widget buildWidget() {
     return SafeArea(
         child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
             child: LayoutBuilder(builder: (context, constraints) {
               if (lastMaxWidth == null) {
                 lastMaxWidth = constraints.maxWidth;
@@ -256,10 +257,7 @@ class BookReadState extends ConsumerState<BookRead> {
               onPageChanged: (value) {
                 currentPage.value = value + 1;
                 readTagNum = getReadTagNum(pageNodes.list[value].first);
-                print('currentPage.value${currentPage.value}');
-                print('pageNodes.pageCount${pageNodes.pageCount}');
                 progress = currentPage.value / pageNodes.pageCount;
-                print('progress$progress');
               },
               children: pageNodes.list
                   .map(
@@ -351,7 +349,7 @@ class BookReadState extends ConsumerState<BookRead> {
                                   child: Text(
                                     widget.bookItem.name!,
                                     style: const TextStyle(fontSize: 18),
-                                    maxLines: 2,
+                                    maxLines: 1,
                                   ),
                                 )
                               ],

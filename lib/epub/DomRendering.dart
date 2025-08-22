@@ -47,7 +47,34 @@ class DomRendering {
     "tbody",
     "tr",
     "td",
+    "note",
   ];
+
+  ModelStyle getStyle(String css, ModelStyle style, node) {
+    StyleMap styleMap = cssMap[css]!;
+    for (var item in styleMap.importList) {
+      style = getStyle(item, style, node);
+    }
+
+    if (styleMap.tagStyles.containsKey(node.localName)) {
+      ModelStyle tagStyle = styleMap.tagStyles[node.localName]!;
+      style = style.merge(tagStyle);
+    }
+
+    for (var className in node.classes) {
+      if (styleMap.classStyles.containsKey(className)) {
+        ModelStyle classStyle = styleMap.classStyles[className]!;
+        style = style.merge(classStyle);
+      }
+    }
+
+    if (styleMap.idStyles.containsKey(node.id)) {
+      ModelStyle idStyle = styleMap.idStyles[node.id]!;
+      style = style.merge(idStyle);
+    }
+
+    return style;
+  }
 
   Future<List<ReaderNode>> domParse(
       List<dom.Node> nodes, ModelStyle baseStyle, List<String> useCss) async {
@@ -63,23 +90,7 @@ class DomRendering {
         }
       } else if (node is dom.Element) {
         for (String css in useCss) {
-          StyleMap styleMap = cssMap[css]!;
-          if (styleMap.tagStyles.containsKey(node.localName)) {
-            ModelStyle tagStyle = styleMap.tagStyles[node.localName]!;
-            style = style.merge(tagStyle);
-          }
-
-          for (var className in node.classes) {
-            if (styleMap.classStyles.containsKey(className)) {
-              ModelStyle classStyle = styleMap.classStyles[className]!;
-              style = style.merge(classStyle);
-            }
-          }
-
-          if (styleMap.idStyles.containsKey(node.id)) {
-            ModelStyle idStyle = styleMap.idStyles[node.id]!;
-            style = style.merge(idStyle);
-          }
+          style = getStyle(css, style, node);
         }
 
         String? nodeStyle = node.attributes["style"];
@@ -94,8 +105,8 @@ class DomRendering {
             String? path = getImageBytes(node);
             if (path == null) continue;
             List<int>? list = epubParsing.getImage(path);
-            readerNode =
-                ImageNode(node.localName!, style, nodeIndex, list!, path);
+            if (list == null || list.isEmpty) continue;
+            readerNode = ImageNode(node.localName!, style, nodeIndex, list, path);
             await (readerNode as ImageNode).decode();
           } else if (node.localName == "i") {
             readerNode = INode("i", style, nodeIndex);
@@ -132,7 +143,7 @@ class DomRendering {
         .toList();
   }
 
-   Future<List<List<ReaderNode>>> start(List<int> epubBytes) async {
+  Future<List<List<ReaderNode>>> start(List<int> epubBytes) async {
     try {
       epubParsing = EpubParsing();
       List<String>? list = await epubParsing.parseEpubFromBytes(epubBytes);

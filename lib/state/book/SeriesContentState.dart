@@ -163,6 +163,8 @@ class SeriesContentState extends _$SeriesContentState {
         "/book/changeCover",
         method: "post",
         (json) => json,
+        isLoading: true,
+        successMsg: true,
         formData: formData);
     if (baseResult.code == "2000") {
       if (state.bookItem != null && state.bookItem!.isNotEmpty) {

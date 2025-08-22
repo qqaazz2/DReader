@@ -4,7 +4,7 @@ import 'package:archive/archive.dart';
 import 'package:xml/xml.dart';
 
 class EpubParsing {
-  late final files;
+  late final Map<String, List<int>> files;
   String _opfDir = "";
 
   Future<Map<String, dynamic>> _getOptData(List<int> epubBytes) async {
@@ -133,7 +133,12 @@ class EpubParsing {
   }
 
   List<int>? getImage(String path) {
-    return files["$_opfDir/$path"];
+    if (path.contains("http")) return null;
+
+    if (files.containsKey("$_opfDir/$path")) {
+      return files["$_opfDir/$path"];
+    }
+    return null;
   }
 
   Map<String, String> getAllCss() {

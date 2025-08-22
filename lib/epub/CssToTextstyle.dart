@@ -13,6 +13,7 @@ class StyleMap {
   final Map<String, ModelStyle> classStyles = {};
   final Map<String, ModelStyle> idStyles = {};
   final Map<String, ModelStyle> complexStyles = {};
+  final List<String> importList = [];
 }
 
 class CssToTextstyle {
@@ -40,9 +41,15 @@ class CssToTextstyle {
 
   StyleMap parseCssToStyleMap(String css) {
     final styleMap = StyleMap();
-    try{
+    try {
       css = filterEmptyCssDeclarations(css);
       final sheet = css_parser.parse(css);
+      final imports = sheet.topLevels.whereType<css_parser.ImportDirective>();
+      for (var item in imports) {
+        if (!item.import.contains("css")) continue;
+        styleMap.importList.add(item.import);
+      }
+
       for (final rule in sheet.topLevels.whereType<css_parser.RuleSet>()) {
         final declarations = rule.declarationGroup.declarations
             .whereType<css_parser.Declaration>()
@@ -78,7 +85,7 @@ class CssToTextstyle {
           }
         }
       }
-    }catch(e){
+    } catch (e) {
       SideNoticeOverlay.error(text: "css文件解析错误");
     }
     return styleMap;
