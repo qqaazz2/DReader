@@ -14,8 +14,8 @@ class ImageNode extends InlineNode {
   late ui.Image image;
   String imgName;
 
-  ImageNode(
-      super.tag, super.styleModel, super.uniqueId, this.bytes, this.imgName);
+  ImageNode(super.tag, super.styleModel, super.uniqueId, this.bytes,
+      this.imgName);
 
   Future<void> decode() async {
     final completer = Completer<ui.Image>();
@@ -35,17 +35,14 @@ class ImageNode extends InlineNode {
     double aspectRatio = originalWidth / originalHeight;
 
     double remainingHeight = NodeStatus.pageHeight - currentOffset.dy;
-    bool hasExplicitSize =
-        (styleModel.width ?? -1) > 0 || (styleModel.height ?? -1) > 0;
-
+    bool hasExplicitSize = (styleModel.width ?? -1) > 0 || (styleModel.height ?? -1) > 0;
     if (hasExplicitSize) {
       double targetWidth = styleModel.width ?? -1;
       double targetHeight = styleModel.height ?? -1;
-
       if (targetWidth > 0 && targetHeight > 0) {
         currentWidth = targetWidth;
         currentHeight = targetHeight;
-      } else if (targetWidth < 0 && targetHeight > 0) {
+      } else if (targetWidth <= 0 && targetHeight > 0) {
         currentHeight = targetHeight;
         currentWidth = currentHeight * aspectRatio;
       } else {
@@ -63,9 +60,11 @@ class ImageNode extends InlineNode {
         currentHeight = currentWidth / aspectRatio;
         if (currentHeight > remainingHeight) return cloneImage();
       }
-      nextOffset = Offset(
-          currentOffset.dx + currentWidth, currentOffset.dy + currentHeight);
+
+      nextOffset = Offset(currentOffset.dx + currentWidth, currentOffset.dy);
     } else {
+      double top = 0;
+      double left = 0;
       currentHeight = NodeStatus.pageHeight;
       currentWidth = currentHeight * aspectRatio;
       if (currentOffset.dy > 0 || remainingHeight < NodeStatus.pageHeight) {
@@ -75,10 +74,12 @@ class ImageNode extends InlineNode {
       if (currentWidth > availableWidth) {
         currentWidth = availableWidth;
         currentHeight = currentWidth / aspectRatio;
-      }
+      }else left = (availableWidth - currentWidth) / 2;
 
-      nextOffset = Offset(
-          currentOffset.dx + currentWidth, currentOffset.dy + currentHeight);
+      if (currentHeight < NodeStatus.pageHeight) top = (NodeStatus.pageHeight - currentHeight) / 2;
+
+      currentOffset = Offset(currentOffset.dx + left, currentOffset.dy + top);
+      nextOffset = Offset(currentOffset.dx + currentWidth, currentOffset.dy + currentHeight);
     }
     return [];
   }

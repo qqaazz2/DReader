@@ -23,7 +23,7 @@ class SeriesForm extends ConsumerStatefulWidget {
 }
 
 class SeriesFormState extends ConsumerState<SeriesForm> {
-  Map<int, String> overMap = {1: "连载中", 2: "完结", 3: "弃坑"};
+  Map<int, String> overMap = {1: "连载中", 2: "完结", 3: "弃坑",4: "有生之年"};
   Map<int, String> readMap = {1: "未读", 2: "已读", 3: "在读"};
 
   List<DropdownMenuEntry<int>> _buildMenuList(map) {

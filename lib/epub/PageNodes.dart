@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:DReader/epub/ReaderNode.dart';
@@ -27,7 +28,8 @@ class PageNodes {
         final node = nodesToLayout[i];
         List<ReaderNode> spillover = node.layout(pageWidth, currentOffset);
         currentPageNodes.add(node);
-        if (node.hasIndexList.contains(readRecodesIndex))readPage = list.length + currentPageNodes.length;
+        if (node.hasIndexList.contains(readRecodesIndex))
+          readPage = list.length + currentPageNodes.length;
         if (spillover.isNotEmpty) {
           nodesForNextPage.addAll(spillover);
           if (i + 1 < nodesToLayout.length) {
@@ -53,6 +55,7 @@ class PageNodes {
     }
     pageCount = isColumn ? (list.length / columnNum).ceil() : list.length;
     readPage = isColumn ? (readPage / columnNum).ceil() : readPage;
+    readPage = max(0, readPage - 1);
   }
 
   PageNodes(this.unallocated, this.pageWidth, this.pageHeight,

@@ -14,7 +14,7 @@ class SeriesDrawer extends ConsumerStatefulWidget {
 }
 
 class SeriesDrawerState extends ConsumerState<SeriesDrawer> {
-  Map<int, String> map = {1: "连载中", 2: "完结", 3: "弃坑"};
+  Map<int, String> map = {1: "连载中", 2: "完结", 3: "弃坑",4: "有生之年"};
   Map<int, String> readMap = {1: "未读", 2: "已读", 3: "在读"};
   Map<int, String> loveMap = {1: "未收藏", 2: "已收藏"};
   late SeriesParam seriesParam;
