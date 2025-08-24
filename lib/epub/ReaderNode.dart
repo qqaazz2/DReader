@@ -123,15 +123,13 @@ abstract class ElementNode extends ReaderNode {
       int childIndex = 0;
       while (childIndex != children.length) {
         ReaderNode child = children[childIndex];
-        child.remainingHeight =
-            NodeStatus.pageHeight - currentOffset.dy - currentHeight;
+        child.remainingHeight = NodeStatus.pageHeight - currentOffset.dy - currentHeight;
         bool isFull = unchanged == availableWidth;
         child.isBranch = isBranch;
         if (child is BlockNode) {
           currentHeight += currentLineHeight; // 加上上一行的最终高度
           currentLineHeight = 0;
-          nextChildOffset =
-              Offset(defaultDx, offset.dy + currentHeight); // 新行从当前高度开始
+          nextChildOffset = Offset(defaultDx, offset.dy + currentHeight); // 新行从当前高度开始
           truncatedNode = child.layout(unchanged, nextChildOffset);
           currentHeight += child.currentHeight;
           currentLineHeight = 0; // 清空行高

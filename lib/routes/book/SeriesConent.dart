@@ -51,7 +51,28 @@ class SeriesContentState extends ConsumerState<SeriesContent> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(seriesContentStateProvider(widget.seriesId));
-    if (state.seriesItem == null) return const CircularProgressIndicator();
+    if (state.seriesItem == null) {
+      return const Center(
+        child: SizedBox(
+          width: 150,
+          height: 150,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(
+                strokeWidth: 6,
+                color: Colors.blue,
+              ),
+              SizedBox(height: 16), // 间距
+              Text(
+                '加载中…',
+                style: TextStyle(fontSize: 16, color: Colors.grey),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
     return PopScope(
         onPopInvokedWithResult: (bool didPop, Object? result) {
           if (widget.index == 1) {
@@ -304,7 +325,8 @@ class SeriesContentState extends ConsumerState<SeriesContent> {
         expandedHeight: 400,
         flexibleSpace: FlexibleSpaceBar(
           collapseMode: CollapseMode.pin,
-          background: ImageModule.imageModule(state.seriesItem!.minioCover,baseUrl: false, fit: BoxFit.fitHeight),
+          background: ImageModule.imageModule(state.seriesItem!.minioCover,
+              baseUrl: false, fit: BoxFit.fitHeight),
         ),
       ),
       SliverPadding(
@@ -352,7 +374,7 @@ class SeriesContentState extends ConsumerState<SeriesContent> {
                             size: 15,
                           ),
                           const SizedBox(width: 5),
-                            Text("阅读状态：${readMap[state.seriesItem!.status]}")
+                          Text("阅读状态：${readMap[state.seriesItem!.status]}")
                         ],
                       ),
                     ),
@@ -378,7 +400,8 @@ class SeriesContentState extends ConsumerState<SeriesContent> {
                               size: 15,
                             ),
                             const SizedBox(width: 5),
-                            Text("上次阅读：${state.seriesItem!.lastReadTime ?? "无"}"),
+                            Text(
+                                "上次阅读：${state.seriesItem!.lastReadTime ?? "无"}"),
                           ],
                         )),
                     Row(
