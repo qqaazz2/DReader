@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:DReader/routes/setting/SettingChart.dart';
 
@@ -104,12 +105,16 @@ class SettingInfoState extends State<SettingInfo> {
   Widget checkPlatform() {
     String text = "未知";
     IconData iconData = Icons.device_unknown;
-    if (Platform.isAndroid) {
-      text = "Android";
-      iconData = Icons.android;
-    } else if (Platform.isWindows) {
-      text = "Windows";
-      iconData = Icons.desktop_windows;
+    if(kIsWeb){
+      text = "Web";
+    }else{
+      if (Platform.isAndroid) {
+        text = "Android";
+        iconData = Icons.android;
+      } else if (Platform.isWindows) {
+        text = "Windows";
+        iconData = Icons.desktop_windows;
+      }
     }
 
     if (widget.isShow) {

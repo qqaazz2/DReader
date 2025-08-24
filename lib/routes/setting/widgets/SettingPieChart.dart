@@ -1,10 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:DReader/common/FilesTypeInfo.dart';
 import 'package:DReader/common/HttpApi.dart';
-import 'package:DReader/entity/setting/Proportion.dart';
-import 'package:DReader/state/setting/SettingState.dart';
 
 import '../../../entity/BaseResult.dart';
 
@@ -45,6 +42,7 @@ class SettingPieChartState extends ConsumerState<SettingPieChart> {
         ),
       );
     }
+
     return Stack(
       children: [
         Container(
@@ -56,10 +54,12 @@ class SettingPieChartState extends ConsumerState<SettingPieChart> {
               const Text("书籍阅读情况",
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               Expanded(
-                child: Align(
-                  alignment: Alignment.center,
-                  child: getPicChart(), // 确保中心对齐
-                ),
+                child: count == 0
+                    ? const Align(alignment: Alignment.center, child: Text("暂无数据"))
+                    : Align(
+                        alignment: Alignment.center,
+                        child: getPicChart(), // 确保中心对齐
+                      ),
               ),
               SizedBox(
                 width: double.infinity,
@@ -154,6 +154,7 @@ class SettingPieChartState extends ConsumerState<SettingPieChart> {
       map["未读"] = baseResult.result['unreadCount'];
       map["在读"] = baseResult.result['readingCount'];
       count = baseResult.result['bookCount'];
+      print('map$map$count');
       setState(() {
         isLoading = false;
       });

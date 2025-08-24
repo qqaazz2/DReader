@@ -5,6 +5,7 @@ import 'package:DReader/routes/setting/widgets/SettingList.dart';
 import 'package:DReader/routes/setting/widgets/SettingList.dart';
 import 'package:DReader/routes/setting/widgets/SettingList.dart';
 import 'package:DReader/routes/setting/widgets/SettingList.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:DReader/routes/setting/widgets/SettingBarChart.dart';
 import 'package:DReader/routes/setting/widgets/SettingBox.dart';
@@ -46,13 +47,18 @@ class SettingChartState extends State<SettingChart> {
   Widget checkPlatform() {
     String text = "未知";
     IconData iconData = Icons.device_unknown;
-    if (Platform.isAndroid) {
-      text = "Android";
-      iconData = Icons.android;
-    } else if (Platform.isWindows) {
-      text = "Windows";
-      iconData = Icons.desktop_windows;
+    if(kIsWeb){
+      text = "Web";
+    }else{
+      if (Platform.isAndroid) {
+        text = "Android";
+        iconData = Icons.android;
+      } else if (Platform.isWindows) {
+        text = "Windows";
+        iconData = Icons.desktop_windows;
+      }
     }
+
 
     return SettingBox(
       title: '运行平台',
