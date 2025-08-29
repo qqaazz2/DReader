@@ -52,13 +52,20 @@ class HomePage extends ConsumerStatefulWidget {
 class HomePageState extends ConsumerState<HomePage> {
   late TimePeriod currTimeText;
 
-  Widget titleWidget(String text) {
+  Widget titleWidget(String text, {Widget? action}) {
     return Padding(
-        padding: const EdgeInsets.only(top: 20, bottom: 10),
-        child: Text(
-          text,
-          style: Theme.of(context).textTheme.titleLarge,
-        ));
+      padding: const EdgeInsets.only(top: 20, bottom: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            text,
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          if (action != null) action,
+        ],
+      ),
+    );
   }
 
   @override
@@ -89,7 +96,7 @@ class HomePageState extends ConsumerState<HomePage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "${currTimeText.displayName}好，EMT",
+                      "${currTimeText.displayName}好，祝你今天愉快！",
                       style: themeData.textTheme.headlineLarge
                           ?.copyWith(fontWeight: FontWeight.w500),
                     ),
@@ -192,7 +199,12 @@ class HomePageState extends ConsumerState<HomePage> {
                     );
                   });
                 }),
-                titleWidget("书库一览"),
+                titleWidget("书库一览",
+                    action: IconButton(
+                        onPressed: () => ref
+                            .read(overviewStateProvider.notifier)
+                            .getOverview(),
+                        icon: const Icon(Icons.refresh))),
                 Consumer(builder: (context, ref, child) {
                   final overviewState = ref.watch(overviewStateProvider);
                   return LayoutBuilder(
@@ -222,11 +234,8 @@ class HomePageState extends ConsumerState<HomePage> {
                     },
                   );
                 }),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    titleWidget("最近添加"),
-                    Row(
+                titleWidget("最近添加",
+                    action: Row(
                       children: [
                         IconButton(
                             tooltip: "刷新数据",
@@ -238,9 +247,7 @@ class HomePageState extends ConsumerState<HomePage> {
                             onPressed: () => context.go("/books"),
                             child: const Text("查看更多"))
                       ],
-                    )
-                  ],
-                ),
+                    )),
                 Consumer(builder: (context, ref, child) {
                   final seriesListState = ref.watch(recentlyAddsStateProvider);
                   return LayoutBuilder(builder: (context, constraints) {

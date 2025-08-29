@@ -82,6 +82,7 @@ class RubyNode extends InlineNode {
 
   @override
   RubyNode clone() {
+    children = [];
     RubyNode rubyNode = RubyNode(tag, styleModel, uniqueId);
     rubyNode.children = [cloneTextNode!, cloneRtNode!];
     return rubyNode;
