@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "DReader" "\0"
+            VALUE "FileDescription", "dreader" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "DReader" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2024 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "DReader.exe" "\0"
-            VALUE "ProductName", "DReader" "\0"
+            VALUE "InternalName", "dreader" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2025 com.example. All rights reserved." "\0"
+            VALUE "OriginalFilename", "dreader.exe" "\0"
+            VALUE "ProductName", "dreader" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

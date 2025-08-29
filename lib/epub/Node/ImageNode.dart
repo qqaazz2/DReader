@@ -29,7 +29,6 @@ class ImageNode extends InlineNode {
   List<ReaderNode> layout(double availableWidth, Offset offset, {isFull}) {
     layoutBefore();
     currentOffset = offset;
-
     double originalWidth = image.width.toDouble();
     double originalHeight = image.height.toDouble();
     double aspectRatio = originalWidth / originalHeight;
@@ -63,7 +62,7 @@ class ImageNode extends InlineNode {
       }
 
       imageWidth = currentWidth;
-      imageWidth = currentHeight;
+      imageHeight = currentHeight;
       nextOffset = Offset(currentOffset.dx + currentWidth, currentOffset.dy);
     } else {
       currentHeight = NodeStatus.pageHeight;

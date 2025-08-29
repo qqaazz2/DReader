@@ -16,11 +16,6 @@ import 'package:DReader/epub/ReaderNode.dart';
 import 'Node/BNode.dart';
 import 'Node/TextNode.dart';
 
-//[img, a, sup,]
-//[img, a, sup,]
-//[img, a,]
-//[img, a, sup
-//[img, a, table, tbody, tr, td, sup]
 class DomRendering {
   DomRendering({this.readIndex = 0});
 
@@ -48,6 +43,8 @@ class DomRendering {
     "tr",
     "td",
     "note",
+    "section",
+    "figure"
   ];
 
   ModelStyle getStyle(String css, ModelStyle style, node) {
@@ -83,7 +80,8 @@ class DomRendering {
       ReaderNode readerNode;
       ModelStyle style = baseStyle.clone();
       if (node is dom.Text) {
-        final text = node.text;
+        String text = node.text;
+        text = text.replaceAll('\n', '').trim();
         if (text.isNotEmpty && !text.contains('\n')) {
           list.add(TextNode(
               TextSpan(text: text, style: style.textStyle), style, nodeIndex));
@@ -157,8 +155,7 @@ class DomRendering {
           dom.Document document = html_parser.parse(item);
           List<String> useCss = extractExternalCssLinks(document);
           final styleTags = document.querySelectorAll('style');
-          List<ReaderNode> nodeList =
-              await domParse(document.body?.nodes ?? [], ModelStyle(), useCss);
+          List<ReaderNode> nodeList = await domParse(document.body?.nodes ?? [], ModelStyle(), useCss);
           if (nodeList.length > 1) {
             BodyNode bodyNode = BodyNode();
             bodyNode.children = nodeList;

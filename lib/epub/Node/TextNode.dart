@@ -28,6 +28,7 @@ class TextNode extends ReaderNode {
     textPainter!.layout(maxWidth: availableWidth);
     currentOffset = offset;
     double lastWidth = 0;
+
     if (!isFull) {
       TextPosition pos =
       textPainter!.getPositionForOffset(Offset(availableWidth, 0));
