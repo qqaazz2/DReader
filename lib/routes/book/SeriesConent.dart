@@ -12,7 +12,6 @@ import 'package:DReader/entity/book/BookItem.dart';
 import 'package:DReader/main.dart';
 import 'package:DReader/routes/book/widgets/BookItems.dart';
 import 'package:DReader/routes/book/widgets/SeriesChangeCover.dart';
-import 'package:DReader/routes/book/widgets/SeriesDetails.dart';
 import 'package:DReader/state/book/SeriesContentState.dart';
 import 'package:DReader/state/book/SeriesListState.dart';
 import 'package:DReader/widgets/ListWidget.dart';

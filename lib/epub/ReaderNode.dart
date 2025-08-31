@@ -171,6 +171,7 @@ class ElementNode extends ReaderNode {
         }
         nextChildOffset = child.nextOffset ?? Offset(defaultDx, defaultDy);
         childIndex++;
+        isOver = true;
       }
       rearrangement();
     }

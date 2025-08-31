@@ -14,7 +14,6 @@ class Login extends Object {
   Login(this.token,this.userInfo);
 
   factory Login.fromJson(Map<String, dynamic> srcJson) {
-    print(srcJson);
      return _$LoginFromJson(srcJson);
   }
 
