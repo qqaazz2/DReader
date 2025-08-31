@@ -105,6 +105,7 @@ class HomePageState extends ConsumerState<HomePage> {
                       onSelected: (value) {
                         if (value == "scan") {
                           // 执行扫描逻辑
+                          ref.read(seriesListStateProvider.notifier).scanning();
                         } else if (value == "logout") {
                           Global.logout(context);
                         }
