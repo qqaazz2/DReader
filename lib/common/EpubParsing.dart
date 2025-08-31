@@ -18,9 +18,7 @@ class EpubParsing {
   Future<List<String>?> parseEpubFromBytes(List<int> epubBytes) async {
     try {
       Map<String, dynamic> opfData = await _getOptData(epubBytes);
-      print('opfData$opfData');
-      List<String> chapters =
-          readChapters(files, opfData['manifest'], opfData['spine']);
+      List<String> chapters = readChapters(files, opfData['manifest'], opfData['spine']);
       return chapters;
     } catch (e) {
       throw Exception('Error: $e');
@@ -69,8 +67,7 @@ class EpubParsing {
 
     final containerContent = utf8.decode(files[containerPath]!);
     final document = XmlDocument.parse(containerContent);
-    final opfPath =
-        document.findAllElements('rootfile').first.getAttribute('full-path');
+    final opfPath = document.findAllElements('rootfile').first.getAttribute('full-path');
     if (opfPath == null) {
       throw Exception('OPF file path not found in container.xml!');
     }
@@ -106,11 +103,7 @@ class EpubParsing {
     return {'manifest': manifest, 'spine': spine};
   }
 
-  List<String> readChapters(
-    Map<String, List<int>> files,
-    Map<String, String> manifest,
-    List<String?> spine,
-  ) {
+  List<String> readChapters(Map<String, List<int>> files,Map<String, String> manifest,List<String?> spine,) {
     final chapters = <String>[];
 
     for (final idref in spine) {

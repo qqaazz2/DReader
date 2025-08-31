@@ -28,8 +28,7 @@ class PageNodes {
         final node = nodesToLayout[i];
         List<ReaderNode> spillover = node.layout(pageWidth, currentOffset);
         currentPageNodes.add(node);
-        if (node.hasIndexList.contains(readRecodesIndex))
-          readPage = list.length + currentPageNodes.length;
+        if (node.hasIndexList.contains(readRecodesIndex)) readPage = list.length + currentPageNodes.length;
         if (spillover.isNotEmpty) {
           nodesForNextPage.addAll(spillover);
           if (i + 1 < nodesToLayout.length) {

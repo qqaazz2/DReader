@@ -61,7 +61,7 @@ abstract class ReaderNode {
   }
 }
 
-abstract class ElementNode extends ReaderNode {
+class ElementNode extends ReaderNode {
   String tag;
 
   ElementNode(
