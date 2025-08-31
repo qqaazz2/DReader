@@ -34,9 +34,7 @@ class ThemeState extends _$ThemeState {
 
   void getUserInfo() async{
     BaseResult baseResult = await HttpApi.request("/user/info", (json) => UserInfo.fromJson(json));
-    print('baseResult.result${baseResult.code}');
     if(baseResult.code == "2000"){
-      print('baseResult.result${baseResult.result}');
       Global.setting.userInfo = baseResult.result;
     }
   }

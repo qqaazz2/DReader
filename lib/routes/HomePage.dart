@@ -132,6 +132,7 @@ class HomePageState extends ConsumerState<HomePage> {
                                     alignment: Alignment.center,
                                     child: Text("暂无阅读记录")))
                             : GestureDetector(
+                                behavior: HitTestBehavior.opaque,
                                 child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [

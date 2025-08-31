@@ -43,36 +43,6 @@ class SetBaseUrlState extends State<SetBaseUrl> {
                       if (value!.trim().isEmpty) return "服务器地址不可为空";
                       return null;
                     }),
-                TextFormField(
-                    decoration: const InputDecoration(
-                        labelText: "qbittorrentApi",
-                        hintText: "请输入qbittorrentApi",
-                        prefixText: "http://",
-                        prefixIcon: Icon(
-                          Icons.laptop_outlined,
-                          size: 18,
-                        )),
-                    initialValue: Global.setting.serverConfig.qbUrl
-                        .replaceAll("http://", ""),
-                    onSaved: (value){
-                      if(value == null) return;
-                      serverConfig.qbUrl = "http://$value";
-                    }),
-                TextFormField(
-                    decoration: const InputDecoration(
-                        labelText: "EmbyApi",
-                        hintText: "请输入EmbyApi",
-                        prefixText: "http://",
-                        prefixIcon: Icon(
-                          Icons.laptop_outlined,
-                          size: 18,
-                        )),
-                    initialValue: Global.setting.serverConfig.embyUrl
-                        .replaceAll("http://", ""),
-                    onSaved: (value) {
-                      if(value == null) return;
-                      serverConfig.embyUrl = "http://$value";
-                    }),
                 Consumer(builder: (context, ref, child) {
                   return Builder(builder: (context) {
                     return ElevatedButton.icon(

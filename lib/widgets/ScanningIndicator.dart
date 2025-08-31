@@ -70,8 +70,6 @@ class ScanningIndicatorState extends State<ScanningIndicator>
             if (line.startsWith('id:')) {
               id = line.substring(3).trim();
             } else  {
-              print('$line');
-              print('line.trim().isNotEmpty${line.trim().isNotEmpty}');
               if(line.trim().isNotEmpty) data = line.trim();
             }
           }

@@ -239,8 +239,6 @@ class BookReadState extends ConsumerState<BookRead> {
               onPageChanged: (value) {
                 currentPage.value = value + 1;
                 readTagNum = getReadTagNum(pageNodes.list[value * 2].first);
-                print('currentPage.value${currentPage.value}');
-                print('pageNodes.pageCount${widgetList.length}');
                 progress = currentPage.value / widgetList.length;
               },
               children: widgetList,

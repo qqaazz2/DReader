@@ -68,7 +68,6 @@ class ListWidgetState<T> extends State<ListWidget<T>> {
 
   int getNum(constraints) {
     int num = 10;
-    print('constraints.maxWidth${constraints.maxWidth}');
     if (1300 > constraints.maxWidth && constraints.maxWidth > 700) {
       num = 4;
     } else if (2160 > constraints.maxWidth && constraints.maxWidth > 1300) {
