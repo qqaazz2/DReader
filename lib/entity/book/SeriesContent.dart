@@ -2,6 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:DReader/entity/book/BookItem.dart';
 import 'package:DReader/entity/book/SeriesItem.dart';
 
+part 'SeriesContent.g.dart';
 
 @JsonSerializable()
 class SeriesContent extends Object {

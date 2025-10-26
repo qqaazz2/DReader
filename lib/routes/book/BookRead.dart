@@ -2,6 +2,9 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:isolate';
 
+import 'package:DReader/routes/book/widgets/SettingPanel.dart';
+import 'package:DReader/state/ThemeState.dart';
+import 'package:DReader/theme/extensions/ReaderTheme.dart';
 import 'package:DReader/widgets/SideNotice.dart';
 import 'package:csslib/visitor.dart' hide MediaQuery;
 import 'package:dio/dio.dart';
@@ -33,11 +36,12 @@ import 'package:DReader/routes/book/widgets/PageBar.dart';
 import 'package:DReader/state/book/SeriesContentState.dart';
 
 class BookRead extends ConsumerStatefulWidget {
-  const BookRead(
-      {super.key,
-      required this.bookItem,
-      this.textSize = 15,
-      required this.seriesId});
+  const BookRead({
+    super.key,
+    required this.bookItem,
+    this.textSize = 15,
+    required this.seriesId,
+  });
 
   final BookItem bookItem;
   final int seriesId;
@@ -70,6 +74,9 @@ class BookReadState extends ConsumerState<BookRead> {
   late int readTagNum;
   late double progress;
 
+  ReaderTheme? lastReaderTheme;
+  late ReaderTheme currentReaderTheme;
+
   @override
   void initState() {
     super.initState();
@@ -86,23 +93,33 @@ class BookReadState extends ConsumerState<BookRead> {
   }
 
   bool _handleEvent(event) {
-    if (HardwareKeyboard.instance.logicalKeysPressed
-        .contains(LogicalKeyboardKey.arrowLeft)) {
+    if (HardwareKeyboard.instance.logicalKeysPressed.contains(
+      LogicalKeyboardKey.arrowLeft,
+    )) {
       pageController.previousPage(
-          duration: const Duration(milliseconds: 300), curve: Curves.linear);
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.linear,
+      );
       return false;
-    } else if (HardwareKeyboard.instance.logicalKeysPressed
-        .contains(LogicalKeyboardKey.arrowRight)) {
+    } else if (HardwareKeyboard.instance.logicalKeysPressed.contains(
+      LogicalKeyboardKey.arrowRight,
+    )) {
       pageController.nextPage(
-          duration: const Duration(milliseconds: 300), curve: Curves.linear);
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.linear,
+      );
       return false;
     }
 
     return false;
   }
 
-  void getEpub(double maxWidth, double maxHeight,
-      {isColumn = false, columnNum = 2}) async {
+  void getEpub(
+    double maxWidth,
+    double maxHeight, {
+    isColumn = false,
+    columnNum = 2,
+  }) async {
     try {
       // Directory directory = await getTemporaryDirectory();
       // folder = Directory("${directory.path}/$temporaryFolder");
@@ -120,11 +137,15 @@ class BookReadState extends ConsumerState<BookRead> {
         );
       }
 
-      _list = await DomRendering().start(bytes);
-      pageNodes = PageNodes(_list, maxWidth, maxHeight,
-          isColumn: isColumn,
-          columnNum: columnNum,
-          readRecodesIndex: readTagNum);
+      _list = await DomRendering(readerTheme: currentReaderTheme).start(bytes);
+      pageNodes = PageNodes(
+        _list,
+        maxWidth,
+        maxHeight,
+        isColumn: isColumn,
+        columnNum: columnNum,
+        readRecodesIndex: readTagNum,
+      );
       currentPage.value = pageNodes.readPage;
       pageController = PageController(initialPage: currentPage.value);
       setState(() {
@@ -159,41 +180,54 @@ class BookReadState extends ConsumerState<BookRead> {
   @override
   Widget build(BuildContext context) {
     return Material(
-        child: PopScope(
-            onPopInvokedWithResult: (bool didPop, Object? result) {
-              updateProgress();
-            },
-            child: buildWidget()));
+      child: PopScope(
+        onPopInvokedWithResult: (bool didPop, Object? result) {
+          updateProgress();
+        },
+        child: buildWidget(),
+      ),
+    );
   }
 
   Widget buildWidget() {
+    final state = ref.watch(themeStateProvider);
+    currentReaderTheme = state.readerTheme;
+    final hasReaderThemeChanged =
+        lastReaderTheme != null && currentReaderTheme != lastReaderTheme!;
     return SafeArea(
-        child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: LayoutBuilder(builder: (context, constraints) {
-              if (lastMaxWidth == null) {
-                lastMaxWidth = constraints.maxWidth;
-                constraintsPage(constraints);
-              } else if (lastMaxWidth != constraints.maxWidth) {
-                isLoading = true;
-                _resetDebounceTimer(constraints);
-              }
+      child: Container(
+        color: currentReaderTheme.backgroundColor,
+        // padding: const EdgeInsets.symmetric(horizontal: 10),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            if (lastMaxWidth == null) {
+              lastMaxWidth = constraints.maxWidth;
+              constraintsPage(constraints);
+            } else if (lastMaxWidth != constraints.maxWidth ||
+                hasReaderThemeChanged) {
+              isLoading = true;
+              _resetDebounceTimer(constraints);
+            }
 
-              if (isLoading) {
-                return const Center(
-                  child: SizedBox(
-                    width: 100,
-                    height: 100,
-                    child: CircularProgressIndicator(),
-                  ),
-                );
-              }
+            lastReaderTheme = currentReaderTheme;
+            if (isLoading) {
+              return const Center(
+                child: SizedBox(
+                  width: 100,
+                  height: 100,
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            }
 
-              if (isError) return errorWidget();
-              return constraints.maxWidth < MyApp.width
-                  ? getMobile(constraints)
-                  : getPc(constraints);
-            })));
+            if (isError) return errorWidget();
+            return constraints.maxWidth < MyApp.width
+                ? getMobile(constraints)
+                : getPc(constraints);
+          },
+        ),
+      ),
+    );
   }
 
   Widget getPc(BoxConstraints constraints) {
@@ -206,66 +240,71 @@ class BookReadState extends ConsumerState<BookRead> {
         content2 = pageNodes.list[i * 2 + 1];
       }
 
-      widgetList.add(BookPcPage(
-        list: content1,
-        list2: content2,
-      ));
+      widgetList.add(BookPcPage(list: content1, list2: content2));
     }
     return Listener(
-        onPointerHover: (value) {
-          currentValue.value = true;
-          _resetIdleTimer();
-        },
-        onPointerMove: (value) {
-          currentValue.value = true;
-        },
-        onPointerSignal: (PointerSignalEvent event) {
-          if (event is PointerScrollEvent) {
-            // 判断鼠标滚动
-            if (event.scrollDelta.dy < 0) {
-              pageController.previousPage(
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.linear);
-            } else if (event.scrollDelta.dy > 0) {
-              pageController.nextPage(
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.linear);
-            }
+      onPointerHover: (value) {
+        currentValue.value = true;
+        _resetIdleTimer();
+      },
+      onPointerMove: (value) {
+        currentValue.value = true;
+      },
+      onPointerSignal: (PointerSignalEvent event) {
+        if (event is PointerScrollEvent) {
+          // 判断鼠标滚动
+          if (event.scrollDelta.dy < 0) {
+            pageController.previousPage(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.linear,
+            );
+          } else if (event.scrollDelta.dy > 0) {
+            pageController.nextPage(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.linear,
+            );
           }
-        },
-        child: pageWidget(
-            PageView(
-              controller: pageController,
-              onPageChanged: (value) {
-                currentPage.value = value + 1;
-                readTagNum = getReadTagNum(pageNodes.list[value * 2].first);
-                progress = currentPage.value / widgetList.length;
-              },
-              children: widgetList,
-            ),
-            constraints.maxWidth));
+        }
+      },
+      child: pageWidget(
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: PageView(
+            controller: pageController,
+            onPageChanged: (value) {
+              currentPage.value = value + 1;
+              readTagNum = getReadTagNum(pageNodes.list[value * 2].first);
+              progress = currentPage.value / widgetList.length;
+            },
+            children: widgetList,
+          ),
+        ),
+        constraints.maxWidth,
+      ),
+    );
   }
 
   Widget getMobile(BoxConstraints constraints) {
     return GestureDetector(
-        onTap: () => currentValue.value = !currentValue.value,
-        child: pageWidget(
-            PageView(
-              controller: pageController,
-              onPageChanged: (value) {
-                currentPage.value = value + 1;
-                readTagNum = getReadTagNum(pageNodes.list[value].first);
-                progress = currentPage.value / pageNodes.pageCount;
-              },
-              children: pageNodes.list
-                  .map(
-                    (value) => CustomPaint(
-                      painter: ReaderPainter(value),
-                    ),
-                  )
-                  .toList(),
-            ),
-            constraints.maxWidth));
+      onTap: () => currentValue.value = !currentValue.value,
+      child: pageWidget(
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: PageView(
+            controller: pageController,
+            onPageChanged: (value) {
+              currentPage.value = value + 1;
+              readTagNum = getReadTagNum(pageNodes.list[value].first);
+              progress = currentPage.value / pageNodes.pageCount;
+            },
+            children: pageNodes.list
+                .map((value) => CustomPaint(painter: ReaderPainter(value)))
+                .toList(),
+          ),
+        ),
+        constraints.maxWidth,
+      ),
+    );
   }
 
   void _resetIdleTimer() {
@@ -288,17 +327,16 @@ class BookReadState extends ConsumerState<BookRead> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
-            Icons.error_outline,
-            size: 50,
-          ),
+          const Icon(Icons.error_outline, size: 50),
           const Padding(
-              padding: EdgeInsets.symmetric(vertical: 20), child: Text("解析错误")),
+            padding: EdgeInsets.symmetric(vertical: 20),
+            child: Text("解析错误"),
+          ),
           ElevatedButton.icon(
             onPressed: () => Navigator.of(context).pop(),
             label: const Text("返回"),
             icon: const Icon(Icons.arrow_back_sharp),
-          )
+          ),
         ],
       ),
     );
@@ -312,11 +350,21 @@ class BookReadState extends ConsumerState<BookRead> {
   void constraintsPage(BoxConstraints constraints) {
     lastMaxWidth = constraints.maxWidth;
     getEpub(
-        constraints.maxWidth > MyApp.width
-            ? constraints.maxWidth / 2 - 20
-            : constraints.maxWidth,
-        constraints.maxHeight,
-        isColumn: constraints.maxWidth > MyApp.width);
+      constraints.maxWidth > MyApp.width
+          ? constraints.maxWidth / 2 - 20
+          : constraints.maxWidth,
+      constraints.maxHeight,
+      isColumn: constraints.maxWidth > MyApp.width,
+    );
+  }
+
+  void showSettingPanel() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return const SettingPanel();
+      },
+    );
   }
 
   Widget pageWidget(Widget contentChild, double maxWidth) {
@@ -324,93 +372,126 @@ class BookReadState extends ConsumerState<BookRead> {
       children: [
         contentChild,
         Positioned(
-            top: 0,
-            left: 0,
-            child: GestureDetector(
-              child: ValueListenableBuilder(
-                  valueListenable: currentValue,
-                  builder: (context, value, child) {
-                    return AnimatedOpacity(
-                        opacity: value ? 1 : 0,
-                        duration: const Duration(milliseconds: 300),
-                        child: Container(
-                            width: MediaQuery.of(context).size.width,
-                            padding: const EdgeInsets.symmetric(vertical: 5),
-                            color: Theme.of(context).cardColor.withOpacity(0.8),
-                            child: Row(
-                              children: [
-                                IconButton(
-                                    onPressed: () =>
-                                        Navigator.of(context).pop(),
-                                    icon: const Icon(Icons.arrow_back_ios_new)),
-                                Expanded(
-                                  child: Text(
-                                    widget.bookItem.name!,
-                                    style: const TextStyle(fontSize: 18),
-                                    maxLines: 1,
-                                  ),
-                                )
-                              ],
-                            )));
-                  }),
-              onTap: () {},
-            )),
+          top: 0,
+          left: 0,
+          child: GestureDetector(
+            child: ValueListenableBuilder(
+              valueListenable: currentValue,
+              builder: (context, value, child) {
+                return AnimatedOpacity(
+                  opacity: value ? 1 : 0,
+                  duration: const Duration(milliseconds: 300),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    color: Theme.of(context).cardColor.withOpacity(0.8),
+                    child: Row(
+                      children: [
+                        IconButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          icon: const Icon(Icons.arrow_back_ios_new),
+                        ),
+                        Expanded(
+                          child: Text(
+                            widget.bookItem.name!,
+                            style: const TextStyle(fontSize: 18),
+                            maxLines: 1,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+            onTap: () {},
+          ),
+        ),
         Positioned(
           bottom: 0,
           left: 0,
           child: GestureDetector(
-              child: ValueListenableBuilder(
-                  valueListenable: currentValue,
-                  builder: (context, value, child) {
-                    return AnimatedOpacity(
-                        opacity: value ? 1 : 0,
-                        duration: const Duration(milliseconds: 300),
-                        child: Container(
-                            width: maxWidth,
-                            padding: const EdgeInsets.all(10),
-                            color: Theme.of(context).cardColor.withOpacity(0.8),
-                            child: ValueListenableBuilder(
-                                valueListenable: currentPage,
-                                builder: (context, value, child) {
-                                  return Column(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Row(
-                                          mainAxisSize: MainAxisSize.max,
-                                          children: [
-                                            IconButton(
-                                                onPressed: () => pageController
-                                                    .jumpToPage(0),
-                                                icon: const Icon(Icons
-                                                    .keyboard_double_arrow_left_outlined)),
-                                            Expanded(
-                                                child: Listener(
-                                              child: Slider(
-                                                  value: currentPage.value
-                                                      .toDouble(),
-                                                  onChanged: (value) {
-                                                    pageController.jumpToPage(
-                                                        value.toInt());
-                                                  },
-                                                  max: pageNodes.pageCount
-                                                      .toDouble()),
-                                            )),
-                                            IconButton(
-                                                onPressed: () =>
-                                                    pageController.jumpToPage(
-                                                        pageNodes.pageCount),
-                                                icon: const Icon(Icons
-                                                    .keyboard_double_arrow_right_outlined)),
-                                          ]),
-                                      Text(
-                                        "当前阅读进度:${currentPage.value}/${pageNodes.pageCount}",
-                                        style: const TextStyle(fontSize: 16),
-                                      ),
-                                    ],
-                                  );
-                                })));
-                  })),
-        )
+            child: ValueListenableBuilder(
+              valueListenable: currentValue,
+              builder: (context, value, child) {
+                return AnimatedOpacity(
+                  opacity: value ? 1 : 0,
+                  duration: const Duration(milliseconds: 300),
+                  child: Container(
+                    width: maxWidth,
+                    padding: const EdgeInsets.all(10),
+                    color: Theme.of(context).cardColor.withOpacity(0.8),
+                    child: ValueListenableBuilder(
+                      valueListenable: currentPage,
+                      builder: (context, value, child) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                IconButton(
+                                  onPressed: () => pageController.jumpToPage(0),
+                                  icon: const Icon(
+                                    Icons.keyboard_double_arrow_left_outlined,
+                                  ),
+                                ),
+                                Expanded(
+                                  child: Listener(
+                                    child: Slider(
+                                      value: currentPage.value.toDouble(),
+                                      onChanged: (value) {
+                                        pageController.jumpToPage(
+                                          value.toInt(),
+                                        );
+                                      },
+                                      max: pageNodes.pageCount.toDouble(),
+                                    ),
+                                  ),
+                                ),
+                                IconButton(
+                                  onPressed: () => pageController.jumpToPage(
+                                    pageNodes.pageCount,
+                                  ),
+                                  icon: const Icon(
+                                    Icons.keyboard_double_arrow_right_outlined,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            LayoutBuilder(
+                              builder: (context, constraints) {
+                                return Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        IconButton(
+                                          onPressed: () => showSettingPanel(),
+                                          icon: const Icon(Icons.settings),
+                                        ),
+                                        // if(constraints.maxWidth > MyApp.width)
+                                      ],
+                                    ),
+                                    Text(
+                                      "当前阅读进度:${currentPage.value}/${pageNodes.pageCount}",
+                                      style: const TextStyle(fontSize: 16),
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
       ],
     );
   }

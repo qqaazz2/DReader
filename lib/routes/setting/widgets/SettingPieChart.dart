@@ -154,7 +154,6 @@ class SettingPieChartState extends ConsumerState<SettingPieChart> {
       map["未读"] = baseResult.result['unreadCount'];
       map["在读"] = baseResult.result['readingCount'];
       count = baseResult.result['bookCount'];
-      print('map$map$count');
       setState(() {
         isLoading = false;
       });

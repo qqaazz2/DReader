@@ -7,11 +7,11 @@ part of 'BookOverview.dart';
 // **************************************************************************
 
 BookOverview _$BookOverviewFromJson(Map<String, dynamic> json) => BookOverview(
-      (json['seriesCount'] as num).toInt(),
-      (json['bookCount'] as num).toInt(),
-      (json['overCount'] as num).toInt(),
-      (json['unreadCount'] as num).toInt(),
-    );
+  (json['seriesCount'] as num).toInt(),
+  (json['bookCount'] as num).toInt(),
+  (json['overCount'] as num).toInt(),
+  (json['unreadCount'] as num).toInt(),
+);
 
 Map<String, dynamic> _$BookOverviewToJson(BookOverview instance) =>
     <String, dynamic>{

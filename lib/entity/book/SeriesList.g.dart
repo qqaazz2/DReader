@@ -7,14 +7,14 @@ part of 'SeriesList.dart';
 // **************************************************************************
 
 SeriesList _$SeriesListFromJson(Map<String, dynamic> json) => SeriesList(
-      (json['limit'] as num).toInt(),
-      (json['page'] as num).toInt(),
-      (json['pages'] as num).toInt(),
-      (json['count'] as num).toInt(),
-      (json['data'] as List<dynamic>)
-          .map((e) => SeriesItem.fromJson(e as Map<String, dynamic>))
-          .toList(),
-    );
+  (json['limit'] as num).toInt(),
+  (json['page'] as num).toInt(),
+  (json['pages'] as num).toInt(),
+  (json['count'] as num).toInt(),
+  (json['data'] as List<dynamic>)
+      .map((e) => SeriesItem.fromJson(e as Map<String, dynamic>))
+      .toList(),
+);
 
 Map<String, dynamic> _$SeriesListToJson(SeriesList instance) =>
     <String, dynamic>{

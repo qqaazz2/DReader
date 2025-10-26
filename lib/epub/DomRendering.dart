@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:DReader/theme/extensions/ReaderTheme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:DReader/common/EpubParsing.dart';
@@ -17,9 +18,10 @@ import 'Node/BNode.dart';
 import 'Node/TextNode.dart';
 
 class DomRendering {
-  DomRendering({this.readIndex = 0});
+  DomRendering({this.readIndex = 0, required this.readerTheme});
 
   int readIndex;
+  ReaderTheme readerTheme;
   int nodeIndex = 0;
   List<String> tagList = [];
   CssToTextstyle cssToTextstyle = CssToTextstyle();
@@ -44,8 +46,9 @@ class DomRendering {
     "td",
     "note",
     "section",
-    "figure"
+    "figure",
   ];
+  late ModelStyle readerThemeStyle;
 
   ModelStyle getStyle(String css, ModelStyle style, node) {
     StyleMap styleMap = cssMap[css]!;
@@ -73,8 +76,28 @@ class DomRendering {
     return style;
   }
 
+  ModelStyle checkReadTheme() {
+    return ModelStyle(
+      textStyle: TextStyle(
+        color: !readerTheme.followThemeColor ? readerTheme.textColor : null,
+        fontSize: !readerTheme.followThemeColor
+            ? readerTheme.textSize.toDouble()
+            : null,
+      ),
+      margin: readerTheme.useLinePreset
+          ? null
+          : EdgeInsets.only(bottom: readerTheme.lineMargin ?? 12, top: 0),
+      extraLineSpacing: !readerTheme.useLinePreset && readerTheme.useLineSpacing
+          ? readerTheme.lineMargin
+          : null,
+    );
+  }
+
   Future<List<ReaderNode>> domParse(
-      List<dom.Node> nodes, ModelStyle baseStyle, List<String> useCss) async {
+    List<dom.Node> nodes,
+    ModelStyle baseStyle,
+    List<String> useCss,
+  ) async {
     List<ReaderNode> list = [];
     for (var node in nodes) {
       ReaderNode readerNode;
@@ -83,8 +106,18 @@ class DomRendering {
         String text = node.text;
         text = text.replaceAll('\n', '').trim();
         if (text.isNotEmpty && !text.contains('\n')) {
-          list.add(TextNode(
-              TextSpan(text: text, style: style.textStyle), style, nodeIndex));
+          // if(style.extraLineSpacing != null){
+          //   double fontSize = style.textStyle!.fontSize!;
+          //   double height = (fontSize + style.extraLineSpacing!) / fontSize;
+          //   style.textStyle = style.textStyle?.merge(TextStyle(height: height));
+          // }
+          list.add(
+            TextNode(
+              TextSpan(text: text, style: style.textStyle),
+              style,
+              nodeIndex,
+            ),
+          );
         }
       } else if (node is dom.Element) {
         for (String css in useCss) {
@@ -96,6 +129,7 @@ class DomRendering {
           style = style.merge(cssToTextstyle.parseInlineStyle(nodeStyle));
         }
 
+        style = style.merge(readerThemeStyle);
         if (blockList.contains(node.localName)) {
           readerNode = BlockNode(node.localName!, style, nodeIndex);
         } else {
@@ -104,7 +138,13 @@ class DomRendering {
             if (path == null) continue;
             List<int>? list = epubParsing.getImage(path);
             if (list == null || list.isEmpty) continue;
-            readerNode = ImageNode(node.localName!, style, nodeIndex, list, path);
+            readerNode = ImageNode(
+              node.localName!,
+              style,
+              nodeIndex,
+              list,
+              path,
+            );
             await (readerNode as ImageNode).decode();
           } else if (node.localName == "i") {
             readerNode = INode("i", style, nodeIndex);
@@ -150,12 +190,18 @@ class DomRendering {
       cssList.forEach((key, value) {
         cssMap[key] = cssToTextstyle.parseCssToStyleMap(value);
       });
+
+      readerThemeStyle = checkReadTheme();
       if (list != null) {
         for (String item in list) {
           dom.Document document = html_parser.parse(item);
           List<String> useCss = extractExternalCssLinks(document);
           final styleTags = document.querySelectorAll('style');
-          List<ReaderNode> nodeList = await domParse(document.body?.nodes ?? [], ModelStyle(), useCss);
+          List<ReaderNode> nodeList = await domParse(
+            document.body?.nodes ?? [],
+            ModelStyle(),
+            useCss,
+          );
           if (nodeList.length > 1) {
             BodyNode bodyNode = BodyNode();
             bodyNode.children = nodeList;

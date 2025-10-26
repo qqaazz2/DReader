@@ -4,12 +4,14 @@ class ListTitleWidget extends StatelessWidget {
   final Icon icon;
   final Widget title;
   final Widget content;
+  final Widget? trailing;
 
   const ListTitleWidget({
     Key? key,
     required this.icon,
     required this.title,
     required this.content,
+    this.trailing,
   }) : super(key: key);
 
   @override
@@ -27,6 +29,7 @@ class ListTitleWidget extends StatelessWidget {
         subtitle: content,
         title: title,
         contentPadding: EdgeInsets.zero,
+        trailing: trailing,
       ),
     );
   }

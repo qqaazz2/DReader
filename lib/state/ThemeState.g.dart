@@ -6,20 +6,57 @@ part of 'ThemeState.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$themeStateHash() => r'67c00f8c8e6f7a4d8688c7a4929211b1932b124c';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// See also [ThemeState].
 @ProviderFor(ThemeState)
-final themeStateProvider =
-    AutoDisposeNotifierProvider<ThemeState, Setting>.internal(
-  ThemeState.new,
-  name: r'themeStateProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$themeStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+const themeStateProvider = ThemeStateProvider._();
 
-typedef _$ThemeState = AutoDisposeNotifier<Setting>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+final class ThemeStateProvider extends $NotifierProvider<ThemeState, Setting> {
+  const ThemeStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'themeStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$themeStateHash();
+
+  @$internal
+  @override
+  ThemeState create() => ThemeState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(Setting value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<Setting>(value),
+    );
+  }
+}
+
+String _$themeStateHash() => r'00ef8bbeffc9381cec903065189945ed06d79468';
+
+abstract class _$ThemeState extends $Notifier<Setting> {
+  Setting build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<Setting, Setting>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<Setting, Setting>,
+              Setting,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
