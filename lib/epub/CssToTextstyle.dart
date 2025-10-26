@@ -104,7 +104,8 @@ class CssToTextstyle {
   }
 
   ModelStyle parseCssDeclarationsToTextStyle(
-      List<css_parser.Declaration> declarations) {
+    List<css_parser.Declaration> declarations,
+  ) {
     double? marginTop, marginRight, marginBottom, marginLeft;
     double? paddingTop, paddingRight, paddingBottom, paddingLeft;
     double fontSize = baseFontSize;
@@ -125,8 +126,9 @@ class CssToTextstyle {
       final property = declaration.property;
       // final value = declaration.expression?.span?.text.trim();
       final raw = declaration.span?.text;
-      final value =
-          raw != null ? raw.split(":").last.trim().replaceAll(';', '') : null;
+      final value = raw != null
+          ? raw.split(":").last.trim().replaceAll(';', '')
+          : null;
 
       // "padding" 1
       // "margin" 1
@@ -148,8 +150,8 @@ class CssToTextstyle {
             if (parts.isNotEmpty) {
               final sides =
                   (parts.length == 2 || parts.length == 4 || parts.length == 3)
-                      ? parts[1]
-                      : (parts.length == 1 ? parts[0] : null);
+                  ? parts[1]
+                  : (parts.length == 1 ? parts[0] : null);
               if (sides == 'auto') {
                 marginLeftAuto = true;
                 marginRightAuto = true;
@@ -188,8 +190,9 @@ class CssToTextstyle {
         }
       }
 
-      if (RegExp(r'^padding($|-top|-right|-bottom|-left)$')
-          .hasMatch(property)) {
+      if (RegExp(
+        r'^padding($|-top|-right|-bottom|-left)$',
+      ).hasMatch(property)) {
         final size = parseCssSize(value) ?? 0;
         switch (property) {
           case "padding":
@@ -278,12 +281,13 @@ class CssToTextstyle {
       textAlign: textAlign,
       textShadows: shadowList,
       textStyle: TextStyle(
-          color: color,
-          height: lineHeight,
-          fontSize: fontSize,
-          fontWeight: fontWeight,
-          shadows: shadowList,
-          fontStyle: fontStyle),
+        color: color,
+        height: lineHeight,
+        fontSize: fontSize,
+        fontWeight: fontWeight,
+        shadows: shadowList,
+        fontStyle: fontStyle,
+      ),
     );
     return modelStyle;
   }
@@ -291,8 +295,10 @@ class CssToTextstyle {
   EdgeInsets? parseCssEdgeInsets(String? value) {
     if (value == null) return EdgeInsets.zero;
 
-    final parts =
-        value.split(RegExp(r'\s+')).map((v) => parseCssSize(v)).toList();
+    final parts = value
+        .split(RegExp(r'\s+'))
+        .map((v) => parseCssSize(v))
+        .toList();
     switch (parts.length) {
       case 1: // 所有方向
         return EdgeInsets.all(parts[0] ?? 0);
@@ -401,8 +407,11 @@ class CssToTextstyle {
     if (value.startsWith("rgb")) {
       final rgbaMatch = RegExp(r'rgba?\(([^)]+)\)').firstMatch(value);
       if (rgbaMatch != null) {
-        final parts =
-            rgbaMatch.group(1)!.split(",").map((e) => e.trim()).toList();
+        final parts = rgbaMatch
+            .group(1)!
+            .split(",")
+            .map((e) => e.trim())
+            .toList();
         if (parts.length >= 3) {
           final int r = int.tryParse(parts[0]) ?? 0;
           final int g = int.tryParse(parts[1]) ?? 0;
@@ -552,20 +561,23 @@ class ModelStyle {
   List<Shadow>? textShadows;
   bool? marginLeftAuto;
   bool? marginRightAuto;
+  double? extraLineSpacing;
 
-  ModelStyle(
-      {this.textStyle,
-      this.margin,
-      this.padding,
-      this.width,
-      this.height,
-      this.borderRadius,
-      this.floatDirection,
-      this.lineHeight,
-      this.textAlign,
-      this.textShadows,
-      this.marginLeftAuto,
-      this.marginRightAuto});
+  ModelStyle({
+    this.textStyle,
+    this.margin,
+    this.padding,
+    this.width,
+    this.height,
+    this.borderRadius,
+    this.floatDirection,
+    this.lineHeight,
+    this.textAlign,
+    this.textShadows,
+    this.marginLeftAuto,
+    this.marginRightAuto,
+    this.extraLineSpacing,
+  });
 
   ModelStyle merge(ModelStyle? other) {
     if (other == null) return this;
@@ -580,23 +592,33 @@ class ModelStyle {
       lineHeight: other.lineHeight ?? lineHeight,
       textAlign: other.textAlign ?? textAlign,
       textShadows: other.textShadows ?? textShadows,
+      extraLineSpacing: other.extraLineSpacing ?? extraLineSpacing
     );
   }
 
   ModelStyle clone() {
     return ModelStyle(
       textStyle: textStyle != null
-          ? textStyle!.copyWith() // TextStyle 自带 copyWith()
+          ? textStyle!
+                .copyWith() // TextStyle 自带 copyWith()
           : null,
       width: width,
       height: height,
       margin: margin != null
           ? EdgeInsets.fromLTRB(
-              margin!.left, margin!.top, margin!.right, margin!.bottom)
+              margin!.left,
+              margin!.top,
+              margin!.right,
+              margin!.bottom,
+            )
           : null,
       padding: padding != null
           ? EdgeInsets.fromLTRB(
-              padding!.left, padding!.top, padding!.right, padding!.bottom)
+              padding!.left,
+              padding!.top,
+              padding!.right,
+              padding!.bottom,
+            )
           : null,
       borderRadius: borderRadius != null
           ? BorderRadius.only(
@@ -612,6 +634,7 @@ class ModelStyle {
       textShadows: textShadows != null ? List<Shadow>.from(textShadows!) : null,
       marginLeftAuto: marginLeftAuto,
       marginRightAuto: marginRightAuto,
+      extraLineSpacing: extraLineSpacing,
     );
   }
 }

@@ -14,6 +14,4 @@ SeriesCoverList _$SeriesCoverListFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$SeriesCoverListToJson(SeriesCoverList instance) =>
-    <String, dynamic>{
-      'list': instance.list,
-    };
+    <String, dynamic>{'list': instance.list};

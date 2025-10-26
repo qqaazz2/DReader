@@ -6,21 +6,58 @@ part of 'SeriesListState.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$seriesListStateHash() => r'ddeb50b35875f8a7639ee6ad9db662bae83d4505';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// See also [SeriesListState].
 @ProviderFor(SeriesListState)
-final seriesListStateProvider =
-    AutoDisposeNotifierProvider<SeriesListState, SeriesList>.internal(
-  SeriesListState.new,
-  name: r'seriesListStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$seriesListStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+const seriesListStateProvider = SeriesListStateProvider._();
 
-typedef _$SeriesListState = AutoDisposeNotifier<SeriesList>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+final class SeriesListStateProvider
+    extends $NotifierProvider<SeriesListState, SeriesList> {
+  const SeriesListStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'seriesListStateProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$seriesListStateHash();
+
+  @$internal
+  @override
+  SeriesListState create() => SeriesListState();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(SeriesList value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<SeriesList>(value),
+    );
+  }
+}
+
+String _$seriesListStateHash() => r'ca11e0cfe1453a7ce80a76d404f3522a7ab60a50';
+
+abstract class _$SeriesListState extends $Notifier<SeriesList> {
+  SeriesList build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<SeriesList, SeriesList>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<SeriesList, SeriesList>,
+              SeriesList,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

@@ -1,3 +1,4 @@
+import 'package:DReader/theme/extensions/ReaderTheme.dart';
 import 'package:flutter/material.dart';
 import 'package:DReader/common/Global.dart';
 import 'package:DReader/common/HttpApi.dart';
@@ -23,18 +24,38 @@ class ThemeState extends _$ThemeState {
     state = state.copyWith(light: Global.setting.light);
   }
 
+  void changeColor(Color color) {
+    if (color == state.color) return;
+    Global.setThemeColor(color);
+    if (state.readerTheme.followThemeColor) {
+      ReaderTheme readerTheme = Global.initReaderTheme(state.light, color);
+      Global.setReaderTheme(readerTheme);
+      state = state.copyWith(
+          color: color,
+          readerTheme: readerTheme);
+    } else {
+      state = state.copyWith(color: color);
+    }
+  }
+
   void changeServerConfig(ServerConfig config) {
     Global.setServerConfig(config);
     state = state.copyWith(serverConfig: config);
+  }
+
+  void changeReaderTheme(ReaderTheme theme) {
+    Global.setReaderTheme(theme);
+    state = state.copyWith(readerTheme: theme);
   }
 
   void changeUserInfo(UserInfo userInfo) {
     state = state.copyWith(userInfo: userInfo);
   }
 
-  void getUserInfo() async{
-    BaseResult baseResult = await HttpApi.request("/user/info", (json) => UserInfo.fromJson(json));
-    if(baseResult.code == "2000"){
+  void getUserInfo() async {
+    BaseResult baseResult =
+        await HttpApi.request("/user/info", (json) => UserInfo.fromJson(json));
+    if (baseResult.code == "2000") {
       Global.setting.userInfo = baseResult.result;
     }
   }

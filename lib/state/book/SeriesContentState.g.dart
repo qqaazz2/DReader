@@ -6,172 +6,104 @@ part of 'SeriesContentState.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$seriesContentStateHash() =>
-    r'065590391094796becc7776dfebdb9339deffc4f';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// Copied from Dart SDK
-class _SystemHash {
-  _SystemHash._();
-
-  static int combine(int hash, int value) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + value);
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
-    return hash ^ (hash >> 6);
-  }
-
-  static int finish(int hash) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
-    // ignore: parameter_assignments
-    hash = hash ^ (hash >> 11);
-    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
-  }
-}
-
-abstract class _$SeriesContentState
-    extends BuildlessAutoDisposeNotifier<SeriesContent> {
-  late final dynamic id;
-
-  SeriesContent build(
-    dynamic id,
-  );
-}
-
-/// See also [SeriesContentState].
 @ProviderFor(SeriesContentState)
-const seriesContentStateProvider = SeriesContentStateFamily();
+const seriesContentStateProvider = SeriesContentStateFamily._();
 
-/// See also [SeriesContentState].
-class SeriesContentStateFamily extends Family<SeriesContent> {
-  /// See also [SeriesContentState].
-  const SeriesContentStateFamily();
+final class SeriesContentStateProvider
+    extends $NotifierProvider<SeriesContentState, SeriesContent> {
+  const SeriesContentStateProvider._({
+    required SeriesContentStateFamily super.from,
+    required dynamic super.argument,
+  }) : super(
+         retry: null,
+         name: r'seriesContentStateProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
-  /// See also [SeriesContentState].
-  SeriesContentStateProvider call(
-    dynamic id,
-  ) {
-    return SeriesContentStateProvider(
-      id,
-    );
+  @override
+  String debugGetCreateSourceHash() => _$seriesContentStateHash();
+
+  @override
+  String toString() {
+    return r'seriesContentStateProvider'
+        ''
+        '($argument)';
   }
 
+  @$internal
   @override
-  SeriesContentStateProvider getProviderOverride(
-    covariant SeriesContentStateProvider provider,
-  ) {
-    return call(
-      provider.id,
-    );
-  }
+  SeriesContentState create() => SeriesContentState();
 
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'seriesContentStateProvider';
-}
-
-/// See also [SeriesContentState].
-class SeriesContentStateProvider
-    extends AutoDisposeNotifierProviderImpl<SeriesContentState, SeriesContent> {
-  /// See also [SeriesContentState].
-  SeriesContentStateProvider(
-    dynamic id,
-  ) : this._internal(
-          () => SeriesContentState()..id = id,
-          from: seriesContentStateProvider,
-          name: r'seriesContentStateProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$seriesContentStateHash,
-          dependencies: SeriesContentStateFamily._dependencies,
-          allTransitiveDependencies:
-              SeriesContentStateFamily._allTransitiveDependencies,
-          id: id,
-        );
-
-  SeriesContentStateProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.id,
-  }) : super.internal();
-
-  final dynamic id;
-
-  @override
-  SeriesContent runNotifierBuild(
-    covariant SeriesContentState notifier,
-  ) {
-    return notifier.build(
-      id,
-    );
-  }
-
-  @override
-  Override overrideWith(SeriesContentState Function() create) {
-    return ProviderOverride(
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(SeriesContent value) {
+    return $ProviderOverride(
       origin: this,
-      override: SeriesContentStateProvider._internal(
-        () => create()..id = id,
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        id: id,
-      ),
+      providerOverride: $SyncValueProvider<SeriesContent>(value),
     );
-  }
-
-  @override
-  AutoDisposeNotifierProviderElement<SeriesContentState, SeriesContent>
-      createElement() {
-    return _SeriesContentStateProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is SeriesContentStateProvider && other.id == id;
+    return other is SeriesContentStateProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, id.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin SeriesContentStateRef on AutoDisposeNotifierProviderRef<SeriesContent> {
-  /// The parameter `id` of this provider.
-  dynamic get id;
-}
+String _$seriesContentStateHash() =>
+    r'bdaee89b9676e62c0fbd253434e8a549615a6ae6';
 
-class _SeriesContentStateProviderElement
-    extends AutoDisposeNotifierProviderElement<SeriesContentState,
-        SeriesContent> with SeriesContentStateRef {
-  _SeriesContentStateProviderElement(super.provider);
+final class SeriesContentStateFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          SeriesContentState,
+          SeriesContent,
+          SeriesContent,
+          SeriesContent,
+          dynamic
+        > {
+  const SeriesContentStateFamily._()
+    : super(
+        retry: null,
+        name: r'seriesContentStateProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  SeriesContentStateProvider call(dynamic id) =>
+      SeriesContentStateProvider._(argument: id, from: this);
 
   @override
-  dynamic get id => (origin as SeriesContentStateProvider).id;
+  String toString() => r'seriesContentStateProvider';
 }
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+
+abstract class _$SeriesContentState extends $Notifier<SeriesContent> {
+  late final _$args = ref.$arg as dynamic;
+  dynamic get id => _$args;
+
+  SeriesContent build(dynamic id);
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build(_$args);
+    final ref = this.ref as $Ref<SeriesContent, SeriesContent>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<SeriesContent, SeriesContent>,
+              SeriesContent,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

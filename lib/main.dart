@@ -128,20 +128,24 @@ class _MyAppState extends ConsumerState<MyApp> {
   @override
   Widget build(BuildContext context) {
     final bright = ref.watch(themeStateProvider);
+    Color themeColor = bright.color;
     return MaterialApp.router(
       routerConfig: router,
       title: 'DReader',
       themeMode: bright.light ? ThemeMode.dark : ThemeMode.light,
       theme: ThemeData(
-        useMaterial3: true,
-        brightness: Brightness.light,
-        cardColor: Colors.white,
-      ),
-      darkTheme: ThemeData(
           useMaterial3: true,
-          brightness: Brightness.dark,
-          shadowColor: Colors.white54,
-          cardColor: Colors.black),
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: themeColor,
+            brightness: Brightness.light,
+          )),
+      darkTheme: ThemeData(
+        useMaterial3: true,
+        shadowColor: Colors.white54,
+        cardColor: Colors.black,
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: themeColor, brightness: Brightness.dark),
+      ),
       builder: EasyLoading.init(),
     );
   }
@@ -176,7 +180,7 @@ class MainAppState extends ConsumerState<MainApp> {
             key: MyApp.scaffoldKey,
             endDrawer: MyApp.drawer,
             body: Row(children: [
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Column(crossAxisAlignment: CrossAxisAlignment.center ,children: [
                 Expanded(
                     child: NavigationRail(
                   destinations: Global.itemList
@@ -195,7 +199,8 @@ class MainAppState extends ConsumerState<MainApp> {
                   extended: extended,
                   onDestinationSelected: (int index) {
                     if (widget.navigationShell.currentIndex == index) return;
-                    widget.navigationShell.goBranch(index,initialLocation: index == 0);
+                    widget.navigationShell
+                        .goBranch(index, initialLocation: index == 0);
                   },
                 )),
                 const SettingsBar(),

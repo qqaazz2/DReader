@@ -134,8 +134,7 @@ class ElementNode extends ReaderNode {
           currentHeight += child.currentHeight;
           currentLineHeight = 0; // 清空行高
         } else {
-          truncatedNode =
-              child.layout(availableWidth, nextChildOffset!, isFull: isFull);
+          truncatedNode = child.layout(availableWidth, nextChildOffset!, isFull: isFull);
           currentLineWidth += child.currentWidth;
           if (child.currentHeight != currentLineHeight &&
               currentLineHeight > 0 &&

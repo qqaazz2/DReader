@@ -122,7 +122,7 @@ class SeriesContentState extends _$SeriesContentState {
     BaseResult baseResult = await HttpApi.request(
         "/book/updateProgress", (json) => json,
         method: "post", successMsg: true, params: bookItem.toJson());
-    if (baseResult.code == "2000") {
+    if (baseResult.code == "2000" && ref.mounted) {
       BookItem item = BookItem.fromJson(baseResult.result['book']);
       state.seriesItem?.status = baseResult.result['status'];
 
@@ -137,8 +137,7 @@ class SeriesContentState extends _$SeriesContentState {
       }
 
       ref.read(bookRecentStateProvider.notifier).setData(item);
-      state = state.copyWith(
-          seriesItem: state.seriesItem, bookItem: state.bookItem ?? []);
+      state = state.copyWith(seriesItem: state.seriesItem, bookItem: state.bookItem ?? []);
     }
   }
 

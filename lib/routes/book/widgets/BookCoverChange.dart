@@ -8,8 +8,8 @@ import 'package:DReader/main.dart';
 import 'package:DReader/state/book/SeriesContentState.dart';
 import 'package:DReader/widgets/ListWidget.dart';
 import 'package:dio/dio.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/src/consumer.dart';
 
 class BookCoverChange extends ConsumerStatefulWidget {
   final BookItem bookItem;

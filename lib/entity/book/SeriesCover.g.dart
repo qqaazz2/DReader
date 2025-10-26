@@ -7,11 +7,11 @@ part of 'SeriesCover.dart';
 // **************************************************************************
 
 SeriesCover _$SeriesCoverFromJson(Map<String, dynamic> json) => SeriesCover(
-      (json['id'] as num).toInt(),
-      json['name'] as String,
-      (json['coverId'] as num).toInt(),
-      json['coverPath'] as String,
-    );
+  (json['id'] as num).toInt(),
+  json['name'] as String,
+  (json['coverId'] as num).toInt(),
+  json['coverPath'] as String,
+);
 
 Map<String, dynamic> _$SeriesCoverToJson(SeriesCover instance) =>
     <String, dynamic>{
