@@ -145,7 +145,7 @@ class SeriesContentState extends _$SeriesContentState {
     BaseResult baseResult = await HttpApi.request(
         "/series/updateLastReadTime", (json) => json,
         successMsg: true, params: {"id": seriesId});
-    if (baseResult.code == "2000") {
+    if (baseResult.code == "2000" && ref.mounted) {
       state.seriesItem?.lastReadTime = baseResult.result;
       state = state.copyWith(
           seriesItem: state.seriesItem, bookItem: state.bookItem ?? []);

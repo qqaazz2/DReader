@@ -1,17 +1,12 @@
 import 'dart:io';
 
 import 'package:DReader/routes/setting/widgets/SettingList.dart';
-import 'package:DReader/routes/setting/widgets/SettingList.dart';
-import 'package:DReader/routes/setting/widgets/SettingList.dart';
-import 'package:DReader/routes/setting/widgets/SettingList.dart';
-import 'package:DReader/routes/setting/widgets/SettingList.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:DReader/routes/setting/widgets/SettingBarChart.dart';
 import 'package:DReader/routes/setting/widgets/SettingBox.dart';
 import 'package:DReader/routes/setting/widgets/SettingInfo.dart';
 import 'package:DReader/routes/setting/widgets/SettingPieChart.dart';
-import 'package:DReader/routes/setting/widgets/SettingList.dart';
 import 'package:DReader/routes/setting/widgets/SettingTags.dart';
 
 class SettingChart extends StatefulWidget {
@@ -76,7 +71,7 @@ class SettingChartState extends State<SettingChart> {
           color: Colors.green,
           width: width,
           height: height * 0.32,
-          child: SettingInfo(),
+          child: const SettingInfo(),
         ),
         BoxContainer(
           color: Colors.green,
@@ -87,8 +82,7 @@ class SettingChartState extends State<SettingChart> {
         BoxContainer(
           width: width,
           height: height * 0.5,
-          child: SettingPieChart(
-            boxConstraints: constraints,
+          child: const SettingPieChart(
           ),
         ),
         BoxContainer(
@@ -100,6 +94,7 @@ class SettingChartState extends State<SettingChart> {
         BoxContainer(
           color: Colors.pink,
           width: width ,
+          height: height * 0.5,
           child: const SettingList(),
         ),
       ],
@@ -121,13 +116,12 @@ class SettingChartState extends State<SettingChart> {
           color: Colors.green,
           width: width + 60,
           height: height * 0.4,
-          child: SettingInfo(),
+          child: const SettingInfo(),
         ),
         BoxContainer(
           width: width * 3 + 60,
           height: height * 0.4,
-          child: SettingPieChart(
-            boxConstraints: constraints,
+          child: const SettingPieChart(
           ),
         ),
         BoxContainer(
@@ -140,7 +134,7 @@ class SettingChartState extends State<SettingChart> {
           color: Colors.purple,
           width: width * 3 + 60,
           height: height * 0.4,
-          child: SettingBarChart(),
+          child: const SettingBarChart(),
         ),
       ],
     );
@@ -155,7 +149,7 @@ class SettingChartState extends State<SettingChart> {
           color: Colors.green,
           width: width,
           height: height * 0.4,
-          child: SettingInfo(),
+          child: const SettingInfo(),
         ),
         BoxContainer(
           color: Colors.green,
@@ -166,8 +160,7 @@ class SettingChartState extends State<SettingChart> {
         BoxContainer(
           width: width,
           height: height * 0.4,
-          child: SettingPieChart(
-            boxConstraints: constraints,
+          child: const SettingPieChart(
           ),
         ),
         BoxContainer(
@@ -207,15 +200,13 @@ class SettingChartState extends State<SettingChart> {
         BoxContainer(
           width: width,
           height: height * 0.4,
-          child: SettingPieChart(
-            boxConstraints: constraints,
-          ),
+          child: const SettingPieChart(),
         ),
         BoxContainer(
           color: Colors.purple,
           width: width * 2 + 30,
           height: height * 0.4,
-          child: SettingBarChart(),
+          child: const SettingBarChart(),
         ),
       ],
     );

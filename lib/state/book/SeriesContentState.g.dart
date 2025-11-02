@@ -59,7 +59,7 @@ final class SeriesContentStateProvider
 }
 
 String _$seriesContentStateHash() =>
-    r'bdaee89b9676e62c0fbd253434e8a549615a6ae6';
+    r'8fa10c5238f04baee9077c1fed46813bc0142da4';
 
 final class SeriesContentStateFamily extends $Family
     with

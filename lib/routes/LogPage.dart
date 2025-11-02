@@ -35,10 +35,12 @@ class LogePageState extends ConsumerState<LogPage> {
     logParam = ref.read(logStateProvider.notifier).logParam;
     List<LogData> list = listData.data ?? [];
     List<Widget> actions = getActions();
+    print('LogBuild');
     return TopTool(
         title: "操作日志",
         actions: actions,
         child: LayoutBuilder(builder: (context, constraints) {
+          print('LogLayoutBuilder');
           return Column(children: [
             if (constraints.maxWidth > MyApp.width)
               ToolBar(title: "操作日志", widgetList: actions),

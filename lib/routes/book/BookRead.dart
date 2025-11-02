@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:isolate';
 
+import 'package:DReader/entity/BaseResult.dart';
+import 'package:DReader/entity/readLog/ReadLog.dart';
 import 'package:DReader/routes/book/widgets/SettingPanel.dart';
 import 'package:DReader/state/ThemeState.dart';
 import 'package:DReader/theme/extensions/ReaderTheme.dart';
@@ -15,6 +17,7 @@ import 'package:flutter/material.dart' hide Element;
 import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart' hide Element;
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:DReader/common/EpubParsing.dart';
@@ -77,19 +80,44 @@ class BookReadState extends ConsumerState<BookRead> {
   ReaderTheme? lastReaderTheme;
   late ReaderTheme currentReaderTheme;
 
+  late ReadLog readLog;
+  late DateTime recordDateTime;
   @override
   void initState() {
     super.initState();
     temporaryFolder = "${widget.bookItem.id}";
     readTagNum = widget.bookItem.readTagNum;
     progress = widget.bookItem.progress;
-
+    startReadLog();
     HardwareKeyboard.instance.addHandler(_handleEvent);
-
     appLifecycleListener = AppLifecycleListener(
+      onResume: () => startReadLog(),
       onHide: () => updateProgress(), //隐藏了程序会触发
       onInactive: () => updateProgress(), //失去了焦点，但是页面还在后台（PC） 分屏、画中画（Android）
     );
+  }
+
+  void startReadLog() async {
+    recordDateTime = DateTime.now();
+    BaseResult baseResult = await HttpApi.request(
+      "/readLog/start",
+      (json) => ReadLog.fromJson(json),
+      params: {"bookId": widget.bookItem.id},
+    );
+    if (baseResult.code == "2000") {
+      readLog = baseResult.result;
+    }
+  }
+
+  void recordReadLog() async {
+    BaseResult baseResult = await HttpApi.request(
+      "/readLog/record",
+      (json) => ReadLog.fromJson(json),
+      params: {"readLogId": readLog.id},
+    );
+    if (baseResult.code == "2000") {
+      readLog = baseResult.result;
+    }
   }
 
   bool _handleEvent(event) {
@@ -161,9 +189,14 @@ class BookReadState extends ConsumerState<BookRead> {
   }
 
   void updateProgress() {
+    if(DateTime.now().difference(recordDateTime).inSeconds < 5){
+      SideNoticeOverlay.warning(text: "本次阅读时长不足五秒，不予计入");
+      return;
+    }
     BookItem item = widget.bookItem;
     item.readTagNum = readTagNum;
     item.progress = progress;
+    recordReadLog();
     ref
         .read(seriesContentStateProvider(widget.seriesId).notifier)
         .updateProgress(item);
@@ -203,8 +236,7 @@ class BookReadState extends ConsumerState<BookRead> {
             if (lastMaxWidth == null) {
               lastMaxWidth = constraints.maxWidth;
               constraintsPage(constraints);
-            } else if (lastMaxWidth != constraints.maxWidth ||
-                hasReaderThemeChanged) {
+            } else if (lastMaxWidth != constraints.maxWidth || hasReaderThemeChanged) {
               isLoading = true;
               _resetDebounceTimer(constraints);
             }
