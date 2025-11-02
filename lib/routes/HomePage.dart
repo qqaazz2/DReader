@@ -51,7 +51,6 @@ class HomePage extends ConsumerStatefulWidget {
 
 class HomePageState extends ConsumerState<HomePage> {
   late TimePeriod currTimeText;
-
   Widget titleWidget(String text, {Widget? action}) {
     return Padding(
       padding: const EdgeInsets.only(top: 20, bottom: 10),

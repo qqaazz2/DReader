@@ -1,5 +1,6 @@
 import 'package:DReader/routes/LogPage.dart';
 import 'package:DReader/routes/setting/SettingPage.dart';
+import 'package:DReader/widgets/FrozenBox.dart';
 import 'package:DReader/widgets/ScanningIndicator.dart';
 import 'package:DReader/widgets/SettingsBar.dart';
 import 'package:flutter/material.dart';
@@ -50,70 +51,95 @@ class _MyAppState extends ConsumerState<MyApp> {
       initialLocation: "/home",
       routes: [
         GoRoute(
-            path: "/login",
-            name: "login",
-            builder: (context, state) => const LoginPage()),
+          path: "/login",
+          name: "login",
+          builder: (context, state) => const LoginPage(),
+        ),
         StatefulShellRoute.indexedStack(
-            builder: (context, state, navigationShell) {
-              return MainApp(
-                navigationShell: navigationShell,
-              );
-            },
-            branches: [
-              StatefulShellBranch(routes: [
+          builder: (context, state, navigationShell) {
+            return MainApp(navigationShell: navigationShell);
+          },
+          branches: [
+            StatefulShellBranch(
+              routes: [
                 GoRoute(
-                    path: "/home",
-                    name: "home",
-                    builder: (context, state) => const HomePage()),
-              ]),
-              StatefulShellBranch(routes: [
+                  path: "/home",
+                  name: "home",
+                  builder: (context, state) => const HomePage(),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: [
                 GoRoute(
-                    path: "/books",
-                    name: "books",
-                    builder: (context, state) => const SeriesPage(),
-                    routes: <RouteBase>[
-                      GoRoute(
-                          path: "content",
-                          name: "booksContent",
-                          builder: (context, state) {
-                            int seriesId = int.parse(
-                                state.uri.queryParameters["seriesId"]!);
-                            int filesId = int.parse(
-                                state.uri.queryParameters["filesId"]!);
-                            int index =
-                                int.parse(state.uri.queryParameters["index"]!);
-                            return SeriesContent(
-                                seriesId: seriesId,
-                                filesId: filesId,
-                                index: index);
-                          }),
-                      GoRoute(
-                          path: "read",
-                          name: "booksRead",
-                          builder: (context, state) {
-                            int seriesId = int.parse(
-                                state.uri.queryParameters["seriesId"]!);
-                            BookItem bookItem = state.extra as BookItem;
-                            return BookRead(
-                              bookItem: bookItem,
-                              seriesId: seriesId,
-                            );
-                          })
-                    ]),
-              ]),
-              StatefulShellBranch(routes: [
+                  path: "/books",
+                  name: "books",
+                  builder: (context, state) => const SeriesPage(),
+                  routes: <RouteBase>[
+                    GoRoute(
+                      path: "content",
+                      name: "booksContent",
+                      builder: (context, state) {
+                        int seriesId = int.parse(
+                          state.uri.queryParameters["seriesId"]!,
+                        );
+                        int filesId = int.parse(
+                          state.uri.queryParameters["filesId"]!,
+                        );
+                        int index = int.parse(
+                          state.uri.queryParameters["index"]!,
+                        );
+                        return SeriesContent(
+                          seriesId: seriesId,
+                          filesId: filesId,
+                          index: index,
+                        );
+                      },
+                    ),
+                    GoRoute(
+                      path: "read",
+                      name: "booksRead",
+                      builder: (context, state) {
+                        int seriesId = int.parse(
+                          state.uri.queryParameters["seriesId"]!,
+                        );
+                        BookItem bookItem = state.extra as BookItem;
+                        return BookRead(bookItem: bookItem, seriesId: seriesId);
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: [
                 GoRoute(
-                    path: "/logs",
-                    name: "logs",
-                    builder: (context, state) => const LogPage()),
-              ]),
-              StatefulShellBranch(routes: [
+                  path: "/logs",
+                  name: "logs",
+                  builder: (context, state) => const LogPage(),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: [
                 GoRoute(
-                    path: "/setting",
-                    name: "setting",
-                    builder: (context, state) => const SettingPage()),
-              ]),
-            ]),
+                  path: "/setting",
+                  name: "setting",
+                  builder: (context, state) => const SettingPage(),
+                ),
+              ],
+            ),
+          ],
+          // navigatorContainerBuilder:
+          //     (
+          //       BuildContext context,
+          //       StatefulNavigationShell navigationShell,
+          //       List<Widget> children,
+          //     ) => _IndexedStackedRouteBranchContainer(
+          //       currentIndex: navigationShell.currentIndex,
+          //       children: children,
+          //     ),
+        ),
       ],
       redirect: (context, state) {
         if (Global.token.isEmpty || Global.setting.serverConfig.baseUrl.isEmpty)
@@ -134,17 +160,20 @@ class _MyAppState extends ConsumerState<MyApp> {
       title: 'DReader',
       themeMode: bright.light ? ThemeMode.dark : ThemeMode.light,
       theme: ThemeData(
-          useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: themeColor,
-            brightness: Brightness.light,
-          )),
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: themeColor,
+          brightness: Brightness.light,
+        ),
+      ),
       darkTheme: ThemeData(
         useMaterial3: true,
         shadowColor: Colors.white54,
         cardColor: Colors.black,
         colorScheme: ColorScheme.fromSeed(
-            seedColor: themeColor, brightness: Brightness.dark),
+          seedColor: themeColor,
+          brightness: Brightness.dark,
+        ),
       ),
       builder: EasyLoading.init(),
     );
@@ -171,45 +200,107 @@ class MainAppState extends ConsumerState<MainApp> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(children: [
-      LayoutBuilder(builder: (context, constraints) {
-        if (constraints.maxWidth < MyApp.width) {
-          return widget.navigationShell;
-        } else {
-          return Scaffold(
-            key: MyApp.scaffoldKey,
-            endDrawer: MyApp.drawer,
-            body: Row(children: [
-              Column(crossAxisAlignment: CrossAxisAlignment.center ,children: [
-                Expanded(
-                    child: NavigationRail(
-                  destinations: Global.itemList
-                      .map((e) => NavigationRailDestination(
-                          icon: e.icon, label: Text(e.title)))
-                      .toList(),
-                  selectedIndex: widget.navigationShell.currentIndex,
-                  trailing: IconButton(
-                      icon: Icon(
-                          extended ? Icons.arrow_back : Icons.arrow_forward),
-                      onPressed: () {
-                        setState(() {
-                          extended = !extended;
-                        });
-                      }),
-                  extended: extended,
-                  onDestinationSelected: (int index) {
-                    if (widget.navigationShell.currentIndex == index) return;
-                    widget.navigationShell
-                        .goBranch(index, initialLocation: index == 0);
-                  },
-                )),
-                const SettingsBar(),
-              ]),
-              Expanded(child: widget.navigationShell)
-            ]),
-          );
-        }
-      }),
-    ]);
+    return Stack(
+      children: [
+        LayoutBuilder(
+          builder: (context, constraints) {
+            if (constraints.maxWidth < MyApp.width) {
+              return widget.navigationShell;
+            } else {
+              return Scaffold(
+                key: MyApp.scaffoldKey,
+                endDrawer: MyApp.drawer,
+                body: Row(
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: NavigationRail(
+                            destinations: Global.itemList
+                                .map(
+                                  (e) => NavigationRailDestination(
+                                    icon: e.icon,
+                                    label: Text(e.title),
+                                  ),
+                                )
+                                .toList(),
+                            selectedIndex: widget.navigationShell.currentIndex,
+                            trailing: IconButton(
+                              icon: Icon(
+                                extended
+                                    ? Icons.arrow_back
+                                    : Icons.arrow_forward,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  extended = !extended;
+                                });
+                              },
+                            ),
+                            extended: extended,
+                            onDestinationSelected: (int index) {
+                              if (widget.navigationShell.currentIndex == index)
+                                return;
+                              widget.navigationShell.goBranch(
+                                index,
+                                initialLocation: index == 0,
+                              );
+                            },
+                          ),
+                        ),
+                        const SettingsBar(),
+                      ],
+                    ),
+                    Expanded(child: widget.navigationShell),
+                  ],
+                ),
+              );
+            }
+          },
+        ),
+      ],
+    );
   }
 }
+
+// class _IndexedStackedRouteBranchContainer extends StatelessWidget {
+//   const _IndexedStackedRouteBranchContainer({
+//     required this.currentIndex,
+//     required this.children,
+//   });
+//
+//   final int currentIndex;
+//
+//   final List<Widget> children;
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     final List<Widget> stackItems = [];
+//
+//     int index = 0;
+//     for (Widget item in children) {
+//       stackItems.add(
+//         _buildRouteBranchContainer(context, currentIndex == index, item),
+//       );
+//       index++;
+//     }
+//
+//     return IndexedStack(index: currentIndex, children: stackItems);
+//   }
+//
+//   Widget _buildRouteBranchContainer(
+//     BuildContext context,
+//     bool isActive,
+//     Widget child,
+//   ) {
+//     return Visibility(
+//       visible: isActive,
+//       maintainState: true,
+//       child: FrozenBox(
+//         isActive: isActive,
+//         child: TickerMode(enabled: isActive, child: child),
+//       ),
+//     );
+//   }
+// }

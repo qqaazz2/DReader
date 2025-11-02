@@ -1,3 +1,4 @@
+import 'package:DReader/state/setting/GetOverviewState.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -6,9 +7,7 @@ import 'package:DReader/common/HttpApi.dart';
 import '../../../entity/BaseResult.dart';
 
 class SettingPieChart extends ConsumerStatefulWidget {
-  const SettingPieChart({super.key, required this.boxConstraints});
-
-  final BoxConstraints boxConstraints;
+  const SettingPieChart({super.key});
 
   @override
   ConsumerState<SettingPieChart> createState() => SettingPieChartState();
@@ -17,55 +16,87 @@ class SettingPieChart extends ConsumerStatefulWidget {
 class SettingPieChartState extends ConsumerState<SettingPieChart> {
   int touchedIndex = 0;
   int count = 0;
-  bool isLoading = true;
-  Map<String, int> map = {};
+
+  // bool isLoading = true;
+  // Map map = {};
   Map<String, Color> colors = {
     "未读": Colors.deepOrange,
     "已读": Colors.greenAccent,
-    "在读": Colors.lightBlueAccent
+    "在读": Colors.lightBlueAccent,
   };
 
   @override
   void initState() {
     super.initState();
-    getData();
+    // getData();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading) {
-      return const Align(
-        child: SizedBox(
-          width: 150,
-          height: 150,
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
-
+    // if (isLoading) {
+    //   return const Align(
+    //     child: SizedBox(
+    //       width: 150,
+    //       height: 150,
+    //       child: CircularProgressIndicator(),
+    //     ),
+    //   );
+    // }
+    AsyncValue<Map> asyncValue = ref.watch(getOverviewStateProvider);
     return Stack(
       children: [
-        Container(
+        SizedBox(
           width: double.infinity,
           height: double.infinity,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text("书籍阅读情况",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "阅读情况",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  IconButton(
+                    onPressed: () => ref.invalidate(getOverviewStateProvider),
+                    icon: const Icon(Icons.refresh),
+                    tooltip: "刷新图表",
+                  ),
+                ],
+              ),
               Expanded(
-                child: count == 0
-                    ? const Align(alignment: Alignment.center, child: Text("暂无数据"))
-                    : Align(
-                        alignment: Alignment.center,
-                        child: getPicChart(), // 确保中心对齐
-                      ),
+                child: Align(
+                  alignment: Alignment.center,
+                  child: asyncValue.when(
+                    data: (Map map) {
+                      return getPicChart(map);
+                    },
+                    error: (Object error, StackTrace stackTrace) {
+                      return Center(
+                        child: Text(
+                          '加载失败: $error',
+                          style: const TextStyle(color: Colors.red),
+                        ),
+                      );
+                    },
+                    loading: () {
+                      return const Center(
+                        child: SizedBox(
+                          width: 150,
+                          height: 150,
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    },
+                  ), // 确保中心对齐
+                ),
               ),
               SizedBox(
                 width: double.infinity,
                 child: Wrap(
                   alignment: WrapAlignment.spaceBetween,
-                  children: map.keys.map((value) {
+                  children: colors.keys.map((value) {
                     return Indicator(
                       index: touchedIndex,
                       color: colors[value]!,
@@ -77,21 +108,15 @@ class SettingPieChartState extends ConsumerState<SettingPieChart> {
             ],
           ),
         ),
-        Positioned(
-            right: 0,
-            child: IconButton(
-              onPressed: () => getData(),
-              icon: const Icon(Icons.refresh),
-              tooltip: "刷新图表",
-            ))
       ],
     );
   }
 
-  Widget getPicChart() {
+  Widget getPicChart(Map map) {
     return AspectRatio(
-        aspectRatio: 1, // 强制宽高比为 1:1
-        child: LayoutBuilder(builder: (context, constraints) {
+      aspectRatio: 1, // 强制宽高比为 1:1
+      child: LayoutBuilder(
+        builder: (context, constraints) {
           return PieChart(
             PieChartData(
               pieTouchData: PieTouchData(
@@ -103,26 +128,26 @@ class SettingPieChartState extends ConsumerState<SettingPieChart> {
                       touchedIndex = -1;
                       return;
                     }
-                    touchedIndex =
-                        pieTouchResponse.touchedSection!.touchedSectionIndex;
+                    touchedIndex = pieTouchResponse.touchedSection!.touchedSectionIndex;
                   });
                 },
               ),
-              borderData: FlBorderData(
-                show: false,
-              ),
+              borderData: FlBorderData(show: false),
               sectionsSpace: 0,
               centerSpaceRadius: 0,
-              sections: showingSections(constraints.maxWidth),
+              sections: showingSections(constraints.maxWidth, map),
             ),
           );
-        }));
+        },
+      ),
+    );
   }
 
-  List<PieChartSectionData>? showingSections(double width) {
-    if (isLoading) return null;
+  List<PieChartSectionData>? showingSections(double width, Map map) {
     int index = 0;
-    return map.keys.map((value) {
+    int count = map["合计"] ?? 0;
+    Iterable keys = map.keys.where((item) => item != "合计");
+    return keys.map((value) {
       final isTouched = index == touchedIndex;
       final fontSize = isTouched ? 20.0 : 16.0;
       final radius = isTouched ? width / 2 : width / 2 - 10;
@@ -146,27 +171,27 @@ class SettingPieChartState extends ConsumerState<SettingPieChart> {
     }).toList();
   }
 
-  void getData() async {
-    BaseResult baseResult =
-        await HttpApi.request("/book/getOverview", (json) => json);
-    if (baseResult.code == "2000") {
-      map["已读"] = baseResult.result['overCount'];
-      map["未读"] = baseResult.result['unreadCount'];
-      map["在读"] = baseResult.result['readingCount'];
-      count = baseResult.result['bookCount'];
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
+  // void getData() async {
+  //   BaseResult baseResult = await HttpApi.request("/book/getOverview", (json) => json);
+  //   if (baseResult.code == "2000") {
+  //     map["已读"] = baseResult.result['overCount'];
+  //     map["未读"] = baseResult.result['unreadCount'];
+  //     map["在读"] = baseResult.result['readingCount'];
+  //     count = baseResult.result['bookCount'];
+  //     setState(() {
+  //       isLoading = false;
+  //     });
+  //   }
+  // }
 }
 
 class Indicator extends StatelessWidget {
-  const Indicator(
-      {super.key,
-      required this.color,
-      required this.text,
-      required this.index});
+  const Indicator({
+    super.key,
+    required this.color,
+    required this.text,
+    required this.index,
+  });
 
   final Color color;
   final String text;
@@ -183,7 +208,7 @@ class Indicator extends StatelessWidget {
           height: 15,
           margin: const EdgeInsets.only(right: 10),
         ),
-        Text(text)
+        Text(text),
       ],
     );
   }
