@@ -74,7 +74,7 @@ class BookItemsState extends ConsumerState<BookItems> {
             ref
                 .read(seriesContentStateProvider(widget.seriesId).notifier)
                 .updateLastReadTime(widget.seriesId);
-            context.push("/books/read?seriesId=${widget.seriesId}",
+            context.push("/read?seriesId=${widget.seriesId}",
                 extra: widget.data);
           }),
     );

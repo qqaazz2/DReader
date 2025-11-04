@@ -96,17 +96,6 @@ class _MyAppState extends ConsumerState<MyApp> {
                         );
                       },
                     ),
-                    GoRoute(
-                      path: "read",
-                      name: "booksRead",
-                      builder: (context, state) {
-                        int seriesId = int.parse(
-                          state.uri.queryParameters["seriesId"]!,
-                        );
-                        BookItem bookItem = state.extra as BookItem;
-                        return BookRead(bookItem: bookItem, seriesId: seriesId);
-                      },
-                    ),
                   ],
                 ),
               ],
@@ -139,6 +128,15 @@ class _MyAppState extends ConsumerState<MyApp> {
           //       currentIndex: navigationShell.currentIndex,
           //       children: children,
           //     ),
+        ),
+        GoRoute(
+          path: "/read",
+          name: "read",
+          builder: (context, state) {
+            int seriesId = int.parse(state.uri.queryParameters["seriesId"]!);
+            BookItem bookItem = state.extra as BookItem;
+            return BookRead(bookItem: bookItem, seriesId: seriesId);
+          },
         ),
       ],
       redirect: (context, state) {
