@@ -39,7 +39,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   json_annotation: ^4.9.0
-  go_router: ^13.2.4
+  go_router: ^16.3.0
   flutter_easyloading: ^3.0.5
   file_picker: ^8.0.3
 #  epub_view: ^3.2.0
@@ -90,6 +90,7 @@ dev_dependencies:
 flutter:
   assets:
     - images/img.png
+    - images/1.png
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

@@ -41,14 +41,13 @@ class BookRecentState extends _$BookRecentState {
   }
 
   void read(context) async {
-
     BaseResult baseResult = await HttpApi.request(
         "/series/getIdByFilesId", (json) => json,
         params: {"id": state!.parentId});
     if (baseResult.code == "2000") {
       int seriesId = baseResult.result;
       ref.read(seriesContentStateProvider(seriesId).notifier).updateLastReadTime(seriesId);
-      GoRouter.of(context).push("/books/read?seriesId=$seriesId", extra: state);
+      GoRouter.of(context).push("/read?seriesId=$seriesId", extra: state);
     }
   }
 }

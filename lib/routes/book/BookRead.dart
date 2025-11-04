@@ -110,6 +110,10 @@ class BookReadState extends ConsumerState<BookRead> {
   }
 
   void recordReadLog() async {
+    if(DateTime.now().difference(recordDateTime).inSeconds < 5){
+      SideNoticeOverlay.warning(text: "本次阅读时长不足五秒，不予计入");
+      return;
+    }
     BaseResult baseResult = await HttpApi.request(
       "/readLog/record",
       (json) => ReadLog.fromJson(json),
@@ -189,10 +193,6 @@ class BookReadState extends ConsumerState<BookRead> {
   }
 
   void updateProgress() {
-    if(DateTime.now().difference(recordDateTime).inSeconds < 5){
-      SideNoticeOverlay.warning(text: "本次阅读时长不足五秒，不予计入");
-      return;
-    }
     BookItem item = widget.bookItem;
     item.readTagNum = readTagNum;
     item.progress = progress;
@@ -379,7 +379,14 @@ class BookReadState extends ConsumerState<BookRead> {
     return getReadTagNum(node.children.first);
   }
 
+  bool checkVisibility() {
+    StatefulNavigationShellState shellState = StatefulNavigationShell.of(context);
+    bool isCurrent = ModalRoute.of(context)?.isCurrent ?? false;
+    return (shellState.currentIndex == 1 || shellState.currentIndex == 0) && isCurrent;
+  }
+
   void constraintsPage(BoxConstraints constraints) {
+    // if(!checkVisibility()) return;
     lastMaxWidth = constraints.maxWidth;
     getEpub(
       constraints.maxWidth > MyApp.width
