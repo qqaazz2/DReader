@@ -13,7 +13,7 @@ part of 'OverviewState.dart';
 const overviewStateProvider = OverviewStateProvider._();
 
 final class OverviewStateProvider
-    extends $NotifierProvider<OverviewState, BookOverview> {
+    extends $AsyncNotifierProvider<OverviewState, FilesOverview> {
   const OverviewStateProvider._()
     : super(
         from: null,
@@ -31,30 +31,22 @@ final class OverviewStateProvider
   @$internal
   @override
   OverviewState create() => OverviewState();
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(BookOverview value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<BookOverview>(value),
-    );
-  }
 }
 
-String _$overviewStateHash() => r'bc3f9eec38d71c7d898c03aa1141093ec1f44c47';
+String _$overviewStateHash() => r'c117b6a404ce05035f431065e1326bc4960f5b6a';
 
-abstract class _$OverviewState extends $Notifier<BookOverview> {
-  BookOverview build();
+abstract class _$OverviewState extends $AsyncNotifier<FilesOverview> {
+  FutureOr<FilesOverview> build();
   @$mustCallSuper
   @override
   void runBuild() {
     final created = build();
-    final ref = this.ref as $Ref<BookOverview, BookOverview>;
+    final ref = this.ref as $Ref<AsyncValue<FilesOverview>, FilesOverview>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<BookOverview, BookOverview>,
-              BookOverview,
+              AnyNotifier<AsyncValue<FilesOverview>, FilesOverview>,
+              AsyncValue<FilesOverview>,
               Object?,
               Object?
             >;

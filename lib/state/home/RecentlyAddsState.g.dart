@@ -13,7 +13,7 @@ part of 'RecentlyAddsState.dart';
 const recentlyAddsStateProvider = RecentlyAddsStateProvider._();
 
 final class RecentlyAddsStateProvider
-    extends $NotifierProvider<RecentlyAddsState, SeriesList> {
+    extends $NotifierProvider<RecentlyAddsState, FilesList> {
   const RecentlyAddsStateProvider._()
     : super(
         from: null,
@@ -33,28 +33,28 @@ final class RecentlyAddsStateProvider
   RecentlyAddsState create() => RecentlyAddsState();
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(SeriesList value) {
+  Override overrideWithValue(FilesList value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<SeriesList>(value),
+      providerOverride: $SyncValueProvider<FilesList>(value),
     );
   }
 }
 
-String _$recentlyAddsStateHash() => r'174b4080dc63bff30992703bf992aabcfed25579';
+String _$recentlyAddsStateHash() => r'eec0bcab53e2fd90e0581a35f73f3472a7df6e9b';
 
-abstract class _$RecentlyAddsState extends $Notifier<SeriesList> {
-  SeriesList build();
+abstract class _$RecentlyAddsState extends $Notifier<FilesList> {
+  FilesList build();
   @$mustCallSuper
   @override
   void runBuild() {
     final created = build();
-    final ref = this.ref as $Ref<SeriesList, SeriesList>;
+    final ref = this.ref as $Ref<FilesList, FilesList>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<SeriesList, SeriesList>,
-              SeriesList,
+              AnyNotifier<FilesList, FilesList>,
+              FilesList,
               Object?,
               Object?
             >;

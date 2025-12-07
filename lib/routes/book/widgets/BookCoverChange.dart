@@ -4,7 +4,9 @@ import 'package:DReader/common/EpubParsing.dart';
 import 'package:DReader/common/HttpApi.dart';
 import 'package:DReader/common/ImageModule.dart';
 import 'package:DReader/entity/book/BookItem.dart';
+import 'package:DReader/entity/book/FilesItem.dart';
 import 'package:DReader/main.dart';
+import 'package:DReader/state/book/FilesListState.dart';
 import 'package:DReader/state/book/SeriesContentState.dart';
 import 'package:DReader/widgets/ListWidget.dart';
 import 'package:dio/dio.dart';
@@ -12,14 +14,12 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter/material.dart';
 
 class BookCoverChange extends ConsumerStatefulWidget {
-  final BookItem bookItem;
-  final int seriesId;
+  final FilesItem filesItem;
   final int index;
 
   const BookCoverChange(
       {super.key,
-      required this.bookItem,
-      required this.seriesId,
+      required this.filesItem,
       required this.index});
 
   @override
@@ -40,7 +40,7 @@ class BookCoverChangeState extends ConsumerState<BookCoverChange> {
 
   void getImage() async {
     String encodedFilePath = Uri.encodeFull(
-      widget.bookItem.filePath.replaceAll('\\', '/').substring(1),
+      widget.filesItem.filePath.replaceAll('\\', '/').substring(1),
     );
     bytes = await HttpApi.request(
       "/$encodedFilePath",
@@ -103,10 +103,10 @@ class BookCoverChangeState extends ConsumerState<BookCoverChange> {
                           index: index,
                           image: bytes,
                           voidCallback: () => ref
-                              .read(seriesContentStateProvider(widget.seriesId)
-                                  .notifier)
+                              .read(filesListStateProvider(widget.filesItem.parentId)
+                              .notifier)
                               .changeCover(
-                                  widget.bookItem.id, bytes!, widget.index),
+                              widget.filesItem.id, bytes!, widget.index),
                         );
                       },
                       scale: 0.7,
@@ -117,7 +117,7 @@ class BookCoverChangeState extends ConsumerState<BookCoverChange> {
   }
 }
 
-class BookCover extends FilesItem<String> {
+class BookCover extends ListItem<String> {
   const BookCover(
       {super.key,
       required super.data,

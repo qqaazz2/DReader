@@ -1,3 +1,5 @@
+import 'package:DReader/entity/book/FilesOverview.dart';
+import 'package:DReader/state/home/OverviewState.dart';
 import 'package:DReader/state/setting/GetOverviewState.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -17,8 +19,6 @@ class SettingPieChartState extends ConsumerState<SettingPieChart> {
   int touchedIndex = 0;
   int count = 0;
 
-  // bool isLoading = true;
-  // Map map = {};
   Map<String, Color> colors = {
     "未读": Colors.deepOrange,
     "已读": Colors.greenAccent,
@@ -33,16 +33,7 @@ class SettingPieChartState extends ConsumerState<SettingPieChart> {
 
   @override
   Widget build(BuildContext context) {
-    // if (isLoading) {
-    //   return const Align(
-    //     child: SizedBox(
-    //       width: 150,
-    //       height: 150,
-    //       child: CircularProgressIndicator(),
-    //     ),
-    //   );
-    // }
-    AsyncValue<Map> asyncValue = ref.watch(getOverviewStateProvider);
+    AsyncValue<FilesOverview> asyncValue = ref.watch(overviewStateProvider);
     return Stack(
       children: [
         SizedBox(
@@ -59,7 +50,7 @@ class SettingPieChartState extends ConsumerState<SettingPieChart> {
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   IconButton(
-                    onPressed: () => ref.invalidate(getOverviewStateProvider),
+                    onPressed: () => ref.invalidate(overviewStateProvider),
                     icon: const Icon(Icons.refresh),
                     tooltip: "刷新图表",
                   ),
@@ -69,8 +60,8 @@ class SettingPieChartState extends ConsumerState<SettingPieChart> {
                 child: Align(
                   alignment: Alignment.center,
                   child: asyncValue.when(
-                    data: (Map map) {
-                      return getPicChart(map);
+                    data: (FilesOverview overview) {
+                      return getPicChart(overview);
                     },
                     error: (Object error, StackTrace stackTrace) {
                       return Center(
@@ -112,7 +103,7 @@ class SettingPieChartState extends ConsumerState<SettingPieChart> {
     );
   }
 
-  Widget getPicChart(Map map) {
+  Widget getPicChart(FilesOverview overview) {
     return AspectRatio(
       aspectRatio: 1, // 强制宽高比为 1:1
       child: LayoutBuilder(
@@ -135,7 +126,7 @@ class SettingPieChartState extends ConsumerState<SettingPieChart> {
               borderData: FlBorderData(show: false),
               sectionsSpace: 0,
               centerSpaceRadius: 0,
-              sections: showingSections(constraints.maxWidth, map),
+              sections: showingSections(constraints.maxWidth, overview),
             ),
           );
         },
@@ -143,18 +134,21 @@ class SettingPieChartState extends ConsumerState<SettingPieChart> {
     );
   }
 
-  List<PieChartSectionData>? showingSections(double width, Map map) {
+  List<PieChartSectionData>? showingSections(double width, FilesOverview overview) {
     int index = 0;
-    int count = map["合计"] ?? 0;
-    Iterable keys = map.keys.where((item) => item != "合计");
-    return keys.map((value) {
+    Map<String,int> map = {
+      "未读":overview.unreadCount,
+      "已读":overview.overCount,
+      "在读":overview.readingCount,
+    };
+    return map.keys.map((value) {
       final isTouched = index == touchedIndex;
       final fontSize = isTouched ? 20.0 : 16.0;
       final radius = isTouched ? width / 2 : width / 2 - 10;
       const shadows = [Shadow(color: Colors.black, blurRadius: 2)];
       index++;
 
-      double num = map[value]! / count;
+      double num = map[value]! / overview.bookCount;
       return PieChartSectionData(
         color: colors[value],
         value: num,

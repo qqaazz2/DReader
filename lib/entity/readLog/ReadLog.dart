@@ -10,13 +10,13 @@ class ReadLog extends Object {
   @JsonKey(name: 'time')
   String time;
 
-  @JsonKey(name: 'bookId')
-  int bookId;
+  @JsonKey(name: 'filesId')
+  int filesId;
 
   @JsonKey(name: 'seconds')
   int seconds;
 
-  ReadLog(this.id, this.time, this.bookId, this.seconds);
+  ReadLog(this.id, this.time, this.filesId, this.seconds);
 
   factory ReadLog.fromJson(Map<String, dynamic> srcJson) => _$ReadLogFromJson(srcJson);
 

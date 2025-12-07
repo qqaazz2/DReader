@@ -33,7 +33,7 @@ final class GetOverviewStateProvider
   GetOverviewState create() => GetOverviewState();
 }
 
-String _$getOverviewStateHash() => r'a86b63bec5c5b26f4c94f6dbc172f89e37911176';
+String _$getOverviewStateHash() => r'795b20650563bc65913666c63f6fc53183587754';
 
 abstract class _$GetOverviewState
     extends $AsyncNotifier<Map<dynamic, dynamic>> {

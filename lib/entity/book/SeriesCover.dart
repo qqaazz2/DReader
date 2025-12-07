@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:DReader/entity/book/BookItem.dart';
-import 'package:DReader/entity/book/SeriesItem.dart';
+import 'package:DReader/entity/book/FilesItem.dart';
 
 
 part 'SeriesCover.g.dart';

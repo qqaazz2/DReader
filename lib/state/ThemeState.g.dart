@@ -40,7 +40,7 @@ final class ThemeStateProvider extends $NotifierProvider<ThemeState, Setting> {
   }
 }
 
-String _$themeStateHash() => r'00ef8bbeffc9381cec903065189945ed06d79468';
+String _$themeStateHash() => r'f500f8a7a38f401c97f5d0a6943628a67ec0768c';
 
 abstract class _$ThemeState extends $Notifier<Setting> {
   Setting build();
