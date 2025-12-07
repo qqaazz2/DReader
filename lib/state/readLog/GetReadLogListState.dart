@@ -13,19 +13,17 @@ part 'GetReadLogListState.g.dart';
 class GetReadLogListState extends _$GetReadLogListState {
   @override
   Future<List<ReadLogListItem>> build(String date) async {
-  BaseResult baseResult = await HttpApi.request(
+    BaseResult baseResult = await HttpApi.request(
       "/readLog/getReadLogListByTime",
-          (json) => json.map((item) => ReadLogListItem.fromJson(item)).toList(),
-      params: {
-        'date': date
-      }
-  );
+      (json) => json.map((item) => ReadLogListItem.fromJson(item)).toList(),
+      params: {'date': date},
+    );
 
-  if (baseResult.code == "2000") {
-    return baseResult.result;
-  }else{
-    SideNoticeOverlay.error(text: baseResult.message);
-    return [];
+    if (baseResult.code == "2000") {
+      return baseResult.result;
+    } else {
+      SideNoticeOverlay.error(text: baseResult.message);
+      return [];
+    }
   }
-}
 }

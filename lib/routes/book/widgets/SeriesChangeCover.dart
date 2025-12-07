@@ -7,7 +7,7 @@ import 'package:DReader/common/HttpApi.dart';
 import 'package:DReader/entity/book/SeriesCover.dart';
 import 'package:DReader/entity/book/SeriesCoverList.dart';
 import 'package:DReader/state/book/SeriesContentState.dart';
-import 'package:DReader/state/book/SeriesListState.dart';
+import 'package:DReader/state/book/FilesListState.dart';
 import 'package:DReader/widgets/ListWidget.dart';
 
 class SeriesChangeCover extends ConsumerStatefulWidget {
@@ -26,38 +26,39 @@ class SeriesChangeCoverState extends ConsumerState<SeriesChangeCover> {
 
   @override
   Widget build(BuildContext context) {
-    ref
-        .read(seriesContentStateProvider(widget.seriesId).notifier)
-        .getCoverList();
-    // final state = ref.watch(seriesContentStateProvider(widget.seriesId));
-
-    return Material(
-      child: FutureBuilder(
-        future: ref
-            .read(seriesContentStateProvider(widget.seriesId).notifier)
-            .getCoverList(),
-        builder:
-            (BuildContext context, AsyncSnapshot<SeriesCoverList> snapshot) {
-          // 请求已结束
-          if (snapshot.connectionState == ConnectionState.done) {
-            return GridView.builder(
-                itemCount: snapshot.data?.list?.length ?? 0,
-                gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                    maxCrossAxisExtent: 2, childAspectRatio: 0.7),
-                itemBuilder: (context, index) {
-                  return Container(
-                      margin: const EdgeInsets.only(
-                          bottom: 10, left: 10, right: 10),
-                      // snapshot.data?.list?[index].coverPath
-                      child: Image.asset("images/1.png", fit: BoxFit.fill));
-                });
-          } else {
-            // 请求未结束，显示loading
-            return const CircularProgressIndicator();
-          }
-        },
-      ),
-    );
+    return SizedBox();
+    // ref
+    //     .read(seriesContentStateProvider(widget.seriesId).notifier)
+    //     .getCoverList();
+    // // final state = ref.watch(seriesContentStateProvider(widget.seriesId));
+    //
+    // return Material(
+    //   child: FutureBuilder(
+    //     future: ref
+    //         .read(seriesContentStateProvider(widget.seriesId).notifier)
+    //         .getCoverList(),
+    //     builder:
+    //         (BuildContext context, AsyncSnapshot<SeriesCoverList> snapshot) {
+    //       // 请求已结束
+    //       if (snapshot.connectionState == ConnectionState.done) {
+    //         return GridView.builder(
+    //             itemCount: snapshot.data?.list?.length ?? 0,
+    //             gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+    //                 maxCrossAxisExtent: 2, childAspectRatio: 0.7),
+    //             itemBuilder: (context, index) {
+    //               return Container(
+    //                   margin: const EdgeInsets.only(
+    //                       bottom: 10, left: 10, right: 10),
+    //                   // snapshot.data?.list?[index].coverPath
+    //                   child: Image.asset("images/1.png", fit: BoxFit.fill));
+    //             });
+    //       } else {
+    //         // 请求未结束，显示loading
+    //         return const CircularProgressIndicator();
+    //       }
+    //     },
+    //   ),
+    // );
   }
 
   String splicingPath(String? filePath) {

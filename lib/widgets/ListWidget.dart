@@ -14,7 +14,7 @@ class ListWidget<T> extends StatefulWidget {
   final List<T> list;
   final int count;
   final VoidCallback getList;
-  final FilesItem<T> Function(T data, int index, {bool show, bool isPc}) widget;
+  final ListItem<T> Function(T data, int index, {bool show, bool isPc}) widget;
   final double scale;
 
   @override
@@ -88,7 +88,7 @@ class MobileItem<T> extends StatelessWidget {
 
   final T data;
   final int index;
-  final FilesItem<T> Function(T data, int index, {bool show, bool isPc}) widget;
+  final ListItem<T> Function(T data, int index, {bool show, bool isPc}) widget;
 
   @override
   Widget build(BuildContext context) {
@@ -106,7 +106,7 @@ class PCItem<T> extends StatelessWidget {
   final T data;
   final int index;
   final ValueNotifier<bool> show = ValueNotifier<bool>(false);
-  final FilesItem<T> Function(T data, int index, {bool show, bool isPc}) widget;
+  final ListItem<T> Function(T data, int index, {bool show, bool isPc}) widget;
 
   @override
   Widget build(BuildContext context) {
@@ -119,8 +119,8 @@ class PCItem<T> extends StatelessWidget {
   }
 }
 
-abstract class FilesItem<T> extends ConsumerStatefulWidget {
-  const FilesItem(
+abstract class ListItem<T> extends ConsumerStatefulWidget {
+  const ListItem(
       {super.key,
       required this.data,
       this.show = false,

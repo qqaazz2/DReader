@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'SeriesListState.dart';
+part of 'UserInfoState.dart';
 
 // **************************************************************************
 // RiverpodGenerator
@@ -9,52 +9,52 @@ part of 'SeriesListState.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(SeriesListState)
-const seriesListStateProvider = SeriesListStateProvider._();
+@ProviderFor(UserInfoState)
+const userInfoStateProvider = UserInfoStateProvider._();
 
-final class SeriesListStateProvider
-    extends $NotifierProvider<SeriesListState, SeriesList> {
-  const SeriesListStateProvider._()
+final class UserInfoStateProvider
+    extends $NotifierProvider<UserInfoState, UserInfo?> {
+  const UserInfoStateProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'seriesListStateProvider',
+        name: r'userInfoStateProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$seriesListStateHash();
+  String debugGetCreateSourceHash() => _$userInfoStateHash();
 
   @$internal
   @override
-  SeriesListState create() => SeriesListState();
+  UserInfoState create() => UserInfoState();
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(SeriesList value) {
+  Override overrideWithValue(UserInfo? value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<SeriesList>(value),
+      providerOverride: $SyncValueProvider<UserInfo?>(value),
     );
   }
 }
 
-String _$seriesListStateHash() => r'ca11e0cfe1453a7ce80a76d404f3522a7ab60a50';
+String _$userInfoStateHash() => r'4635a6d15c550e3556c5711d1ff78cbd0c5a11ef';
 
-abstract class _$SeriesListState extends $Notifier<SeriesList> {
-  SeriesList build();
+abstract class _$UserInfoState extends $Notifier<UserInfo?> {
+  UserInfo? build();
   @$mustCallSuper
   @override
   void runBuild() {
     final created = build();
-    final ref = this.ref as $Ref<SeriesList, SeriesList>;
+    final ref = this.ref as $Ref<UserInfo?, UserInfo?>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<SeriesList, SeriesList>,
-              SeriesList,
+              AnyNotifier<UserInfo?, UserInfo?>,
+              UserInfo?,
               Object?,
               Object?
             >;

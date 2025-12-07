@@ -2,9 +2,9 @@ import 'package:DReader/entity/ListData.dart';
 import 'package:DReader/entity/LogData.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:DReader/common/HttpApi.dart';
-import 'package:DReader/entity/book/SeriesItem.dart';
-import 'package:DReader/entity/book/SeriesList.dart';
-import 'package:DReader/entity/book/SeriesList.dart';
+import 'package:DReader/entity/book/FilesItem.dart';
+import 'package:DReader/entity/book/FilesList.dart';
+import 'package:DReader/entity/book/FilesList.dart';
 import 'package:DReader/entity/BaseResult.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

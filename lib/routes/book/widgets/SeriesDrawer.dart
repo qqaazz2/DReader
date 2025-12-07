@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:DReader/entity/BaseResult.dart';
-import 'package:DReader/entity/book/SeriesItem.dart';
+import 'package:DReader/entity/book/FilesItem.dart';
 import 'package:DReader/state/book/SeriesContentState.dart';
-import 'package:DReader/state/book/SeriesListState.dart';
+import 'package:DReader/state/book/FilesListState.dart';
 
 class SeriesDrawer extends ConsumerStatefulWidget {
   const SeriesDrawer({super.key});
@@ -23,7 +23,6 @@ class SeriesDrawerState extends ConsumerState<SeriesDrawer> {
   int? status;
   int? love;
 
-
   List<DropdownMenuEntry<int?>> _buildMenuList(Map<int, String> map) {
     List<DropdownMenuEntry<int?>> list = [];
     list.add(const DropdownMenuEntry<int?>(value: null, label: "全部"));
@@ -35,7 +34,7 @@ class SeriesDrawerState extends ConsumerState<SeriesDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    seriesParam = ref.read(seriesListStateProvider.notifier).seriesParam;
+    seriesParam = ref.read(filesListStateProvider(-1).notifier).seriesParam;
     searchController.text = seriesParam.name ?? "";
     return Drawer(
       child: SafeArea(
@@ -59,7 +58,12 @@ class SeriesDrawerState extends ConsumerState<SeriesDrawer> {
                 ListTile(
                   leading: const Icon(Icons.adf_scanner),
                   title: const Text("扫描系列"),
-                  onTap: () => ref.read(seriesListStateProvider.notifier).scanning(),
+                  onTap: () => ref.read(filesListStateProvider(-1).notifier).scanning(),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.unfold_more),
+                  title: const Text("扁平数据"),
+                  trailing: Switch(value: seriesParam.flattening, onChanged: (value) => setState(() => seriesParam.flattening = value)),
                 ),
                 const Divider(),
                 const Text(
@@ -134,14 +138,13 @@ class SeriesDrawerState extends ConsumerState<SeriesDrawer> {
   }
 
   void search() {
-    ref.read(seriesListStateProvider.notifier).seriesParam = seriesParam;
-    ref.read(seriesListStateProvider.notifier).clear();
-    ref.read(seriesListStateProvider.notifier).getList();
+    ref.read(filesListStateProvider(-1).notifier).clear();
+    ref.read(filesListStateProvider(-1).notifier).getList();
   }
 
   void randomData()async{
-    SeriesItem? seriesItem = await ref.read(seriesListStateProvider.notifier).randomData();
-    if(seriesItem != null) context.push("/books/content?seriesId=${seriesItem.id}&filesId=${seriesItem.filesId}&index=1");
+    FilesItem? filesItem = await ref.read(filesListStateProvider(-1).notifier).randomData();
+    if(filesItem != null) context.push("/books/content?seriesId=${filesItem.id}&filesId=${filesItem.filesId}&parentId=${filesItem.parentId}");
   }
 
   @override

@@ -18,6 +18,7 @@ class Global {
   static List<Item> itemList = [];
   static const String _serverConfig = "serverConfig";
   static late Setting setting;
+  static late String adapter;
 
   static Future init() async {
     WidgetsFlutterBinding.ensureInitialized();
@@ -61,6 +62,8 @@ class Global {
     itemList.add(
         Item(title: "图书", path: "/books", icon: const Icon(Icons.menu_book)));
     itemList.add(
+        Item(title: "制作", path: "/author", icon: const Icon(Icons.person)));
+    itemList.add(
         Item(title: "日志", path: "/logs", icon: const Icon(Icons.analytics)));
     itemList.add(
         Item(title: "设置", path: "/setting", icon: const Icon(Icons.settings)));
@@ -69,12 +72,6 @@ class Global {
   static saveLoginStatus(String token, UserInfo userInfo) {
     Global.token = token;
     preferences.setString("token", token);
-
-    setUserInfo(userInfo);
-  }
-
-  static setUserInfo(UserInfo userInfo) {
-    Global.setting.userInfo = userInfo;
   }
 
   static logout(BuildContext context) {
@@ -95,10 +92,6 @@ class Global {
         builder: (context) {
           return SetBaseUrl();
         });
-  }
-
-  static setMystery(mystery) {
-    setting.userInfo!.mystery = mystery;
   }
 
   static setLight() {
@@ -134,27 +127,27 @@ class Global {
 class Setting {
   ServerConfig serverConfig;
   bool light = false;
-  UserInfo? userInfo;
+  // UserInfo? userInfo;
   Color color = Colors.purple;
   ReaderTheme readerTheme;
 
   Setting(
       {required this.serverConfig,
       this.light = false,
-      this.userInfo,
+      // this.userInfo,
       this.color = Colors.purple,
       required this.readerTheme});
 
   Setting copyWith(
       {ServerConfig? serverConfig,
       bool? light,
-      UserInfo? userInfo,
+      // UserInfo? userInfo,
       Color? color,
       ReaderTheme? readerTheme}) {
     return Setting(
         serverConfig: serverConfig ?? this.serverConfig,
         light: light ?? this.light,
-        userInfo: userInfo ?? this.userInfo,
+        // userInfo: userInfo ?? this.userInfo,
         color: color ?? this.color,
         readerTheme: readerTheme ?? this.readerTheme);
   }

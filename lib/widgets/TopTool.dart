@@ -11,12 +11,14 @@ class TopTool extends StatefulWidget {
     this.floatingActionButton,
     this.endDrawer,
     this.actions,
+    this.appBarBottom,
   });
 
   final Widget child;
   final String title;
   final bool show;
   final Widget? endDrawer;
+  final PreferredSize? appBarBottom;
   final Widget? floatingActionButton;
   final List<Widget>? actions;
 
@@ -29,18 +31,18 @@ class TopToolState extends State<TopTool> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     return Scaffold(
-        appBar: (widget.show && width < MyApp.width)
-            ? AppBar(
-                actions: widget.actions ?? [],
-                title: Text(widget.title),
-                centerTitle: true,
-              )
-            : null,
-        drawer: const LeftDrawer(
-          width: 250,
-        ),
-        endDrawer: widget.endDrawer,
-        body: widget.child,
-        floatingActionButton: widget.floatingActionButton);
+      appBar: (widget.show && width < MyApp.width)
+          ? AppBar(
+              actions: widget.actions ?? [],
+              title: Text(widget.title),
+              centerTitle: true,
+              bottom: widget.appBarBottom,
+            )
+          : null,
+      drawer: const LeftDrawer(width: 250),
+      endDrawer: widget.endDrawer,
+      body: widget.child,
+      floatingActionButton: widget.floatingActionButton,
+    );
   }
 }

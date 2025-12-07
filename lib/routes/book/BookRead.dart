@@ -2,10 +2,15 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:isolate';
 
+import 'package:DReader/common/ComputeLock.dart';
 import 'package:DReader/entity/BaseResult.dart';
+import 'package:DReader/entity/book/FilesDetailsItem.dart';
 import 'package:DReader/entity/readLog/ReadLog.dart';
 import 'package:DReader/routes/book/widgets/SettingPanel.dart';
 import 'package:DReader/state/ThemeState.dart';
+import 'package:DReader/state/book/BookProgressState.dart';
+import 'package:DReader/state/book/FilesDetailsItemState.dart';
+import 'package:DReader/state/book/FilesListState.dart';
 import 'package:DReader/theme/extensions/ReaderTheme.dart';
 import 'package:DReader/widgets/SideNotice.dart';
 import 'package:csslib/visitor.dart' hide MediaQuery;
@@ -38,17 +43,12 @@ import 'package:DReader/routes/book/widgets/PageBar.dart';
 // import 'package:DReader/routes/book/widgets/TextPcPage.dart';
 import 'package:DReader/state/book/SeriesContentState.dart';
 
-class BookRead extends ConsumerStatefulWidget {
-  const BookRead({
-    super.key,
-    required this.bookItem,
-    this.textSize = 15,
-    required this.seriesId,
-  });
+import '../../entity/book/FilesItem.dart';
 
-  final BookItem bookItem;
-  final int seriesId;
-  final int textSize;
+class BookRead extends ConsumerStatefulWidget {
+  const BookRead({super.key, required this.item});
+
+  final FilesItem item;
 
   @override
   ConsumerState<BookRead> createState() => BookReadState();
@@ -62,13 +62,15 @@ class BookReadState extends ConsumerState<BookRead> {
   late Directory folder;
   late int charsPerLine;
   late int linesPerPage;
+
   List<List<ReaderNode>> _list = [];
   final ValueNotifier<bool> currentValue = ValueNotifier<bool>(false);
   final ValueNotifier<int> currentPage = ValueNotifier<int>(1);
   PageController pageController = PageController();
+
   List<int> bytes = [];
   late final AppLifecycleListener appLifecycleListener;
-  late PageNodes pageNodes;
+  PageNodes? pageNodes;
   double? lastMaxWidth;
   Timer? debounceTimer;
 
@@ -80,15 +82,15 @@ class BookReadState extends ConsumerState<BookRead> {
   ReaderTheme? lastReaderTheme;
   late ReaderTheme currentReaderTheme;
 
+  BookItem? bookItem;
   late ReadLog readLog;
   late DateTime recordDateTime;
+
+  late final ComputeLock _computeLock = ComputeLock();
+
   @override
   void initState() {
     super.initState();
-    temporaryFolder = "${widget.bookItem.id}";
-    readTagNum = widget.bookItem.readTagNum;
-    progress = widget.bookItem.progress;
-    startReadLog();
     HardwareKeyboard.instance.addHandler(_handleEvent);
     appLifecycleListener = AppLifecycleListener(
       onResume: () => startReadLog(),
@@ -98,33 +100,49 @@ class BookReadState extends ConsumerState<BookRead> {
   }
 
   void startReadLog() async {
+    if (bookItem == null) return;
     recordDateTime = DateTime.now();
     BaseResult baseResult = await HttpApi.request(
       "/readLog/start",
       (json) => ReadLog.fromJson(json),
-      params: {"bookId": widget.bookItem.id},
+      params: {"filesId": bookItem!.filesId},
     );
     if (baseResult.code == "2000") {
       readLog = baseResult.result;
+    }
+  }
+
+  Future getData() async {
+    recordDateTime = DateTime.now();
+    BaseResult baseResult = await HttpApi.request(
+      "/book/getData",
+      (json) => BookItem.fromJson(json),
+      params: {"filesId": widget.item.filesId},
+    );
+    if (baseResult.code == "2000") {
+      bookItem = baseResult.result;
+      temporaryFolder = "${widget.item.id}";
+      readTagNum = bookItem!.readTagNum;
+      progress = bookItem!.progress;
+      startReadLog();
     }
   }
 
   void recordReadLog() async {
-    if(DateTime.now().difference(recordDateTime).inSeconds < 5){
+    if (bookItem == null) return;
+    if (DateTime.now().difference(recordDateTime).inSeconds < 5) {
       SideNoticeOverlay.warning(text: "本次阅读时长不足五秒，不予计入");
       return;
     }
-    BaseResult baseResult = await HttpApi.request(
+    HttpApi.request(
       "/readLog/record",
       (json) => ReadLog.fromJson(json),
       params: {"readLogId": readLog.id},
     );
-    if (baseResult.code == "2000") {
-      readLog = baseResult.result;
-    }
   }
 
   bool _handleEvent(event) {
+    if (isLoading || isError || pageController.positions.isEmpty) return false;
     if (HardwareKeyboard.instance.logicalKeysPressed.contains(
       LogicalKeyboardKey.arrowLeft,
     )) {
@@ -149,27 +167,27 @@ class BookReadState extends ConsumerState<BookRead> {
   void getEpub(
     double maxWidth,
     double maxHeight, {
-    isColumn = false,
-    columnNum = 2,
+    bool isColumn = false,
+    int columnNum = 2,
   }) async {
-    try {
-      // Directory directory = await getTemporaryDirectory();
-      // folder = Directory("${directory.path}/$temporaryFolder");
-      // if (!folder.existsSync()) folder.createSync();
+    // setState(() => isLoading = true);
 
-      if (bytes.isEmpty) {
-        String encodedFilePath = Uri.encodeFull(
-          widget.bookItem.filePath.replaceAll('\\', '/').substring(1),
+    try {
+      // Step 1: 是否需要解析 EPUB？
+      if (_list.isEmpty) {
+        final encodedPath = Uri.encodeFull(
+          widget.item.filePath.replaceAll('\\', '/').substring(1),
         );
         bytes = await HttpApi.request(
-          "/$encodedFilePath",
+          "/$encodedPath",
           responseType: ResponseType.bytes,
           () => {},
           isLoading: false,
         );
+        _list = await DomRendering(
+          readerTheme: currentReaderTheme,
+        ).start(bytes);
       }
-
-      _list = await DomRendering(readerTheme: currentReaderTheme).start(bytes);
       pageNodes = PageNodes(
         _list,
         maxWidth,
@@ -178,28 +196,58 @@ class BookReadState extends ConsumerState<BookRead> {
         columnNum: columnNum,
         readRecodesIndex: readTagNum,
       );
-      currentPage.value = pageNodes.readPage;
+      // final parseTask = ParseTask(
+      //   list: _list,           // 关键：传值！不是全局变量！
+      //   maxWidth: maxWidth,
+      //   maxHeight: maxHeight,
+      //   isColumn: isColumn,
+      //   columnNum: columnNum,
+      //   readTagNum: readTagNum,
+      // );
+      //
+      // pageNodes = await _computeLock.submit<ParseTask, PageNodes>(
+      //   _buildPageNodes,
+      //   parseTask,
+      //   debugLabel: "EPUB_Paging_${widget.item.id}",
+      // );
+      //
+      // if (!mounted) return;
+
+      currentPage.value = pageNodes!.readPage;
       pageController = PageController(initialPage: currentPage.value);
-      setState(() {
-        isLoading = false;
-      });
-    } catch (e) {
+
+      setState(() => isLoading = false);
+    } catch (e, s) {
+      if (!mounted) return;
+      debugPrint("EPUB 打开失败: $e\n$s");
       setState(() {
         isLoading = false;
         isError = true;
       });
-      SideNoticeOverlay.error(text: e.toString());
+      SideNoticeOverlay.error(text: "打开失败：$e");
     }
   }
 
-  void updateProgress() {
-    BookItem item = widget.bookItem;
-    item.readTagNum = readTagNum;
-    item.progress = progress;
+  Future<PageNodes> _buildPageNodes(ParseTask task) async {
+    return PageNodes(
+      task.list,
+      task.maxWidth,
+      task.maxHeight,
+      isColumn: task.isColumn,
+      columnNum: task.columnNum,
+      readRecodesIndex: task.readTagNum,
+    );
+  }
+
+  void updateProgress({isBack = false}) async {
+    if (bookItem == null) return;
     recordReadLog();
+    if (bookItem!.progress == progress) return;
+    bookItem!.progress = progress;
+    bookItem!.readTagNum = readTagNum;
     ref
-        .read(seriesContentStateProvider(widget.seriesId).notifier)
-        .updateProgress(item);
+        .read(bookProgressStateProvider.notifier)
+        .updateProgress(bookItem!, widget.item, isBack: isBack);
   }
 
   // 关闭 Isolate
@@ -215,7 +263,7 @@ class BookReadState extends ConsumerState<BookRead> {
     return Material(
       child: PopScope(
         onPopInvokedWithResult: (bool didPop, Object? result) {
-          updateProgress();
+          updateProgress(isBack: true);
         },
         child: buildWidget(),
       ),
@@ -230,32 +278,52 @@ class BookReadState extends ConsumerState<BookRead> {
     return SafeArea(
       child: Container(
         color: currentReaderTheme.backgroundColor,
-        // padding: const EdgeInsets.symmetric(horizontal: 10),
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            if (lastMaxWidth == null) {
-              lastMaxWidth = constraints.maxWidth;
-              constraintsPage(constraints);
-            } else if (lastMaxWidth != constraints.maxWidth || hasReaderThemeChanged) {
-              isLoading = true;
-              _resetDebounceTimer(constraints);
-            }
+        child: FutureBuilder(
+          future: getData(),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            return LayoutBuilder(
+              builder: (context, constraints) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  if (snapshot.hasError) {
+                    return Text("Error: ${snapshot.error}");
+                  } else {
+                    if (lastMaxWidth == null) {
+                      lastMaxWidth = constraints.maxWidth;
+                      constraintsPage(constraints);
+                    } else if (lastMaxWidth != constraints.maxWidth ||
+                        hasReaderThemeChanged) {
+                      isLoading = true;
+                      _resetDebounceTimer(constraints);
+                    }
 
-            lastReaderTheme = currentReaderTheme;
-            if (isLoading) {
-              return const Center(
-                child: SizedBox(
-                  width: 100,
-                  height: 100,
-                  child: CircularProgressIndicator(),
-                ),
-              );
-            }
+                    lastReaderTheme = currentReaderTheme;
+                    if (isLoading) {
+                      return const Center(
+                        child: SizedBox(
+                          width: 100,
+                          height: 100,
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    }
 
-            if (isError) return errorWidget();
-            return constraints.maxWidth < MyApp.width
-                ? getMobile(constraints)
-                : getPc(constraints);
+                    if (isError) return errorWidget();
+                    return constraints.maxWidth < MyApp.width
+                        ? getMobile(constraints)
+                        : getPc(constraints);
+                  }
+                } else {
+                  // 请求未结束，显示loading
+                  return const Center(
+                    child: SizedBox(
+                      width: 100,
+                      height: 100,
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+                }
+              },
+            );
           },
         ),
       ),
@@ -264,12 +332,12 @@ class BookReadState extends ConsumerState<BookRead> {
 
   Widget getPc(BoxConstraints constraints) {
     List<Widget> widgetList = [];
-    for (int i = 0; i < pageNodes.pageCount; i++) {
-      List<ReaderNode> content1 = pageNodes.list[i * 2];
+    for (int i = 0; i < pageNodes!.pageCount; i++) {
+      List<ReaderNode> content1 = pageNodes!.list[i * 2];
 
       List<ReaderNode> content2 = [];
-      if (i + 1 < pageNodes.pageCount) {
-        content2 = pageNodes.list[i * 2 + 1];
+      if (i + 1 < pageNodes!.pageCount) {
+        content2 = pageNodes!.list[i * 2 + 1];
       }
 
       widgetList.add(BookPcPage(list: content1, list2: content2));
@@ -305,7 +373,7 @@ class BookReadState extends ConsumerState<BookRead> {
             controller: pageController,
             onPageChanged: (value) {
               currentPage.value = value + 1;
-              readTagNum = getReadTagNum(pageNodes.list[value * 2].first);
+              readTagNum = getReadTagNum(pageNodes!.list[value * 2].first);
               progress = currentPage.value / widgetList.length;
             },
             children: widgetList,
@@ -326,10 +394,10 @@ class BookReadState extends ConsumerState<BookRead> {
             controller: pageController,
             onPageChanged: (value) {
               currentPage.value = value + 1;
-              readTagNum = getReadTagNum(pageNodes.list[value].first);
-              progress = currentPage.value / pageNodes.pageCount;
+              readTagNum = getReadTagNum(pageNodes!.list[value].first);
+              progress = currentPage.value / pageNodes!.pageCount;
             },
-            children: pageNodes.list
+            children: pageNodes!.list
                 .map((value) => CustomPaint(painter: ReaderPainter(value)))
                 .toList(),
           ),
@@ -380,9 +448,12 @@ class BookReadState extends ConsumerState<BookRead> {
   }
 
   bool checkVisibility() {
-    StatefulNavigationShellState shellState = StatefulNavigationShell.of(context);
+    StatefulNavigationShellState shellState = StatefulNavigationShell.of(
+      context,
+    );
     bool isCurrent = ModalRoute.of(context)?.isCurrent ?? false;
-    return (shellState.currentIndex == 1 || shellState.currentIndex == 0) && isCurrent;
+    return (shellState.currentIndex == 1 || shellState.currentIndex == 0) &&
+        isCurrent;
   }
 
   void constraintsPage(BoxConstraints constraints) {
@@ -432,7 +503,7 @@ class BookReadState extends ConsumerState<BookRead> {
                         ),
                         Expanded(
                           child: Text(
-                            widget.bookItem.name!,
+                            widget.item.name!,
                             style: const TextStyle(fontSize: 18),
                             maxLines: 1,
                           ),
@@ -484,13 +555,13 @@ class BookReadState extends ConsumerState<BookRead> {
                                           value.toInt(),
                                         );
                                       },
-                                      max: pageNodes.pageCount.toDouble(),
+                                      max: pageNodes!.pageCount.toDouble(),
                                     ),
                                   ),
                                 ),
                                 IconButton(
                                   onPressed: () => pageController.jumpToPage(
-                                    pageNodes.pageCount,
+                                    pageNodes!.pageCount,
                                   ),
                                   icon: const Icon(
                                     Icons.keyboard_double_arrow_right_outlined,
@@ -514,7 +585,7 @@ class BookReadState extends ConsumerState<BookRead> {
                                       ],
                                     ),
                                     Text(
-                                      "当前阅读进度:${currentPage.value}/${pageNodes.pageCount}",
+                                      "当前阅读进度:${currentPage.value}/${pageNodes!.pageCount}",
                                       style: const TextStyle(fontSize: 16),
                                     ),
                                   ],
@@ -534,4 +605,29 @@ class BookReadState extends ConsumerState<BookRead> {
       ],
     );
   }
+}
+
+class ParseTask {
+  final double maxWidth;
+  final double maxHeight;
+  final bool isColumn;
+  final int columnNum;
+  final int readTagNum;
+  final List<List<ReaderNode>> list;
+
+  ParseTask({
+    required this.maxWidth,
+    required this.maxHeight,
+    required this.isColumn,
+    required this.columnNum,
+    required this.readTagNum,
+    required this.list,
+  });
+}
+
+class ListTask {
+  final String filePath;
+  final ReaderTheme theme;
+
+  ListTask({required this.filePath, required this.theme});
 }

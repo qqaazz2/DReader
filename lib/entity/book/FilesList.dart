@@ -1,10 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:DReader/entity/book/SeriesItem.dart';
+import 'package:DReader/entity/book/FilesItem.dart';
 
-part 'SeriesList.g.dart';
+part 'FilesList.g.dart';
 
 @JsonSerializable()
-class SeriesList extends Object {
+class FilesList extends Object {
   @JsonKey(name: 'limit')
   int limit = 50;
 
@@ -18,23 +18,23 @@ class SeriesList extends Object {
   int count;
 
   @JsonKey(name: 'data')
-  List<SeriesItem> data;
+  List<FilesItem> data;
 
-  SeriesList(this.limit, this.page, this.pages, this.count, this.data);
+  FilesList(this.limit, this.page, this.pages, this.count, this.data);
 
-  factory SeriesList.fromJson(Map<String, dynamic> srcJson) =>
-      _$SeriesListFromJson(srcJson);
+  factory FilesList.fromJson(Map<String, dynamic> srcJson) =>
+      _$FilesListFromJson(srcJson);
 
-  Map<String, dynamic> toJson() => _$SeriesListToJson(this);
+  Map<String, dynamic> toJson() => _$FilesListToJson(this);
 
-  SeriesList copyWith({
-    List<SeriesItem>? data,
+  FilesList copyWith({
+    List<FilesItem>? data,
     int? page,
     int? limit,
     int? pages,
     int? count,
   }) {
-    return SeriesList(
+    return FilesList(
       limit ?? this.limit,
       page ?? this.page,
       pages ?? this.pages,

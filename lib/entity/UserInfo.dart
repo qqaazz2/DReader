@@ -16,11 +16,11 @@ class UserInfo extends Object {
   @JsonKey(name: 'cover')
   String? cover;
 
-  @JsonKey(name: 'minioCover')
-  String? minioCover;
+  @JsonKey(name: 'fileAdapter')
+  String fileAdapter;
 
 
-  UserInfo(this.name, this.email, this.mystery,this.cover,this.minioCover);
+  UserInfo(this.name, this.email, this.mystery,this.cover,this.fileAdapter);
 
   factory UserInfo.fromJson(Map<String, dynamic> srcJson) => _$UserInfoFromJson(srcJson);
 
@@ -31,14 +31,14 @@ class UserInfo extends Object {
     String? email,
     int? mystery,
     String? cover,
-    String? minioCover,
+    String? fileAdapter,
   }) {
     return UserInfo(
       name ?? this.name,
       email ?? this.email,
       mystery ?? this.mystery,
       cover?? this.cover,
-      minioCover ?? this.minioCover
+      fileAdapter ?? this.fileAdapter
     );
   }
 }

@@ -12,46 +12,13 @@ class BookItem extends Object {
   @JsonKey(name: 'filesId')
   int filesId;
 
-  @JsonKey(name: 'filePath')
-  String filePath;
-
-  @JsonKey(name: 'isFolder')
-  int isFolder;
-
   @JsonKey(name: 'progress')
   double progress;
-
-  @JsonKey(name: 'name')
-  String? name;
-
-  @JsonKey(name: 'author')
-  String? author;
-
-  @JsonKey(name: 'profile')
-  String? profile;
-
-  @JsonKey(name: 'publishing')
-  String? publishing;
-
-  @JsonKey(name: 'status')
-  Object? status;
-
-  @JsonKey(name: 'cover')
-  String? cover;
-
-  @JsonKey(name: 'minioCover')
-  String? minioCover;
-
-  @JsonKey(name: 'parentId')
-  int? parentId;
 
   @JsonKey(name: 'readTagNum')
   int readTagNum;
 
-  @JsonKey(name: 'readTime')
-  String? readTime;
-
-  BookItem(this.id,this.filesId,this.filePath,this.isFolder,this.progress,this.name,this.author,this.profile,this.publishing,this.status,this.cover,this.minioCover,this.parentId,this.readTagNum,this.readTime);
+  BookItem(this.id,this.filesId,this.progress,this.readTagNum);
 
   factory BookItem.fromJson(Map<String, dynamic> srcJson) => _$BookItemFromJson(srcJson);
 

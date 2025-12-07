@@ -1,11 +1,12 @@
+import 'package:DReader/entity/book/FilesDetailsItem.dart';
 import 'package:flutter/material.dart';
 import 'package:DReader/entity/book/BookItem.dart';
 
 class PageBar extends StatefulWidget {
   PageBar(
-      {super.key, required this.bookItem, required this.child, required this.count});
+      {super.key, required this.item, required this.child, required this.count});
 
-  final BookItem bookItem;
+  final FilesDetailsItem item;
   final Widget child;
   final int count;
 
@@ -52,7 +53,7 @@ class PageBarState extends State<PageBar> {
                                             Icons.arrow_back_ios_new)),
                                     Expanded(
                                       child: Text(
-                                        widget.bookItem.name!,
+                                        widget.item.name!,
                                         style: const TextStyle(fontSize: 18),
                                         maxLines: 2,
                                       ),

@@ -76,7 +76,7 @@ class HttpApi {
 
     List<Interceptor> inters = [];
     inters.add(inter); //添加自定义拦截器
-    inters.add(LogInterceptor()); //添加内置拦截器
+    // inters.add(LogInterceptor()); //添加内置拦截器
     if (isLoading) EasyLoading.show(status: 'loading...');
     dio.interceptors.addAll(inters);
     // 3 发起网络请求

@@ -55,7 +55,7 @@ dependencies:
   archive: ^4.0.2
   xml: ^6.3.0
   fl_chart: ^0.69.0
-  popover: ^0.3.1
+  popover: ^0.4.0
   marquee: ^2.3.0
   dropdown_search: ^6.0.2
   html: ^0.15.6
@@ -89,7 +89,6 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
   assets:
-    - images/img.png
     - images/1.png
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

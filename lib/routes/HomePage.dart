@@ -1,11 +1,15 @@
+import 'dart:ui';
+
 import 'package:DReader/common/Global.dart';
 import 'package:DReader/common/ImageModule.dart';
-import 'package:DReader/entity/book/SeriesItem.dart';
+import 'package:DReader/entity/book/FilesItem.dart';
+import 'package:DReader/entity/book/FilesOverview.dart';
 import 'package:DReader/main.dart';
-import 'package:DReader/routes/book/widgets/SeriesItems.dart';
+import 'package:DReader/routes/book/widgets/FilesItems.dart';
+import 'package:DReader/state/UserInfoState.dart';
 import 'package:DReader/state/home/BookRecentState.dart';
 import 'package:DReader/state/home/OverviewState.dart';
-import 'package:DReader/state/book/SeriesListState.dart';
+import 'package:DReader/state/book/FilesListState.dart';
 import 'package:DReader/state/home/RecentlyAddsState.dart';
 import 'package:DReader/widgets/TopTool.dart';
 import 'package:flutter/cupertino.dart';
@@ -51,16 +55,14 @@ class HomePage extends ConsumerStatefulWidget {
 
 class HomePageState extends ConsumerState<HomePage> {
   late TimePeriod currTimeText;
+
   Widget titleWidget(String text, {Widget? action}) {
     return Padding(
       padding: const EdgeInsets.only(top: 20, bottom: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            text,
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
+          Text(text, style: Theme.of(context).textTheme.titleLarge),
           if (action != null) action,
         ],
       ),
@@ -70,289 +72,20 @@ class HomePageState extends ConsumerState<HomePage> {
   @override
   void initState() {
     super.initState();
-    ref.read(bookRecentStateProvider.notifier).getData();
-    ref.read(overviewStateProvider.notifier).getOverview();
     currTimeText = TimePeriod.fromTimeOfDay(TimeOfDay.now());
-    ref.read(recentlyAddsStateProvider.notifier).getList();
   }
 
   @override
   Widget build(BuildContext context) {
     ThemeData themeData = Theme.of(context);
     ScrollController scrollController = ScrollController();
-    return TopTool(
-        title: "首页",
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: SingleChildScrollView(
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                const SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "${currTimeText.displayName}好，祝你今天愉快！",
-                      style: themeData.textTheme.headlineLarge
-                          ?.copyWith(fontWeight: FontWeight.w500),
-                    ),
-                    PopupMenuButton<String>(
-                      icon: const Icon(Icons.more_vert),
-                      onSelected: (value) {
-                        if (value == "scan") {
-                          // 执行扫描逻辑
-                          ref.read(seriesListStateProvider.notifier).scanning();
-                        } else if (value == "logout") {
-                          Global.logout(context);
-                        }
-                      },
-                      itemBuilder: (context) => [
-                        const PopupMenuItem(value: "scan", child: Text("扫描")),
-                        const PopupMenuItem(
-                            value: "logout", child: Text("退出登录")),
-                      ],
-                    ),
-                  ],
-                ),
-                titleWidget("继续阅读"),
-                Consumer(builder: (context, ref, child) {
-                  final bookRecentState = ref.watch(bookRecentStateProvider);
-                  return LayoutBuilder(builder: (context, constraints) {
-                    return Card(
-                      clipBehavior: Clip.hardEdge,
-                      child: Container(
-                        child: bookRecentState == null
-                            ? const SizedBox(
-                                height: 150,
-                                child: Align(
-                                    alignment: Alignment.center,
-                                    child: Text("暂无阅读记录")))
-                            : GestureDetector(
-                                behavior: HitTestBehavior.opaque,
-                                child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        constraints: const BoxConstraints(
-                                            minHeight: 150,
-                                            minWidth: 150 * 0.7,
-                                            maxHeight: 300,
-                                            maxWidth: 300 * 0.7),
-                                        width: constraints.maxWidth * 0.2,
-                                        child: AspectRatio(
-                                            aspectRatio: .7,
-                                            child: ImageModule.minioImage(
-                                                bookRecentState.minioCover,
-                                                bookRecentState.cover)),
-                                      ),
-                                      Expanded(
-                                          child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 12),
-                                        child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text("${bookRecentState.name}",
-                                                  maxLines: 1),
-                                              Padding(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(vertical: 20),
-                                                  child: SliderTheme(
-                                                    data:
-                                                        SliderTheme.of(context)
-                                                            .copyWith(
-                                                      thumbShape:
-                                                          SliderComponentShape
-                                                              .noThumb,
-                                                      overlayShape:
-                                                          SliderComponentShape
-                                                              .noOverlay,
-                                                      minThumbSeparation: 0,
-                                                    ),
-                                                    child: Slider(
-                                                      value: bookRecentState
-                                                          .progress,
-                                                      min: 0,
-                                                      max: 1,
-                                                      onChanged: (value) {},
-                                                    ),
-                                                  )),
-                                              Text(
-                                                  "已读 ${(bookRecentState.progress * 100).toStringAsFixed(2)}%")
-                                            ]),
-                                      )),
-                                      const Icon(
-                                          Icons.arrow_forward_ios_rounded),
-                                      const SizedBox(
-                                        width: 10,
-                                      )
-                                    ]),
-                                onTap: () => ref
-                                    .read(bookRecentStateProvider.notifier)
-                                    .read(context)),
-                      ),
-                    );
-                  });
-                }),
-                titleWidget("书库一览",
-                    action: IconButton(
-                        onPressed: () => ref
-                            .read(overviewStateProvider.notifier)
-                            .getOverview(),
-                        icon: const Icon(Icons.refresh))),
-                Consumer(builder: (context, ref, child) {
-                  final overviewState = ref.watch(overviewStateProvider);
-                  return LayoutBuilder(
-                    builder: (context, constraints) {
-                      int num = constraints.maxWidth <= MyApp.width ? 2 : 4;
-                      double width =
-                          (constraints.maxWidth / num).clamp(0, 250) - 10;
-                      final items = [
-                        _StatCardData(overviewState.seriesCount, "系列总数",
-                            Icons.library_books, () {}, Colors.blue),
-                        _StatCardData(overviewState.bookCount, "书籍总数",
-                            Icons.menu_book, () {}, Colors.green),
-                        _StatCardData(overviewState.overCount, "已读书籍",
-                            Icons.check_circle, () {}, Colors.teal),
-                        _StatCardData(overviewState.unreadCount, "未读书籍",
-                            Icons.pending_actions, () {}, Colors.orange),
-                      ];
-                      return Wrap(
-                        alignment: WrapAlignment.center,
-                        children: items.map((item) {
-                          return _StatCard(
-                            data: item,
-                            width: width,
-                          );
-                        }).toList(),
-                      );
-                    },
-                  );
-                }),
-                titleWidget("最近添加",
-                    action: Row(
-                      children: [
-                        IconButton(
-                            tooltip: "刷新数据",
-                            onPressed: () => ref
-                                .read(recentlyAddsStateProvider.notifier)
-                                .getList(),
-                            icon: const Icon(Icons.refresh)),
-                        TextButton(
-                            onPressed: () => context.go("/books"),
-                            child: const Text("查看更多"))
-                      ],
-                    )),
-                Consumer(builder: (context, ref, child) {
-                  final seriesListState = ref.watch(recentlyAddsStateProvider);
-                  return LayoutBuilder(builder: (context, constraints) {
-                    void changeOffset(int type) {
-                      double currentOffset = scrollController.offset;
-                      double? offset;
-                      if (type == 1) {
-                        if (currentOffset == 0) return;
-                        offset = currentOffset - constraints.maxWidth;
-                      } else {
-                        if (currentOffset >=
-                            scrollController.position.maxScrollExtent) return;
-                        offset = currentOffset + constraints.maxWidth;
-                      }
-                      scrollController.animateTo(offset,
-                          curve: Curves.linear,
-                          duration: const Duration(milliseconds: 500));
-                    }
-
-                    return SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.3,
-                        child: Stack(
-                          children: [
-                            Listener(
-                                onPointerSignal: (pointerSignal) {
-                                  if (pointerSignal is PointerScrollEvent) {
-                                    final offset = scrollController.offset +
-                                        pointerSignal.scrollDelta.dy;
-                                    if (offset >= 0 &&
-                                        offset <
-                                            scrollController
-                                                .position.maxScrollExtent) {
-                                      scrollController.jumpTo(offset);
-                                    }
-                                  }
-                                },
-                                child: ListView.builder(
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: seriesListState.data.length,
-                                    controller: scrollController,
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      SeriesItem seriesItem =
-                                          seriesListState.data[index];
-                                      return GestureDetector(
-                                          onTap: () => context.push(
-                                              "/books/content?seriesId=${seriesItem.id}&filesId=${seriesItem.filesId}&index=0"),
-                                          child: Card(
-                                              clipBehavior: Clip.hardEdge,
-                                              child: AspectRatio(
-                                                  aspectRatio: 0.7,
-                                                  child: Column(
-                                                    children: [
-                                                      Expanded(
-                                                          child: ImageModule
-                                                              .minioImage(
-                                                                  seriesItem
-                                                                      .minioCover,
-                                                                  seriesItem
-                                                                      .cover)),
-                                                      Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .only(
-                                                                  top: 10,
-                                                                  bottom: 5),
-                                                          child: Text(
-                                                            seriesItem.name,
-                                                            maxLines: 1,
-                                                          ))
-                                                    ],
-                                                  ))));
-                                    })),
-                            if (MyApp.width < constraints.maxWidth)
-                              Positioned.fill(
-                                  child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                    IconButton(
-                                        style: ButtonStyle(
-                                            backgroundColor:
-                                                WidgetStateProperty.all(Colors
-                                                    .black
-                                                    .withAlpha(100))),
-                                        onPressed: () => changeOffset(1),
-                                        icon: const Icon(
-                                            Icons.arrow_back_ios_rounded)),
-                                    IconButton(
-                                        style: ButtonStyle(
-                                            backgroundColor:
-                                                WidgetStateProperty.all(Colors
-                                                    .black
-                                                    .withAlpha(100))),
-                                        onPressed: () => changeOffset(2),
-                                        icon: const Icon(
-                                            Icons.arrow_forward_ios_rounded)),
-                                  ]))
-                          ],
-                        ));
-                  });
-                }),
-              ])),
-        ));
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        return constraints.maxWidth > MyApp.width
+            ? const PcHome()
+            : const MobileHome();
+      },
+    );
   }
 }
 
@@ -398,6 +131,604 @@ class _StatCard extends StatelessWidget {
                   ),
                   Text(data.label),
                 ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class PcHome extends ConsumerStatefulWidget {
+  const PcHome({super.key});
+
+  @override
+  ConsumerState<ConsumerStatefulWidget> createState() => PcHomeState();
+}
+
+class PcHomeState extends ConsumerState<PcHome> {
+  late TimePeriod currTimeText;
+
+  Widget titleWidget(String text, {Widget? action}) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 20, bottom: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(text, style: Theme.of(context).textTheme.titleLarge),
+          if (action != null) action,
+        ],
+      ),
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    currTimeText = TimePeriod.fromTimeOfDay(TimeOfDay.now());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    ThemeData themeData = Theme.of(context);
+    BoxConstraints itemConstraints = const BoxConstraints(
+      minWidth: 0,
+      maxWidth: 180,
+    );
+    return TopTool(
+      title: "首页",
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Row(
+          children: [
+            Container(
+              constraints: itemConstraints,
+              child: Column(
+                children: [
+                  ListTile(
+                    title: const Text("扫描书籍"),
+                    onTap: () => ref
+                        .read(filesListStateProvider(-1).notifier)
+                        .scanning(),
+                  ),
+                  ListTile(
+                    title: const Text("退出登录"),
+                    onTap: () => Global.logout(context),
+                  ),
+                ],
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: VerticalDivider(width: 5),
+            ),
+            Expanded(
+              child: Column(
+                children: [
+                  // 问候语部分
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20, bottom: 20),
+                    child: Text(
+                      "${currTimeText.displayName}好，祝你今天愉快！",
+                      style: themeData.textTheme.headlineLarge?.copyWith(
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+
+                  // 核心展示区域
+                  Expanded(
+                    child: Consumer(
+                      builder: (context, ref, child) {
+                        final bookRecentState = ref.watch(
+                          bookRecentStateProvider,
+                        );
+                        return LayoutBuilder(
+                          builder: (context, constraints) {
+                            return Container(
+                              constraints: constraints,
+                              color: themeData.scaffoldBackgroundColor,
+                              child: bookRecentState.when(
+                                data: (FilesItem? item) {
+                                  if (item == null) {
+                                    return const Center(child: Text("暂无阅读记录"));
+                                  }
+                                  return GestureDetector(
+                                    onTap: () =>
+                                        context.push("/read?", extra: item),
+                                    behavior: HitTestBehavior.opaque,
+                                    child: Stack(
+                                      fit: StackFit.expand,
+                                      children: [
+                                        ClipRect(
+                                          child: ImageFiltered(
+                                            imageFilter: ImageFilter.blur(
+                                              sigmaX: 25,
+                                              sigmaY: 25,
+                                            ),
+                                            child: Container(
+                                              decoration: const BoxDecoration(
+                                                color: Colors.black,
+                                              ),
+                                              child: ImageModule.getImage(
+                                                item.cover,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Container(
+                                          color: themeData
+                                              .scaffoldBackgroundColor
+                                              .withOpacity(0.6), // 融合主题色
+                                        ),
+                                        Center(
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Container(
+                                                constraints:
+                                                    const BoxConstraints(
+                                                      minHeight: 300,
+                                                      maxHeight: 500,
+                                                    ),
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: Colors.black
+                                                          .withOpacity(0.4),
+                                                      blurRadius: 20,
+                                                      offset: const Offset(
+                                                        0,
+                                                        10,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                clipBehavior: Clip.antiAlias,
+                                                child: AspectRatio(
+                                                  aspectRatio: 2 / 3,
+                                                  child: ImageModule.getImage(
+                                                    item.cover,
+                                                    isMemCache: false,
+                                                  ),
+                                                ),
+                                              ),
+                                              const SizedBox(height: 10),
+                                              Text(
+                                                item.name,
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              const SizedBox(height: 10),
+                                              const Opacity(
+                                                opacity: 0.7,
+                                                child: Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    Text("点击继续阅读"),
+                                                    SizedBox(width: 5),
+                                                    Icon(
+                                                      Icons.arrow_forward,
+                                                      size: 16,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                                error: (err, stack) =>
+                                    Center(child: Text('加载失败: $err')),
+                                loading: () => const Center(
+                                  child: CircularProgressIndicator(),
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: VerticalDivider(width: 5),
+            ),
+            Container(
+              constraints: itemConstraints,
+              child: Column(
+                children: [
+                  titleWidget(
+                    "书库一览",
+                    action: IconButton(
+                      onPressed: () => ref.invalidate(overviewStateProvider),
+                      icon: const Icon(Icons.refresh),
+                    ),
+                  ),
+                  Expanded(
+                    child: Consumer(
+                      builder: (context, ref, child) {
+                        final overviewState = ref.watch(overviewStateProvider);
+                        return overviewState.when(
+                          data: (FilesOverview item) {
+                            final items = [
+                              _StatCardData(
+                                item.seriesCount,
+                                "系列总数",
+                                Icons.library_books,
+                                () {},
+                                Colors.blue,
+                              ),
+                              _StatCardData(
+                                item.bookCount,
+                                "书籍总数",
+                                Icons.menu_book,
+                                () {},
+                                Colors.green,
+                              ),
+                              _StatCardData(
+                                item.overCount,
+                                "已读书籍",
+                                Icons.check_circle,
+                                () {},
+                                Colors.teal,
+                              ),
+                              _StatCardData(
+                                item.unreadCount,
+                                "未读书籍",
+                                Icons.pending_actions,
+                                () {},
+                                Colors.orange,
+                              ),
+                              _StatCardData(
+                                item.readingCount,
+                                "在读书籍",
+                                Icons.book_rounded,
+                                () {},
+                                Colors.yellowAccent,
+                              ),
+                              _StatCardData(
+                                item.loveSeriesCount,
+                                "收藏系列",
+                                Icons.star,
+                                () {},
+                                Colors.yellow,
+                              ),
+                              _StatCardData(
+                                item.loveBookCount,
+                                "收藏书籍",
+                                Icons.favorite,
+                                () {},
+                                Colors.redAccent,
+                              ),
+                              _StatCardData(
+                                item.unOverSeriesCount,
+                                "连载系列",
+                                Icons.autorenew,
+                                () {},
+                                Colors.blue,
+                              ),
+                              _StatCardData(
+                                item.overSeriesCount,
+                                "完结系列",
+                                Icons.check_circle,
+                                () {},
+                                Colors.green,
+                              ),
+                              _StatCardData(
+                                item.discardedSeriesCount,
+                                "弃坑系列",
+                                Icons.cancel,
+                                    () {},
+                                Colors.grey,
+                              ),
+                            ];
+                            return SingleChildScrollView(
+                              child: Wrap(
+                                alignment: WrapAlignment.start,
+                                children: items.map((item) {
+                                  return _StatCard(
+                                    data: item,
+                                    width: itemConstraints.maxWidth,
+                                  );
+                                }).toList(),
+                              ),
+                            );
+                          },
+                          error: (Object error, StackTrace stackTrace) {
+                            return Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                              ),
+                              height: 100,
+                              child: Center(
+                                child: Text(
+                                  '加载失败: $error',
+                                  style: const TextStyle(color: Colors.red),
+                                ),
+                              ),
+                            );
+                          },
+                          loading: () {
+                            return const SizedBox(
+                              width: 150,
+                              height: 150,
+                              child: CircularProgressIndicator(),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class MobileHome extends ConsumerStatefulWidget {
+  const MobileHome({super.key});
+
+  @override
+  ConsumerState<MobileHome> createState() => MobileHomeState();
+}
+
+class MobileHomeState extends ConsumerState<MobileHome> {
+  late TimePeriod currTimeText;
+
+  Widget titleWidget(String text, {Widget? action}) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 20, bottom: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(text, style: Theme.of(context).textTheme.titleLarge),
+          if (action != null) action,
+        ],
+      ),
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    currTimeText = TimePeriod.fromTimeOfDay(TimeOfDay.now());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TopTool(
+      title: "首页",
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("${currTimeText.displayName}好，祝你今天愉快！"),
+                  PopupMenuButton<String>(
+                    icon: const Icon(Icons.more_vert),
+                    onSelected: (value) {
+                      if (value == "scan") {
+                        // 执行扫描逻辑
+                        ref
+                            .read(filesListStateProvider(-1).notifier)
+                            .scanning();
+                      } else if (value == "logout") {
+                        Global.logout(context);
+                      }
+                    },
+                    itemBuilder: (context) => [
+                      const PopupMenuItem(value: "scan", child: Text("扫描")),
+                      const PopupMenuItem(value: "logout", child: Text("退出登录")),
+                    ],
+                  ),
+                ],
+              ),
+              titleWidget("继续阅读"),
+              Consumer(
+                builder: (context, ref, child) {
+                  final bookRecentState = ref.watch(bookRecentStateProvider);
+                  return Container(
+                    child: Center(
+                      child: bookRecentState.when(
+                        data: (FilesItem? item) {
+                          if (item == null) {
+                            return Text("暂无阅读记录");
+                          }
+                          return Container(
+                            constraints: const BoxConstraints(maxWidth: 350),
+                            decoration: const BoxDecoration(
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black12,
+                                  blurRadius: 20,
+                                  offset: Offset(0, 10),
+                                ),
+                              ],
+                            ),
+                            child: Card(
+                              clipBehavior: Clip.hardEdge,
+                              child: Column(
+                                children: [
+                                  AspectRatio(
+                                    aspectRatio: 2 / 3,
+                                    child: ImageModule.getImage(
+                                      item.cover,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  Text(
+                                    item.name,
+                                    style: const TextStyle(fontSize: 15),
+                                  ),
+                                  const SizedBox(height: 10),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                        error: (err, stack) => Text('加载失败: $err'),
+                        loading: () => const CircularProgressIndicator(),
+                      ),
+                    ),
+                  );
+                },
+              ),
+              titleWidget(
+                "书库一览",
+                action: IconButton(
+                  onPressed: () => ref.invalidate(overviewStateProvider),
+                  icon: const Icon(Icons.refresh),
+                ),
+              ),
+              Consumer(
+                builder: (context, ref, child) {
+                  final overviewState = ref.watch(overviewStateProvider);
+                  return overviewState.when(
+                    data: (FilesOverview item) {
+                      final items = [
+                        _StatCardData(
+                          item.seriesCount,
+                          "系列总数",
+                          Icons.library_books,
+                          () {},
+                          Colors.blue,
+                        ),
+                        _StatCardData(
+                          item.bookCount,
+                          "书籍总数",
+                          Icons.menu_book,
+                          () {},
+                          Colors.green,
+                        ),
+                        _StatCardData(
+                          item.overCount,
+                          "已读书籍",
+                          Icons.check_circle,
+                          () {},
+                          Colors.teal,
+                        ),
+                        _StatCardData(
+                          item.unreadCount,
+                          "未读书籍",
+                          Icons.pending_actions,
+                          () {},
+                          Colors.orange,
+                        ),
+                        _StatCardData(
+                          item.readingCount,
+                          "在读书籍",
+                          Icons.book_rounded,
+                          () {},
+                          Colors.yellowAccent,
+                        ),
+                        _StatCardData(
+                          item.loveSeriesCount,
+                          "收藏系列",
+                          Icons.star,
+                          () {},
+                          Colors.yellow,
+                        ),
+                        _StatCardData(
+                          item.loveBookCount,
+                          "收藏书籍",
+                          Icons.favorite,
+                          () {},
+                          Colors.redAccent,
+                        ),
+                        _StatCardData(
+                          item.unOverSeriesCount,
+                          "连载系列",
+                          Icons.autorenew,
+                          () {},
+                          Colors.blue,
+                        ),
+                        _StatCardData(
+                          item.overSeriesCount,
+                          "完结系列",
+                          Icons.check_circle,
+                          () {},
+                          Colors.green,
+                        ),
+                        _StatCardData(
+                          item.discardedSeriesCount,
+                          "弃坑系列",
+                          Icons.cancel,
+                              () {},
+                          Colors.grey,
+                        ),
+                      ];
+                      return LayoutBuilder(
+                        builder: (BuildContext context, constraints) {
+                          int num = 1; // 默认值设为最小卡片数
+                          if (constraints.maxWidth <= MyApp.width &&
+                              constraints.maxWidth >= MyApp.width - 200) {
+                            num = 4;
+                          } else if (constraints.maxWidth < MyApp.width - 200 &&
+                              constraints.maxWidth >= MyApp.width - 300) {
+                            num = 3;
+                          } else {
+                            num = 2;
+                          }
+                          double width =
+                              (constraints.maxWidth / num).clamp(0, 250) - 10;
+                          return Wrap(
+                            alignment: WrapAlignment.start,
+                            children: items.map((item) {
+                              return _StatCard(data: item, width: width);
+                            }).toList(),
+                          );
+                        },
+                      );
+                    },
+                    error: (Object error, StackTrace stackTrace) {
+                      return Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        height: 100,
+                        child: Center(
+                          child: Text(
+                            '加载失败: $error',
+                            style: const TextStyle(color: Colors.red),
+                          ),
+                        ),
+                      );
+                    },
+                    loading: () {
+                      return const SizedBox(
+                        width: 150,
+                        height: 150,
+                        child: CircularProgressIndicator(),
+                      );
+                    },
+                  );
+                },
               ),
             ],
           ),

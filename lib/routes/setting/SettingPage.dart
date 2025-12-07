@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:DReader/common/ImageModule.dart';
+import 'package:DReader/state/UserInfoState.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
@@ -28,7 +29,8 @@ class SettingPage extends ConsumerStatefulWidget {
   ConsumerState<ConsumerStatefulWidget> createState() => SettingPageState();
 }
 
-class SettingPageState extends ConsumerState<SettingPage> with SingleTickerProviderStateMixin {
+class SettingPageState extends ConsumerState<SettingPage>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   List<String> tabs = ["我的", "图表数据"];
 
@@ -36,11 +38,6 @@ class SettingPageState extends ConsumerState<SettingPage> with SingleTickerProvi
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    // if(Global.setting.userInfo == null){
-    //   HttpApi.request("/user/info", (json) => UserInfo.fromJson(json)).then((baseResult) {
-    //     Global.setting.userInfo = baseResult.result;
-    //   });
-    // }
   }
 
   @override
@@ -51,32 +48,32 @@ class SettingPageState extends ConsumerState<SettingPage> with SingleTickerProvi
 
   @override
   Widget build(BuildContext context) {
-    print('SettingBuild');
     return LayoutBuilder(
-        builder: (context, constraints) {
-          print('SettingLayoutBuilder');
-          if (constraints.maxWidth <= 800) {
-            return getMobile(constraints);
-          } else {
-            return getPc(constraints);
-          }
-        },
+      builder: (context, constraints) {
+        if (constraints.maxWidth <= 800) {
+          return getMobile(constraints);
+        } else {
+          return getPc(constraints);
+        }
+      },
     );
   }
 
   Widget getMobile(BoxConstraints constraints) {
     return TopTool(
       title: "设置",
-      child: Consumer(
-        builder: (context, ref, child) {
-          return Column(
-            children: [
-              Expanded(
-                child: TabBarView(
-                  controller: _tabController,
-                  children: [
-                    KeepActivePage(
-                      widget: Column(
+      child: Column(
+        children: [
+          Expanded(
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                KeepActivePage(
+                  widget: Consumer(
+                    builder: (context, ref, child) {
+                      UserInfo? state = ref.watch(userInfoStateProvider);
+                      print('state?.cover${state?.toJson()}');
+                      return Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
@@ -115,12 +112,8 @@ class SettingPageState extends ConsumerState<SettingPage> with SingleTickerProvi
                                         child: AspectRatio(
                                           aspectRatio: 1,
                                           child: ClipOval(
-                                            child: ImageModule.minioImage(
-                                              Global
-                                                  .setting
-                                                  .userInfo
-                                                  ?.minioCover,
-                                              Global.setting.userInfo?.cover,
+                                            child: ImageModule.getImage(
+                                              state?.cover,
                                               fit: BoxFit.cover,
                                             ),
                                           ),
@@ -142,7 +135,10 @@ class SettingPageState extends ConsumerState<SettingPage> with SingleTickerProvi
                                             onPressed: () => showDialog(
                                               context: context,
                                               builder: (context) {
-                                                return userDetailForm(context);
+                                                return userDetailForm(
+                                                  context,
+                                                  state,
+                                                );
                                               },
                                             ),
                                             icon: const Icon(Icons.edit_note),
@@ -155,7 +151,7 @@ class SettingPageState extends ConsumerState<SettingPage> with SingleTickerProvi
                                 Padding(
                                   padding: const EdgeInsets.only(top: 10),
                                   child: Text(
-                                    Global.setting.userInfo?.name ?? "",
+                                    state?.name ?? "",
                                     maxLines: 1,
                                     style: const TextStyle(
                                       fontSize: 25,
@@ -168,25 +164,23 @@ class SettingPageState extends ConsumerState<SettingPage> with SingleTickerProvi
                           ),
                           Expanded(
                             child: SingleChildScrollView(
-                              child: getListWidget(),
+                              child: getListWidget(state),
                             ),
                           ),
                         ],
-                      ),
-                    ),
-                    KeepActivePage(
-                      widget: SettingChart(constraints: constraints),
-                    ),
-                  ],
+                      );
+                    },
+                  ),
                 ),
-              ),
-              TabBar(
-                controller: _tabController,
-                tabs: tabs.map((e) => Tab(text: e)).toList(),
-              ),
-            ],
-          );
-        },
+                KeepActivePage(widget: SettingChart(constraints: constraints)),
+              ],
+            ),
+          ),
+          TabBar(
+            controller: _tabController,
+            tabs: tabs.map((e) => Tab(text: e)).toList(),
+          ),
+        ],
       ),
     );
   }
@@ -205,6 +199,8 @@ class SettingPageState extends ConsumerState<SettingPage> with SingleTickerProvi
           height: double.infinity,
           child: Consumer(
             builder: (context, ref, child) {
+              final state = ref.watch(userInfoStateProvider);
+              print('state?.cover${state?.toJson()}');
               return Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -244,9 +240,8 @@ class SettingPageState extends ConsumerState<SettingPage> with SingleTickerProvi
                                 width: getWidth() - 100,
                                 height: getWidth() - 100,
                                 child: ClipOval(
-                                  child: ImageModule.minioImage(
-                                    Global.setting.userInfo?.minioCover,
-                                    Global.setting.userInfo?.cover,
+                                  child: ImageModule.getImage(
+                                    state?.cover,
                                     fit: BoxFit.cover,
                                   ),
                                 ),
@@ -265,7 +260,7 @@ class SettingPageState extends ConsumerState<SettingPage> with SingleTickerProvi
                                     onPressed: () => showDialog(
                                       context: context,
                                       builder: (context) {
-                                        return userDetailForm(context);
+                                        return userDetailForm(context, state);
                                       },
                                     ),
                                     icon: const Icon(Icons.edit_note),
@@ -278,7 +273,7 @@ class SettingPageState extends ConsumerState<SettingPage> with SingleTickerProvi
                         Padding(
                           padding: const EdgeInsets.only(top: 10),
                           child: Text(
-                            Global.setting.userInfo?.name ?? "",
+                            state?.name ?? "",
                             maxLines: 1,
                             style: const TextStyle(
                               fontSize: 25,
@@ -290,7 +285,7 @@ class SettingPageState extends ConsumerState<SettingPage> with SingleTickerProvi
                     ),
                   ),
                   Expanded(
-                    child: SingleChildScrollView(child: getListWidget()),
+                    child: SingleChildScrollView(child: getListWidget(state)),
                   ),
                 ],
               );
@@ -308,114 +303,118 @@ class SettingPageState extends ConsumerState<SettingPage> with SingleTickerProvi
     );
   }
 
-  Widget getListWidget() {
-    return LayoutBuilder(builder: (context,constraints){
-      return  Column(
-        children: [
-          ListTile(
-            leading: const Icon(Icons.email_rounded),
-            title: const Text(
-              "邮箱:",
-              style: TextStyle(fontWeight: FontWeight.bold),
+  Widget getListWidget(UserInfo? userInfo) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Column(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.email_rounded),
+              title: const Text(
+                "邮箱:",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text(
+                userInfo?.email ?? "",
+                style: const TextStyle(fontSize: 15),
+              ),
             ),
-            subtitle: Text(
-              Global.setting.userInfo?.email ?? "",
-              style: const TextStyle(fontSize: 15),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.link),
+              title: const Text(
+                "服务器地址",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text(
+                Global.setting.serverConfig.baseUrl,
+                style: const TextStyle(fontSize: 15),
+              ),
+              trailing: const Icon(Icons.edit),
+              onTap: () => Global.showSetBaseUrlDialog(context),
             ),
-          ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.link),
-            title: const Text(
-              "服务器地址",
-              style: TextStyle(fontWeight: FontWeight.bold),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.color_lens_sharp),
+              title: const Text(
+                "切换主题",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              trailing: Text("当前：${Global.setting.light ? "暗色" : "亮色"}"),
+              onTap: () => ref.read(themeStateProvider.notifier).changeTheme(),
             ),
-            subtitle: Text(
-              Global.setting.serverConfig.baseUrl,
-              style: const TextStyle(fontSize: 15),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.edit_attributes),
+              title: const Text(
+                "神秘开关",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              trailing: Switch(
+                value: userInfo?.mystery == 1,
+                onChanged: (value) {
+                  if (userInfo?.mystery == 1) {
+                    ref
+                        .read(userInfoStateProvider.notifier)
+                        .changeMystery(mystery: 2);
+                  } else {
+                    showDialog(
+                      context: context,
+                      builder: (context) => show(context),
+                    );
+                  }
+                },
+              ),
             ),
-            trailing: const Icon(Icons.edit),
-            onTap: () => Global.showSetBaseUrlDialog(context),
-          ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.color_lens_sharp),
-            title: const Text(
-              "切换主题",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            trailing: Text("当前：${Global.setting.light ? "暗色" : "亮色"}"),
-            onTap: () => ref.read(themeStateProvider.notifier).changeTheme(),
-          ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.edit_attributes),
-            title: const Text(
-              "神秘开关",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            trailing: Switch(
-              value: Global.setting.userInfo?.mystery == 1,
-              onChanged: (value) {
-                if (Global.setting.userInfo?.mystery == 1) {
-                  ref.read(themeStateProvider.notifier).changeMystery(mystery: 2);
-                } else {
-                  showDialog(
-                    context: context,
-                    builder: (context) => show(context),
-                  );
-                }
-              },
-            ),
-          ),
-          const Divider(),
-          if (Global.setting.userInfo?.mystery == 1)
+            const Divider(),
+            if (userInfo?.mystery == 1)
+              ListTile(
+                leading: const Icon(Icons.create),
+                title: const Text(
+                  "修改神秘开关密码",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                onTap: () => showDialog(
+                  context: context,
+                  builder: (context) {
+                    if (constraints.maxWidth > MyApp.width) {
+                      return Dialog(child: editPassWord(2));
+                    }
+                    return editPassWord(2);
+                  },
+                ),
+              ),
+            if (userInfo?.mystery == 1) const Divider(),
             ListTile(
               leading: const Icon(Icons.create),
               title: const Text(
-                "修改神秘开关密码",
+                "修改密码",
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               onTap: () => showDialog(
                 context: context,
                 builder: (context) {
                   if (constraints.maxWidth > MyApp.width) {
-                    return Dialog(child: editPassWord(2));
+                    return Dialog(child: editPassWord(1));
                   }
-                  return editPassWord(2);
+                  return editPassWord(1);
                 },
               ),
             ),
-          if (Global.setting.userInfo?.mystery == 1) const Divider(),
-          ListTile(
-            leading: const Icon(Icons.create),
-            title: const Text(
-              "修改密码",
-              style: TextStyle(fontWeight: FontWeight.bold),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.logout_rounded),
+              title: const Text(
+                "退出登录",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              onTap: () => Global.logout(context),
             ),
-            onTap: () => showDialog(
-              context: context,
-              builder: (context) {
-                if (constraints.maxWidth > MyApp.width) {
-                  return Dialog(child: editPassWord(1));
-                }
-                return editPassWord(1);
-              },
-            ),
-          ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.logout_rounded),
-            title: const Text(
-              "退出登录",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            onTap: () => Global.logout(context),
-          ),
-          const Divider(),
-        ],
-      );
-    });
+            const Divider(),
+          ],
+        );
+      },
+    );
   }
 
   Widget show(context) {
@@ -464,10 +463,10 @@ class SettingPageState extends ConsumerState<SettingPage> with SingleTickerProvi
                   if (status) {
                     Form.of(context).save();
                     password = md5.convert(utf8.encode(password)).toString();
-                    bool isTrue = await ref
-                        .read(themeStateProvider.notifier)
+                    ref
+                        .read(userInfoStateProvider.notifier)
                         .changeMystery(mystery: 1, mysteryPassword: password);
-                    if (isTrue) Navigator.of(context).pop(true); //关闭对话框
+                    Navigator.of(context).pop(true); //关闭对话框
                   }
                 },
               );
@@ -478,8 +477,7 @@ class SettingPageState extends ConsumerState<SettingPage> with SingleTickerProvi
     );
   }
 
-  Widget userDetailForm(context) {
-    UserInfo? userInfo = Global.setting.userInfo!;
+  Widget userDetailForm(context, UserInfo? userInfo) {
     Size size = MediaQuery.of(context).size;
     return Form(
       child: AlertDialog(
@@ -496,8 +494,8 @@ class SettingPageState extends ConsumerState<SettingPage> with SingleTickerProvi
                   hintText: "请输入名称",
                   prefixIcon: Icon(Icons.person, size: 18),
                 ),
-                onSaved: (value) => userInfo.name = value!,
-                initialValue: Global.setting.userInfo?.name ?? "",
+                onSaved: (value) => userInfo?.name = value!,
+                initialValue: userInfo?.name ?? "",
                 validator: (value) {
                   if (value!.trim().isEmpty) return "名称不可为空";
                   return null;
@@ -511,9 +509,9 @@ class SettingPageState extends ConsumerState<SettingPage> with SingleTickerProvi
                     hintText: "请输入邮箱",
                     prefixIcon: Icon(Icons.email, size: 18),
                   ),
-                  onSaved: (value) => userInfo.email = value!,
+                  onSaved: (value) => userInfo?.email = value!,
                   keyboardType: TextInputType.emailAddress,
-                  initialValue: Global.setting.userInfo?.email ?? "",
+                  initialValue: userInfo?.email ?? "",
                   validator: (value) {
                     if (value!.trim().isEmpty) return "邮箱不可为空";
                     return null;
@@ -538,14 +536,14 @@ class SettingPageState extends ConsumerState<SettingPage> with SingleTickerProvi
                     Form.of(context).save();
                     BaseResult baseResult = await HttpApi.request(
                       method: "post",
-                      params: userInfo.toJson(),
+                      params: userInfo?.toJson(),
                       "/user/setInfo",
                       (json) => UserInfo.fromJson(json),
                     );
                     if ("2000" == baseResult.code) {
                       ref
-                          .read(themeStateProvider.notifier)
-                          .changeUserInfo(userInfo);
+                          .read(userInfoStateProvider.notifier)
+                          .setUserInfo(userInfo!);
                       Navigator.of(context).pop(true); //关闭对话框
                     }
                   }
@@ -706,23 +704,9 @@ class SettingPageState extends ConsumerState<SettingPage> with SingleTickerProvi
     );
 
     if (result != null) {
-      FormData formData = FormData.fromMap({
-        "file": await MultipartFile.fromFile(
-          result.files.single.path!,
-          filename: "cover",
-        ),
-      });
-      BaseResult baseResult = await HttpApi.request(
-        formData: formData,
-        method: "post",
-        "/user/uploadCover",
-        (json) => json,
-      );
-      if ("2000" == baseResult.code) {
-        UserInfo userInfo = Global.setting.userInfo!;
-        userInfo.minioCover = baseResult.result;
-        ref.read(themeStateProvider.notifier).changeUserInfo(userInfo);
-      }
+      ref
+          .read(userInfoStateProvider.notifier)
+          .changeCover(result.files.single.path!);
     }
   }
 
