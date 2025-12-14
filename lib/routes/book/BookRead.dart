@@ -173,7 +173,6 @@ class BookReadState extends ConsumerState<BookRead> {
     // setState(() => isLoading = true);
 
     try {
-      // Step 1: 是否需要解析 EPUB？
       if (_list.isEmpty) {
         final encodedPath = Uri.encodeFull(
           widget.item.filePath.replaceAll('\\', '/').substring(1),
@@ -184,10 +183,11 @@ class BookReadState extends ConsumerState<BookRead> {
           () => {},
           isLoading: false,
         );
-        _list = await DomRendering(
-          readerTheme: currentReaderTheme,
-        ).start(bytes);
       }
+      _list = await DomRendering(
+        readerTheme: currentReaderTheme,
+      ).start(bytes);
+
       pageNodes = PageNodes(
         _list,
         maxWidth,
