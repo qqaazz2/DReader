@@ -60,6 +60,12 @@ class SeriesPageState extends ConsumerState<SeriesPage> {
                     icon: const Icon(Icons.featured_play_list_sharp),
                     tooltip: "扫描图书"),
                 IconButton(
+                    onPressed: () {
+                      ref.read(filesListStateProvider(-1).notifier).coverScanning();
+                    },
+                    icon: const Icon(Icons.image_search),
+                    tooltip: "扫描封面"),
+                IconButton(
                     onPressed: () => Scaffold.of(context).openEndDrawer(),
                     icon: const Icon(Icons.filter_list))
               ]),
