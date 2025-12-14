@@ -61,6 +61,11 @@ class SeriesDrawerState extends ConsumerState<SeriesDrawer> {
                   onTap: () => ref.read(filesListStateProvider(-1).notifier).scanning(),
                 ),
                 ListTile(
+                  leading: const Icon(Icons.image_search),
+                  title: const Text("扫描封面"),
+                  onTap: () => ref.read(filesListStateProvider(-1).notifier).coverScanning(),
+                ),
+                ListTile(
                   leading: const Icon(Icons.unfold_more),
                   title: const Text("扁平数据"),
                   trailing: Switch(value: seriesParam.flattening, onChanged: (value) => setState(() => seriesParam.flattening = value)),

@@ -37,6 +37,17 @@ class UserInfoState extends _$UserInfoState {
     }
   }
 
+  void changeFileAdapter({required String adapter}) async {
+    BaseResult baseResult = await HttpApi.request(
+      params: {"adapter": adapter},
+      "/user/changeFileAdapter",
+      (json) => json,
+    );
+    if ("2000" == baseResult.code) {
+      state = state?.copyWith(fileAdapter: adapter);
+    }
+  }
+
   void setUserInfo(UserInfo userInfo) => state = userInfo;
 
   void changeCover(String path) async {

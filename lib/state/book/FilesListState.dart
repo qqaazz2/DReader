@@ -135,13 +135,24 @@ class FilesListState extends _$FilesListState {
 
   void scanning() async {
     BaseResult baseResult = await HttpApi.request(
-      "/book/scanning",
+      "/task/scanning",
       () => {},
       params: {},
     );
     if (baseResult.code == "2000") {
       SideNoticeOverlay.success(text: "开始扫描图书文件");
       ScanningIndicatorOverlay.open();
+    }
+  }
+
+  void coverScanning() async {
+    BaseResult baseResult = await HttpApi.request(
+      "/task/coverScanning",
+          () => {},
+      params: {},
+    );
+    if (baseResult.code == "2000") {
+      SideNoticeOverlay.success(text: "开始扫描图书封面");
     }
   }
 

@@ -193,6 +193,12 @@ class PcHomeState extends ConsumerState<PcHome> {
                         .scanning(),
                   ),
                   ListTile(
+                    title: const Text("扫描封面"),
+                    onTap: () => ref
+                        .read(filesListStateProvider(-1).notifier)
+                        .coverScanning(),
+                  ),
+                  ListTile(
                     title: const Text("退出登录"),
                     onTap: () => Global.logout(context),
                   ),
@@ -535,16 +541,20 @@ class MobileHomeState extends ConsumerState<MobileHome> {
                     icon: const Icon(Icons.more_vert),
                     onSelected: (value) {
                       if (value == "scan") {
-                        // 执行扫描逻辑
                         ref
                             .read(filesListStateProvider(-1).notifier)
                             .scanning();
+                      }else if (value == "coverScan") {
+                        ref
+                            .read(filesListStateProvider(-1).notifier)
+                            .coverScanning();
                       } else if (value == "logout") {
                         Global.logout(context);
                       }
                     },
                     itemBuilder: (context) => [
-                      const PopupMenuItem(value: "scan", child: Text("扫描")),
+                      const PopupMenuItem(value: "scan", child: Text("扫描图书")),
+                      const PopupMenuItem(value: "coverScan", child: Text("扫描封面")),
                       const PopupMenuItem(value: "logout", child: Text("退出登录")),
                     ],
                   ),

@@ -1,4 +1,5 @@
 import 'package:DReader/main.dart';
+import 'package:DReader/widgets/SetFileAdapter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -119,6 +120,11 @@ class SettingsBarState extends State<SettingsBar> {
                     tooltip: "服务端链接",
                     onPressed: () => Global.showSetBaseUrlDialog(context),
                     icon: const Icon(Icons.link_outlined),
+                  ),
+                  IconButton(
+                    tooltip: "图片适配器",
+                    onPressed: () => showDialog(context: context, builder: (context) => const SetFileAdapter()),
+                    icon: const Icon(Icons.transform),
                   ),
                   IconButton(
                     tooltip: "主题色选择",

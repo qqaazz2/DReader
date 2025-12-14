@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:DReader/common/ImageModule.dart';
 import 'package:DReader/state/UserInfoState.dart';
+import 'package:DReader/widgets/SetFileAdapter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
@@ -332,6 +333,20 @@ class SettingPageState extends ConsumerState<SettingPage>
               ),
               trailing: const Icon(Icons.edit),
               onTap: () => Global.showSetBaseUrlDialog(context),
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.transform),
+              title: const Text(
+                "图片适配器",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text(
+                userInfo?.fileAdapter ?? "",
+                style: const TextStyle(fontSize: 15),
+              ),
+              trailing: const Icon(Icons.edit),
+              onTap: () => showDialog(context: context, builder: (context) => const SetFileAdapter()),
             ),
             const Divider(),
             ListTile(
