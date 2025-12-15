@@ -1,6 +1,10 @@
 # DReader
 
-一个基于Flutter实现的跨平台的Epub小说阅读软件
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/769f6598-1d55-4380-803d-fb7fee281451" alt="DReader Logo" width="400" />
+</p>
+
+一个基于Flutter实现的跨平台的Epub格式的轻小说阅读软件，支持多端同步阅读进度。
 
 ## 项目简介
 
