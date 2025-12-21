@@ -184,9 +184,7 @@ class BookReadState extends ConsumerState<BookRead> {
           isLoading: false,
         );
       }
-      _list = await DomRendering(
-        readerTheme: currentReaderTheme,
-      ).start(bytes);
+      _list = await DomRendering(readerTheme: currentReaderTheme).start(bytes);
 
       pageNodes = PageNodes(
         _list,
@@ -277,6 +275,7 @@ class BookReadState extends ConsumerState<BookRead> {
         lastReaderTheme != null && currentReaderTheme != lastReaderTheme!;
     return SafeArea(
       child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10),
         color: currentReaderTheme.backgroundColor,
         child: FutureBuilder(
           future: getData(),
@@ -367,17 +366,14 @@ class BookReadState extends ConsumerState<BookRead> {
         }
       },
       child: pageWidget(
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: PageView(
-            controller: pageController,
-            onPageChanged: (value) {
-              currentPage.value = value + 1;
-              readTagNum = getReadTagNum(pageNodes!.list[value * 2].first);
-              progress = currentPage.value / widgetList.length;
-            },
-            children: widgetList,
-          ),
+        PageView(
+          controller: pageController,
+          onPageChanged: (value) {
+            currentPage.value = value + 1;
+            readTagNum = getReadTagNum(pageNodes!.list[value * 2].first);
+            progress = currentPage.value / widgetList.length;
+          },
+          children: widgetList,
         ),
         constraints.maxWidth,
       ),
@@ -388,19 +384,16 @@ class BookReadState extends ConsumerState<BookRead> {
     return GestureDetector(
       onTap: () => currentValue.value = !currentValue.value,
       child: pageWidget(
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: PageView(
-            controller: pageController,
-            onPageChanged: (value) {
-              currentPage.value = value + 1;
-              readTagNum = getReadTagNum(pageNodes!.list[value].first);
-              progress = currentPage.value / pageNodes!.pageCount;
-            },
-            children: pageNodes!.list
-                .map((value) => CustomPaint(painter: ReaderPainter(value)))
-                .toList(),
-          ),
+        PageView(
+          controller: pageController,
+          onPageChanged: (value) {
+            currentPage.value = value + 1;
+            readTagNum = getReadTagNum(pageNodes!.list[value].first);
+            progress = currentPage.value / pageNodes!.pageCount;
+          },
+          children: pageNodes!.list
+              .map((value) => CustomPaint(painter: ReaderPainter(value)))
+              .toList(),
         ),
         constraints.maxWidth,
       ),

@@ -45,7 +45,7 @@ class TextNode extends ReaderNode {
         }
 
         //这里是还有splitIndex的值位置，将裁断splitIndex这么多的文本出来，其余放到下一行
-        segmentation(splitIndex, availableWidth);
+        segmentation(splitIndex , availableWidth);
       }
     }
 
