@@ -1,6 +1,10 @@
 # DReader
 
-一个基于Flutter实现的跨平台的Epub小说阅读软件
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/769f6598-1d55-4380-803d-fb7fee281451" alt="DReader Logo" width="400" />
+</p>
+
+一个基于Flutter实现的跨平台的Epub格式的轻小说阅读软件，支持多端同步阅读进度。[食用指南](https://qqaazz2.github.io/dreader-docs/)
 
 ## 项目简介
 
@@ -10,23 +14,28 @@ DReader 是一款基于 Flutter 构建的跨平台 EPUB 阅读器，目的是提
 ## 部分预览
 
 ### 移动端截图
-
-<img width="150" height="300" alt="屏幕截图 2025-10-27 223144" src="https://github.com/user-attachments/assets/366c3248-f97a-43c1-912e-c888ae18da63" />
-<img width="150" height="300" alt="屏幕截图 2025-10-27 222849" src="https://github.com/user-attachments/assets/1b86a66c-911a-4ec6-b68d-ee992eef88e2" />
-<img width="150" height="300" alt="屏幕截图 2025-10-27 223003" src="https://github.com/user-attachments/assets/45e02ddf-524b-4f87-b349-62712b00f64c" />
-<img width="150" height="300" alt="屏幕截图 2025-10-27 223034" src="https://github.com/user-attachments/assets/7e815f9c-0fb0-4756-9e9b-072cb5462d7b" />
-<img width="150" height="300" alt="屏幕截图 2025-10-27 222749" src="https://github.com/user-attachments/assets/616d4795-faa7-4bb6-9059-f768dadaae1a" />
-<img width="150" height="300" alt="屏幕截图 2025-10-27 222812" src="https://github.com/user-attachments/assets/ed3d6a95-7f14-4702-9e74-c80b089e7cc4" />
+<img width="150" height="300" alt="mb1" src="https://github.com/user-attachments/assets/19ca2ad2-18eb-400e-85b5-9a42662d1ef1" />
+<img width="150" height="300" alt="mb2" src="https://github.com/user-attachments/assets/b6b59ba1-6397-4255-a577-4a2e8baced10" />
+<img width="150" height="300" alt="mb3" src="https://github.com/user-attachments/assets/f47af2ac-a68a-4e08-a9c1-a04aa8228cd6" />
+<img width="150" height="300" alt="mb4" src="https://github.com/user-attachments/assets/b44c1915-c020-4908-9e6b-d3fd17a21094" />
+<img width="150" height="300" alt="mb5" src="https://github.com/user-attachments/assets/8d554fac-36de-436c-ad7a-6925d3800881" />
+<img width="150" height="300" alt="mb6" src="https://github.com/user-attachments/assets/b8dc9334-509e-4751-8bdf-57e7d83a7e94" />
+<img width="150" height="300" alt="mb7" src="https://github.com/user-attachments/assets/6a825c14-b7cd-4aa5-b609-5ce6c93ff225" />
+<img width="150" height="300" alt="mb8" src="https://github.com/user-attachments/assets/be90eded-eb46-408f-a740-22675e3f870e" />
 
 ### 桌面端截图
+<img width="300" height="200" alt="pc1" src="https://github.com/user-attachments/assets/6cd3132a-e7c7-402d-abde-c080726d7814" />
+<img width="300" height="200" alt="pc2" src="https://github.com/user-attachments/assets/914da892-3609-401f-8c51-ec4b039e2198" />
+<img width="300" height="200" alt="pc3" src="https://github.com/user-attachments/assets/55fc3c7b-0b03-4687-9b01-cc64c391b1eb" />
+<img width="300" height="200" alt="pc4" src="https://github.com/user-attachments/assets/a693d96c-8e78-4c6e-ba37-b28421425351" />
+<img width="300" height="200" alt="pc5" src="https://github.com/user-attachments/assets/461feb31-a674-42f9-aeab-8aea1b267e8b" />
+<img width="300" height="200" alt="pc6" src="https://github.com/user-attachments/assets/2d1dce7e-7c38-4fad-a6a7-d4dfe4020e54" />
+<img width="300" height="200" alt="pc7" src="https://github.com/user-attachments/assets/c0294242-34c2-485a-bc92-6a0cb476d898" />
+<img width="300" height="200" alt="pc8" src="https://github.com/user-attachments/assets/2e76ae92-79d3-47ed-a2e9-162172cad01f" />
+<img width="300" height="200" alt="pc9" src="https://github.com/user-attachments/assets/7a9e1d33-a008-420a-8f1b-d82227daae79" />
 
-<img width="300" height="200" alt="屏幕截图 2025-10-27 220930" src="https://github.com/user-attachments/assets/f27fde17-54d3-4cfa-a6ec-f2ffb482fbc1" />
-<img width="300" height="200" alt="屏幕截图 2025-10-27 221209" src="https://github.com/user-attachments/assets/656c953d-74c1-4bc9-9189-ea6e09aa5044" />
-<img width="300" height="200" alt="屏幕截图 2025-10-27 221220" src="https://github.com/user-attachments/assets/a3193d96-092f-46d8-81ac-4106b409ce06" />
-<img width="300" height="200" alt="屏幕截图 2025-10-27 221637" src="https://github.com/user-attachments/assets/bf4e6cbb-164c-4f0b-a541-99001fb881b8" />
-<img width="300" height="200" alt="屏幕截图 2025-10-27 222428" src="https://github.com/user-attachments/assets/e32d9168-ec39-463a-aa68-0c1079fa2bd0" />
-<img width="300" height="200" alt="屏幕截图 2025-10-27 222547" src="https://github.com/user-attachments/assets/7719db2e-e3ab-40e3-bb6f-54c774578fc9" />
-<img width="300" height="200" alt="屏幕截图 2025-10-27 222639" src="https://github.com/user-attachments/assets/8c138506-d288-4f94-b2c1-23bceb05793e" />
+
+
 
 ## 核心功能
 
