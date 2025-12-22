@@ -571,7 +571,7 @@ class MobileHomeState extends ConsumerState<MobileHome> {
                           if (item == null) {
                             return Text("暂无阅读记录");
                           }
-                          return Container(
+                          return GestureDetector(child: Container(
                             constraints: const BoxConstraints(maxWidth: 350),
                             decoration: const BoxDecoration(
                               boxShadow: [
@@ -602,7 +602,7 @@ class MobileHomeState extends ConsumerState<MobileHome> {
                                 ],
                               ),
                             ),
-                          );
+                          ),onTap: () => context.push("/read?", extra: item),);
                         },
                         error: (err, stack) => Text('加载失败: $err'),
                         loading: () => const CircularProgressIndicator(),
