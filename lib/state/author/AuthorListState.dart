@@ -15,7 +15,9 @@ class AuthorListState extends _$AuthorListState {
   @override
   ListData<AuthorItem> build() {
     final updateStream = ref.watch(authorUpdateStateProvider).stream;
-    final subscription = updateStream.listen((AuthorDetail detail) => syncAuthor(detail));
+    final subscription = updateStream.listen(
+      (AuthorDetail detail) => syncAuthor(detail),
+    );
     ref.onDispose(() => subscription.cancel());
     return ListData<AuthorItem>(50, 1, 0, 0, []);
   }
@@ -30,9 +32,9 @@ class AuthorListState extends _$AuthorListState {
     state.data = [];
   }
 
-  void searchByName(String? name){
+  void searchByName(String? name) {
     clear();
-    getList(name:name);
+    getList(name: name);
   }
 
   void getList({String? name}) async {
@@ -43,10 +45,15 @@ class AuthorListState extends _$AuthorListState {
           params: {"page": state.page, "limit": state.limit, "name": name},
           isList: true,
         );
-
     // 如果请求成功，更新状态
-    if (baseListResult.code == "2000") {
-      state = baseListResult.result!;
+    if (baseListResult.code == "2000" && ref.mounted) {
+      state = state.copyWith(
+        page: state.page += 1,
+        count: baseListResult.result?.count ?? 0,
+        pages: baseListResult.result?.pages ?? 0,
+        limit: 50,
+        data: [...state.data ?? [],...baseListResult.result?.data ?? []],
+      );
     }
   }
 
@@ -54,10 +61,10 @@ class AuthorListState extends _$AuthorListState {
     state.data?.insert(0, authorItem);
   }
 
-  void syncAuthor(AuthorDetail detail){
-    if(state.data == null || state.data!.isEmpty) return;
+  void syncAuthor(AuthorDetail detail) {
+    if (state.data == null || state.data!.isEmpty) return;
     int index = state.data!.indexWhere((item) => item.id == detail.id);
-    if(index < 0) return;
+    if (index < 0) return;
     state.data![index].name = detail.name;
     state.data![index].avatar = detail.avatar;
     state = state.copyWith(data: state.data);
