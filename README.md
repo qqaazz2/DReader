@@ -6,7 +6,7 @@
 
 一个基于Flutter实现的跨平台的Epub格式的轻小说阅读软件，支持多端同步阅读进度。[食用指南](https://qqaazz2.github.io/dreader-docs/)
 
-## 初次登陆账密
+## 默认登陆账密
 
 账号：1@gmail.com
 密码：1234561
