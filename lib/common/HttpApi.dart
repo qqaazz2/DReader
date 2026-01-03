@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:DReader/widgets/SideNotice.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:go_router/go_router.dart';
@@ -14,7 +15,7 @@ import 'package:DReader/widgets/SetBaseUrl.dart';
 
 class HttpApi {
   static final BaseOptions options = BaseOptions(
-      baseUrl: Global.setting.serverConfig.baseUrl,
+      baseUrl:kIsWeb ? "/api" : "${Global.setting.serverConfig.baseUrl}/api",
       // baseUrl: 'http://127.0.0.1:8081/',
       method: 'GET',
       connectTimeout: const Duration(seconds: 3),
@@ -32,7 +33,7 @@ class HttpApi {
   }
 
   static void updateDio() {
-    options.baseUrl = Global.setting.serverConfig.baseUrl;
+    options.baseUrl = kIsWeb ? "/api" : "${Global.setting.serverConfig.baseUrl}/api";
     dio = _createDio();
   }
 

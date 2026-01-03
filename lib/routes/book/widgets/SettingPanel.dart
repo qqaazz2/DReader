@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:DReader/main.dart';
 import 'package:DReader/state/ThemeState.dart';
 import 'package:DReader/theme/extensions/ReaderTheme.dart';
