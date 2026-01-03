@@ -6,6 +6,11 @@
 
 一个基于Flutter实现的跨平台的Epub格式的轻小说阅读软件，支持多端同步阅读进度。[食用指南](https://qqaazz2.github.io/dreader-docs/)
 
+## 初次登陆账密
+
+账号：1@gmail.com
+密码：1234561
+
 ## 项目简介
 
 DReader 是一款基于 Flutter 构建的跨平台 EPUB 阅读器，目的是提供一个私有化、可多端同步的云端书库方案。
