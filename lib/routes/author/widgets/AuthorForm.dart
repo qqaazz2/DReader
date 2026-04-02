@@ -129,12 +129,12 @@ class AuthorFormState extends ConsumerState<AuthorForm> {
                               bottom: 0,
                               right: 0,
                               child: Material(
-                                color: Theme.of(context).primaryColor, // 使用主题色
+                                color: Theme.of(context).primaryColor,
                                 shape: const CircleBorder(),
                                 elevation: 4,
                                 child: InkWell(
                                   borderRadius: BorderRadius.circular(50),
-                                  onTap: changeImage, // 点击触发选择图片
+                                  onTap: changeImage,
                                   child: Container(
                                     padding: const EdgeInsets.all(8),
                                     child: const Icon(
@@ -235,7 +235,7 @@ class AuthorFormState extends ConsumerState<AuthorForm> {
         fit: BoxFit.cover,
         width: size,
         height: size,
-        // 🔥【防 OOM 关键】指定缓存宽度，Flutter 会在解码时缩小图片
+        // 指定缓存宽度，Flutter 会在解码时缩小图片
         cacheWidth: cacheSize,
       );
     }
@@ -244,7 +244,6 @@ class AuthorFormState extends ConsumerState<AuthorForm> {
       return ImageModule.getImage(authorDetail.avatar);
     }
 
-    // 默认占位图
     return Icon(Icons.person, size: size * 0.6, color: Colors.grey.shade400);
   }
 

@@ -136,13 +136,8 @@ class ElementNode extends ReaderNode {
         } else {
           truncatedNode = child.layout(availableWidth, nextChildOffset!, isFull: isFull);
           currentLineWidth += child.currentWidth;
-          if (child.currentHeight != currentLineHeight &&
-              currentLineHeight > 0 &&
-              !highlyInconsistent) {
-            highlyInconsistent = true;
-          }
-          currentLineHeight =
-              max(currentLineHeight, child.currentHeight); //这里再货比同一行内的所有Node的高度
+          if (child.currentHeight != currentLineHeight && currentLineHeight > 0 && !highlyInconsistent) highlyInconsistent = true;
+          currentLineHeight = max(currentLineHeight, child.currentHeight); //这里再货比同一行内的所有Node的高度
           availableWidth = availableWidth - child.currentWidth;
           currentLineIndex.add(childIndex);
         }
@@ -160,7 +155,9 @@ class ElementNode extends ReaderNode {
             isTurning = true;
             turning(childIndex);
             break;
-          } else if (child.isEnter || availableWidth <= 0) {
+          }
+
+          if (truncatedNode.isNotEmpty) {
             availableWidth = unchanged;
             nextChildOffset = Offset(defaultDx, defaultDy + currentHeight);
             childIndex++;
@@ -204,7 +201,7 @@ class ElementNode extends ReaderNode {
   }
 
   void rearrangement() {
-    if (currentLineIndex.isNotEmpty && highlyInconsistent) {
+    if (currentLineIndex.isNotEmpty && currentLineIndex.length > 1 && highlyInconsistent) {
       for (int index in currentLineIndex) {
         ReaderNode child = children[index];
         if (child.currentHeight == currentLineHeight) continue;

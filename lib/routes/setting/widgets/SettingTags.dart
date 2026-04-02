@@ -144,7 +144,7 @@ class SettingTagsState extends ConsumerState<SettingTags> {
       const shadows = [Shadow(color: Colors.black, blurRadius: 2)];
       index++;
 
-      double num = map[value]! / overview.seriesCount;
+      double num = (overview.seriesCount == 0) ? 0.0: (map[value]! / overview.seriesCount);
       return PieChartSectionData(
         color: colors[value],
         value: num,

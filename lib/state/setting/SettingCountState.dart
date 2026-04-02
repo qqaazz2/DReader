@@ -15,6 +15,6 @@ class SettingCountState extends _$SettingCountState {
     if (baseResult.code == "2000") {
       return baseResult.result!;
     }
-    return {"count": 0, "size": 0};
+    return {"count": 0, "size": 0.0};
   }
 }

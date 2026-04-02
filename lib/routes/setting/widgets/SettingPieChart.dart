@@ -148,7 +148,7 @@ class SettingPieChartState extends ConsumerState<SettingPieChart> {
       const shadows = [Shadow(color: Colors.black, blurRadius: 2)];
       index++;
 
-      double num = map[value]! / overview.bookCount;
+      double num = overview.bookCount == 0 ? 0.0 : map[value]! / overview.bookCount;
       return PieChartSectionData(
         color: colors[value],
         value: num,

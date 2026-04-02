@@ -31,17 +31,19 @@ class SetFileAdapterState extends ConsumerState<SetFileAdapter> {
   }
 
   void getData() async {
-    BaseResult<List<String>> baseResult = await HttpApi.request<List<String>>(
-      "/image/getAdapterList",
-      (json) => List<String>.from(json),
-    );
-    if (baseResult.code == "2000") {
-      list = baseResult.result;
+    try{
+      BaseResult<List<String>> baseResult = await HttpApi.request<List<String>>(
+        "/image/getAdapterList",
+            (json) => List<String>.from(json),
+      );
+      if (baseResult.code == "2000") {
+        list = baseResult.result;
+      }
+    }catch(e){
+      print(e.toString());
+    }finally{
+      setState(() => isLoading = false);
     }
-
-    setState(() {
-      isLoading = false;
-    });
   }
 
   @override
@@ -57,6 +59,7 @@ class SetFileAdapterState extends ConsumerState<SetFileAdapter> {
         ),
         Container(
           width: 100,
+          padding: const EdgeInsets.symmetric(horizontal: 50),
           child: ElevatedButton(
             onPressed: () {
               ref
