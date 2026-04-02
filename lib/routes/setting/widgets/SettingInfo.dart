@@ -7,8 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:DReader/routes/setting/SettingChart.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../common/HttpApi.dart';
-import '../../../entity/BaseResult.dart';
 import 'SettingBox.dart';
 
 class SettingInfo extends ConsumerStatefulWidget {
@@ -29,12 +27,10 @@ class SettingInfoState extends ConsumerState<SettingInfo> {
 
   @override
   Widget build(BuildContext context) {
-    AsyncValue<Map> asyncValue = ref.watch(
-      settingCountStateProvider,
-    );
+    AsyncValue<Map> asyncValue = ref.watch(settingCountStateProvider);
     return asyncValue.when(
       data: (Map map) {
-        double size = map["size"] ?? 0;
+        double size = map["size"]?.toDouble() ?? 0.0;
         int count = map["count"]?.toInt() ?? 0;
         return _build(count: count, size: size);
       },
