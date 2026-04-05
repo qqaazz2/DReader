@@ -33,7 +33,7 @@ final class SettingCountStateProvider
   SettingCountState create() => SettingCountState();
 }
 
-String _$settingCountStateHash() => r'c5c9bc2d8406000c8e4609f359a4e78efbc48dc9';
+String _$settingCountStateHash() => r'74b61549eca3fe4c92cc12625240779f86969b91';
 
 abstract class _$SettingCountState
     extends $AsyncNotifier<Map<dynamic, dynamic>> {

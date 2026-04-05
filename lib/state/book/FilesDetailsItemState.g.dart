@@ -16,7 +16,7 @@ final class FilesDetailsItemStateProvider
     extends $AsyncNotifierProvider<FilesDetailsItemState, FilesDetailsItem?> {
   const FilesDetailsItemStateProvider._({
     required FilesDetailsItemStateFamily super.from,
-    required int super.argument,
+    required String super.argument,
   }) : super(
          retry: null,
          name: r'filesDetailsItemStateProvider',
@@ -51,7 +51,7 @@ final class FilesDetailsItemStateProvider
 }
 
 String _$filesDetailsItemStateHash() =>
-    r'acc93294aa2bf039d7d1b234156f9fe3d1d9f6c4';
+    r'4498feaa7e5d2c3b2bfaa897c06140dd2054b9e1';
 
 final class FilesDetailsItemStateFamily extends $Family
     with
@@ -60,7 +60,7 @@ final class FilesDetailsItemStateFamily extends $Family
           AsyncValue<FilesDetailsItem?>,
           FilesDetailsItem?,
           FutureOr<FilesDetailsItem?>,
-          int
+          String
         > {
   const FilesDetailsItemStateFamily._()
     : super(
@@ -71,7 +71,7 @@ final class FilesDetailsItemStateFamily extends $Family
         isAutoDispose: true,
       );
 
-  FilesDetailsItemStateProvider call(int id) =>
+  FilesDetailsItemStateProvider call(String id) =>
       FilesDetailsItemStateProvider._(argument: id, from: this);
 
   @override
@@ -80,10 +80,10 @@ final class FilesDetailsItemStateFamily extends $Family
 
 abstract class _$FilesDetailsItemState
     extends $AsyncNotifier<FilesDetailsItem?> {
-  late final _$args = ref.$arg as int;
-  int get id => _$args;
+  late final _$args = ref.$arg as String;
+  String get id => _$args;
 
-  FutureOr<FilesDetailsItem?> build(int id);
+  FutureOr<FilesDetailsItem?> build(String id);
   @$mustCallSuper
   @override
   void runBuild() {

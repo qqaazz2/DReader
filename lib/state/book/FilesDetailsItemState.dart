@@ -19,8 +19,8 @@ part 'FilesDetailsItemState.g.dart';
 @riverpod
 class FilesDetailsItemState extends _$FilesDetailsItemState {
   @override
-  Future<FilesDetailsItem?> build(int id) async {
-    if (id == -1) return null;
+  Future<FilesDetailsItem?> build(String id) async {
+    if (int.parse(id) == -1) return null;
     final updateStream = ref.watch(authorUpdateStateProvider).stream;
     final subscription = updateStream.listen(
       (AuthorDetail detail) => syncAuthor(detail),
@@ -68,7 +68,7 @@ class FilesDetailsItemState extends _$FilesDetailsItemState {
       ref.read(filesGlobalUpdateStateProvider).add(filesItem);
       if (list.isNotEmpty) {
         for (int item in list) {
-          final provider = filesListStateProvider(item);
+          final provider = filesListStateProvider(item.toString());
           if (ref.exists(provider)) {
             ref.read(provider.notifier).clear();
             ref.read(provider.notifier).getListByAuthor();

@@ -359,47 +359,47 @@ class SettingPageState extends ConsumerState<SettingPage>
               onTap: () => ref.read(themeStateProvider.notifier).changeTheme(),
             ),
             const Divider(),
-            ListTile(
-              leading: const Icon(Icons.edit_attributes),
-              title: const Text(
-                "神秘开关",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              trailing: Switch(
-                value: userInfo?.mystery == 1,
-                onChanged: (value) {
-                  if (userInfo?.mystery == 1) {
-                    ref
-                        .read(userInfoStateProvider.notifier)
-                        .changeMystery(mystery: 2);
-                  } else {
-                    showDialog(
-                      context: context,
-                      builder: (context) => show(context),
-                    );
-                  }
-                },
-              ),
-            ),
-            const Divider(),
-            if (userInfo?.mystery == 1)
-              ListTile(
-                leading: const Icon(Icons.create),
-                title: const Text(
-                  "修改神秘开关密码",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                onTap: () => showDialog(
-                  context: context,
-                  builder: (context) {
-                    if (constraints.maxWidth > MyApp.width) {
-                      return Dialog(child: editPassWord(2));
-                    }
-                    return editPassWord(2);
-                  },
-                ),
-              ),
-            if (userInfo?.mystery == 1) const Divider(),
+            // ListTile(
+            //   leading: const Icon(Icons.edit_attributes),
+            //   title: const Text(
+            //     "神秘开关",
+            //     style: TextStyle(fontWeight: FontWeight.bold),
+            //   ),
+            //   trailing: Switch(
+            //     value: userInfo?.mystery == 1,
+            //     onChanged: (value) {
+            //       if (userInfo?.mystery == 1) {
+            //         ref
+            //             .read(userInfoStateProvider.notifier)
+            //             .changeMystery(mystery: 2);
+            //       } else {
+            //         showDialog(
+            //           context: context,
+            //           builder: (context) => show(context),
+            //         );
+            //       }
+            //     },
+            //   ),
+            // ),
+            // const Divider(),
+            // if (userInfo?.mystery == 1)
+            //   ListTile(
+            //     leading: const Icon(Icons.create),
+            //     title: const Text(
+            //       "修改神秘开关密码",
+            //       style: TextStyle(fontWeight: FontWeight.bold),
+            //     ),
+            //     onTap: () => showDialog(
+            //       context: context,
+            //       builder: (context) {
+            //         if (constraints.maxWidth > MyApp.width) {
+            //           return Dialog(child: editPassWord(2));
+            //         }
+            //         return editPassWord(2);
+            //       },
+            //     ),
+            //   ),
+            // if (userInfo?.mystery == 1) const Divider(),
             ListTile(
               leading: const Icon(Icons.create),
               title: const Text(

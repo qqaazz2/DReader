@@ -192,7 +192,7 @@ class AuthorFormState extends ConsumerState<AuthorForm> {
                               authorDetail.vocational = value!,
                         ),
                         FormInput(
-                          label: '系列简介',
+                          label: '作者简介',
                           controller: profileController,
                           iconData: Icons.content_paste_rounded,
                           onSaved: (String? value) =>

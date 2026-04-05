@@ -34,7 +34,7 @@ class SeriesDrawerState extends ConsumerState<SeriesDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    seriesParam = ref.read(filesListStateProvider(-1).notifier).seriesParam;
+    seriesParam = ref.read(filesListStateProvider("-1").notifier).seriesParam;
     searchController.text = seriesParam.name ?? "";
     return Drawer(
       child: SafeArea(
@@ -58,12 +58,12 @@ class SeriesDrawerState extends ConsumerState<SeriesDrawer> {
                 ListTile(
                   leading: const Icon(Icons.adf_scanner),
                   title: const Text("扫描系列"),
-                  onTap: () => ref.read(filesListStateProvider(-1).notifier).scanning(),
+                  onTap: () => ref.read(filesListStateProvider("-1").notifier).scanning(),
                 ),
                 ListTile(
                   leading: const Icon(Icons.image_search),
                   title: const Text("扫描封面"),
-                  onTap: () => ref.read(filesListStateProvider(-1).notifier).coverScanning(),
+                  onTap: () => ref.read(filesListStateProvider("-1").notifier).coverScanning(),
                 ),
                 ListTile(
                   leading: const Icon(Icons.unfold_more),
@@ -143,12 +143,12 @@ class SeriesDrawerState extends ConsumerState<SeriesDrawer> {
   }
 
   void search() {
-    ref.read(filesListStateProvider(-1).notifier).clear();
-    ref.read(filesListStateProvider(-1).notifier).getList();
+    ref.read(filesListStateProvider("-1").notifier).clear();
+    ref.read(filesListStateProvider("-1").notifier).getList();
   }
 
   void randomData()async{
-    FilesItem? filesItem = await ref.read(filesListStateProvider(-1).notifier).randomData();
+    FilesItem? filesItem = await ref.read(filesListStateProvider("-1").notifier).randomData();
     if(filesItem != null) context.push("/books/content?seriesId=${filesItem.id}&filesId=${filesItem.filesId}&parentId=${filesItem.parentId}");
   }
 

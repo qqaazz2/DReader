@@ -11,7 +11,7 @@ class ReadLog extends Object {
   String time;
 
   @JsonKey(name: 'filesId')
-  int filesId;
+  String filesId;
 
   @JsonKey(name: 'seconds')
   int seconds;

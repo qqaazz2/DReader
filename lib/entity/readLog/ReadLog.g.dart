@@ -9,7 +9,7 @@ part of 'ReadLog.dart';
 ReadLog _$ReadLogFromJson(Map<String, dynamic> json) => ReadLog(
   (json['id'] as num).toInt(),
   json['time'] as String,
-  (json['filesId'] as num).toInt(),
+  json['filesId'] as String,
   (json['seconds'] as num).toInt(),
 );
 

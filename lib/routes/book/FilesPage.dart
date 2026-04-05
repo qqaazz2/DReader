@@ -23,12 +23,12 @@ class SeriesPageState extends ConsumerState<SeriesPage> {
   @override
   void initState() {
     super.initState();
-    ref.read(filesListStateProvider(-1).notifier).getList();
+    ref.read(filesListStateProvider("-1").notifier).getList();
   }
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(filesListStateProvider(-1));
+    final state = ref.watch(filesListStateProvider("-1"));
     return TopTool(
       title: "图书",
       endDrawer: const SeriesDrawer(),
@@ -49,19 +49,19 @@ class SeriesPageState extends ConsumerState<SeriesPage> {
                 Text("共${state.count}个系列"),
                 IconButton(
                     onPressed: () {
-                      ref.read(filesListStateProvider(-1).notifier).reload();
+                      ref.read(filesListStateProvider("-1").notifier).reload();
                     },
                     icon: const Icon(Icons.refresh),
                     tooltip: "刷新列表"),
                 IconButton(
                     onPressed: () {
-                      ref.read(filesListStateProvider(-1).notifier).scanning();
+                      ref.read(filesListStateProvider("-1").notifier).scanning();
                     },
                     icon: const Icon(Icons.featured_play_list_sharp),
                     tooltip: "扫描图书"),
                 IconButton(
                     onPressed: () {
-                      ref.read(filesListStateProvider(-1).notifier).coverScanning();
+                      ref.read(filesListStateProvider("-1").notifier).coverScanning();
                     },
                     icon: const Icon(Icons.image_search),
                     tooltip: "扫描封面"),
@@ -85,7 +85,7 @@ class SeriesPageState extends ConsumerState<SeriesPage> {
                       );
                     },
                     getList: () =>
-                        ref.read(filesListStateProvider(-1).notifier).getList())),
+                        ref.read(filesListStateProvider("-1").notifier).getList())),
           ],
         );
       }),

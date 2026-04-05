@@ -189,13 +189,13 @@ class PcHomeState extends ConsumerState<PcHome> {
                   ListTile(
                     title: const Text("扫描书籍"),
                     onTap: () => ref
-                        .read(filesListStateProvider(-1).notifier)
+                        .read(filesListStateProvider("-1").notifier)
                         .scanning(),
                   ),
                   ListTile(
                     title: const Text("扫描封面"),
                     onTap: () => ref
-                        .read(filesListStateProvider(-1).notifier)
+                        .read(filesListStateProvider("-1").notifier)
                         .coverScanning(),
                   ),
                   ListTile(
@@ -542,11 +542,11 @@ class MobileHomeState extends ConsumerState<MobileHome> {
                     onSelected: (value) {
                       if (value == "scan") {
                         ref
-                            .read(filesListStateProvider(-1).notifier)
+                            .read(filesListStateProvider("-1").notifier)
                             .scanning();
                       }else if (value == "coverScan") {
                         ref
-                            .read(filesListStateProvider(-1).notifier)
+                            .read(filesListStateProvider("-1").notifier)
                             .coverScanning();
                       } else if (value == "logout") {
                         Global.logout(context);

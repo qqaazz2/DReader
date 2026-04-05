@@ -27,12 +27,12 @@ class AuthorBookPcListState extends ConsumerState<AuthorBookPcList> {
   @override
   void initState() {
     super.initState();
-    ref.read(filesListStateProvider(widget.id).notifier).getListByAuthor();
+    ref.read(filesListStateProvider(widget.id.toString()).notifier).getListByAuthor();
   }
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(filesListStateProvider(widget.id));
+    final state = ref.watch(filesListStateProvider(widget.id.toString()));
     return Card(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10),
@@ -46,11 +46,11 @@ class AuthorBookPcListState extends ConsumerState<AuthorBookPcList> {
               index: index,
               show: show,
               isPc: isPc,
-              parentId: widget.id,
+              parentId: widget.id.toString(),
             );
           },
           getList: () => ref
-              .read(filesListStateProvider(widget.id).notifier)
+              .read(filesListStateProvider(widget.id.toString()).notifier)
               .getListByAuthor(),
         ),
       ),

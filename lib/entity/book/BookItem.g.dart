@@ -8,7 +8,7 @@ part of 'BookItem.dart';
 
 BookItem _$BookItemFromJson(Map<String, dynamic> json) => BookItem(
   (json['id'] as num).toInt(),
-  (json['filesId'] as num).toInt(),
+  json['filesId'] as String,
   (json['progress'] as num).toDouble(),
   (json['readTagNum'] as num).toInt(),
 );

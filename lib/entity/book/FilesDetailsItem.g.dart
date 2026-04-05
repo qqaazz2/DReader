@@ -14,7 +14,7 @@ FilesDetailsItem _$FilesDetailsItemFromJson(Map<String, dynamic> json) =>
       (json['overStatus'] as num).toInt(),
       (json['status'] as num).toInt(),
       (json['love'] as num).toInt(),
-      (json['filesId'] as num).toInt(),
+      json['filesId'] as String,
       (json['isFolder'] as num).toInt(),
       json['lastReadTime'] as String?,
       json['profile'] as String?,
@@ -22,7 +22,7 @@ FilesDetailsItem _$FilesDetailsItemFromJson(Map<String, dynamic> json) =>
       json['originalName'] as String?,
       json['filePath'] as String,
       (json['bgmId'] as num?)?.toInt(),
-      (json['parentId'] as num).toInt(),
+      json['parentId'] as String,
       (json['filesAuthors'] as List<dynamic>)
           .map((e) => FilesDetailsAuthor.fromJson(e as Map<String, dynamic>))
           .toList(),

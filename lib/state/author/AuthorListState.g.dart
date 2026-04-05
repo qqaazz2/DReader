@@ -41,7 +41,7 @@ final class AuthorListStateProvider
   }
 }
 
-String _$authorListStateHash() => r'7fb13b1c72fd706e7a594b4f2a50604554f92a5d';
+String _$authorListStateHash() => r'74687dce9378706b65cd89209e1f8f0b7c6a843e';
 
 abstract class _$AuthorListState extends $Notifier<ListData<AuthorItem>> {
   ListData<AuthorItem> build();
