@@ -27,7 +27,7 @@ class FilesItems extends ListItem<FilesItem> {
     required super.isPc,
     required this.parentId,
   });
-  final int parentId;
+  final String parentId;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => FilesItemsState();

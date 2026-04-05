@@ -22,7 +22,7 @@ import 'package:DReader/widgets/ListTitleWidget.dart';
 class FilesForm extends ConsumerStatefulWidget {
   const FilesForm({super.key, required this.filesId});
 
-  final int filesId;
+  final String filesId;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => FilesFormState();

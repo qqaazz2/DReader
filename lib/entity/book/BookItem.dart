@@ -10,7 +10,7 @@ class BookItem extends Object {
   int id;
 
   @JsonKey(name: 'filesId')
-  int filesId;
+  String filesId;
 
   @JsonKey(name: 'progress')
   double progress;

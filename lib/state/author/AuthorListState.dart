@@ -52,13 +52,13 @@ class AuthorListState extends _$AuthorListState {
         count: baseListResult.result?.count ?? 0,
         pages: baseListResult.result?.pages ?? 0,
         limit: 50,
-        data: [...state.data ?? [],...baseListResult.result?.data ?? []],
+        data: [...state.data ?? [], ...baseListResult.result?.data ?? []],
       );
     }
   }
 
   void addFirstItem(AuthorItem authorItem) {
-    state.data?.insert(0, authorItem);
+    state = state.copyWith(data: [authorItem, ...?state.data]);
   }
 
   void syncAuthor(AuthorDetail detail) {

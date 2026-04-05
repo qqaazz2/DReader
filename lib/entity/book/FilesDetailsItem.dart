@@ -26,7 +26,7 @@ class FilesDetailsItem extends Object {
   int love;
 
   @JsonKey(name: 'filesId')
-  int filesId;
+  String filesId;
 
   @JsonKey(name: 'isFolder')
   int isFolder;
@@ -50,7 +50,7 @@ class FilesDetailsItem extends Object {
   int? bgmId;
 
   @JsonKey(name: 'parentId')
-  int parentId;
+  String parentId;
 
   @JsonKey(name: 'filesAuthors')
   List<FilesDetailsAuthor> filesAuthors;
@@ -90,7 +90,7 @@ class FilesDetailsItem extends Object {
     int? overStatus,
     int? status,
     int? love,
-    int? filesId,
+    String? filesId,
     int? isFolder,
     String? lastReadTime,
     String? profile,
@@ -98,7 +98,7 @@ class FilesDetailsItem extends Object {
     String? originalName,
     String? filePath,
     int? bgmId,
-    int? parentId,
+    String? parentId,
     List<FilesDetailsAuthor>? filesAuthors,
     List<FilesDetailsTag>? filesTags,
   }) {

@@ -26,13 +26,13 @@ class FilesItem extends Object {
   String? cover;
 
   @JsonKey(name: 'filesId')
-  int filesId;
+  String filesId;
 
   @JsonKey(name: 'isFolder')
   int isFolder;
 
   @JsonKey(name: 'parentId')
-  int parentId;
+  String parentId;
 
   @JsonKey(name: "filePath")
   String filePath;
@@ -84,9 +84,9 @@ class FilesItem extends Object {
     int? status,
     int? love,
     String? cover,
-    int? filesId,
+    String? filesId,
     int? isFolder,
-    int? parentId,
+    String? parentId,
     String? filePath,
   }) {
     return FilesItem(

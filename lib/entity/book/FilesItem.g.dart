@@ -13,9 +13,9 @@ FilesItem _$FilesItemFromJson(Map<String, dynamic> json) => FilesItem(
   json['name'] as String,
   (json['overStatus'] as num).toInt(),
   (json['status'] as num).toInt(),
-  (json['filesId'] as num).toInt(),
+  json['filesId'] as String,
   (json['isFolder'] as num).toInt(),
-  (json['parentId'] as num).toInt(),
+  json['parentId'] as String,
   json['filePath'] as String,
 );
 

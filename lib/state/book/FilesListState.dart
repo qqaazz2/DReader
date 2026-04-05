@@ -19,10 +19,10 @@ part 'FilesListState.g.dart';
 @riverpod
 class FilesListState extends _$FilesListState {
   late SeriesParam seriesParam;
-  late int patentId;
+  late String patentId;
 
   @override
-  FilesList build(int id) {
+  FilesList build(String id) {
     patentId = id;
     seriesParam = SeriesParam();
     final updateStream = ref.watch(filesGlobalUpdateStateProvider).stream;

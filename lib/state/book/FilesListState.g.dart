@@ -16,7 +16,7 @@ final class FilesListStateProvider
     extends $NotifierProvider<FilesListState, FilesList> {
   const FilesListStateProvider._({
     required FilesListStateFamily super.from,
-    required int super.argument,
+    required String super.argument,
   }) : super(
          retry: null,
          name: r'filesListStateProvider',
@@ -58,7 +58,7 @@ final class FilesListStateProvider
   }
 }
 
-String _$filesListStateHash() => r'6c47a08aaeaff5b02648170f1cbee097d4601093';
+String _$filesListStateHash() => r'50688ec69565faf076bbdbb4dead2546d943ea12';
 
 final class FilesListStateFamily extends $Family
     with
@@ -67,7 +67,7 @@ final class FilesListStateFamily extends $Family
           FilesList,
           FilesList,
           FilesList,
-          int
+          String
         > {
   const FilesListStateFamily._()
     : super(
@@ -78,7 +78,7 @@ final class FilesListStateFamily extends $Family
         isAutoDispose: true,
       );
 
-  FilesListStateProvider call(int id) =>
+  FilesListStateProvider call(String id) =>
       FilesListStateProvider._(argument: id, from: this);
 
   @override
@@ -86,10 +86,10 @@ final class FilesListStateFamily extends $Family
 }
 
 abstract class _$FilesListState extends $Notifier<FilesList> {
-  late final _$args = ref.$arg as int;
-  int get id => _$args;
+  late final _$args = ref.$arg as String;
+  String get id => _$args;
 
-  FilesList build(int id);
+  FilesList build(String id);
   @$mustCallSuper
   @override
   void runBuild() {
