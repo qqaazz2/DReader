@@ -1,3 +1,4 @@
+import 'package:DReader/common/HttpApi.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -14,7 +15,7 @@ class SeriesDrawer extends ConsumerStatefulWidget {
 }
 
 class SeriesDrawerState extends ConsumerState<SeriesDrawer> {
-  Map<int, String> map = {1: "连载中", 2: "完结", 3: "弃坑",4: "有生之年"};
+  Map<int, String> map = {1: "连载中", 2: "完结", 3: "弃坑", 4: "有生之年"};
   Map<int, String> readMap = {1: "未读", 2: "已读", 3: "在读"};
   Map<int, String> loveMap = {1: "未收藏", 2: "已收藏"};
   late SeriesParam seriesParam;
@@ -46,7 +47,7 @@ class SeriesDrawerState extends ConsumerState<SeriesDrawer> {
                 SearchBar(
                   hintText: '搜索系列',
                   controller: searchController,
-                  onChanged: (value) => seriesParam.name =value,
+                  onChanged: (value) => seriesParam.name = value,
                   onSubmitted: (value) => search(),
                   leading: const Icon(Icons.search),
                 ),
@@ -58,17 +59,25 @@ class SeriesDrawerState extends ConsumerState<SeriesDrawer> {
                 ListTile(
                   leading: const Icon(Icons.adf_scanner),
                   title: const Text("扫描系列"),
-                  onTap: () => ref.read(filesListStateProvider("-1").notifier).scanning(),
+                  onTap: () => ref
+                      .read(filesListStateProvider("-1").notifier)
+                      .scanning(),
                 ),
                 ListTile(
                   leading: const Icon(Icons.image_search),
                   title: const Text("扫描封面"),
-                  onTap: () => ref.read(filesListStateProvider("-1").notifier).coverScanning(),
+                  onTap: () => ref
+                      .read(filesListStateProvider("-1").notifier)
+                      .coverScanning(),
                 ),
                 ListTile(
                   leading: const Icon(Icons.unfold_more),
                   title: const Text("扁平数据"),
-                  trailing: Switch(value: seriesParam.flattening, onChanged: (value) => setState(() => seriesParam.flattening = value)),
+                  trailing: Switch(
+                    value: seriesParam.flattening,
+                    onChanged: (value) =>
+                        setState(() => seriesParam.flattening = value),
+                  ),
                 ),
                 const Divider(),
                 const Text(
@@ -81,7 +90,8 @@ class SeriesDrawerState extends ConsumerState<SeriesDrawer> {
                   title: const Text("完结状态"),
                   subtitle: DropdownMenu<int?>(
                     initialSelection: seriesParam.overStatus,
-                    onSelected: (value) => setState(() => seriesParam.overStatus = value),
+                    onSelected: (value) =>
+                        setState(() => seriesParam.overStatus = value),
                     width: 220,
                     dropdownMenuEntries: _buildMenuList(map),
                   ),
@@ -92,7 +102,8 @@ class SeriesDrawerState extends ConsumerState<SeriesDrawer> {
                   title: const Text("阅读状态"),
                   subtitle: DropdownMenu<int?>(
                     initialSelection: seriesParam.status,
-                    onSelected: (value) => setState(() => seriesParam.status = value),
+                    onSelected: (value) =>
+                        setState(() => seriesParam.status = value),
                     width: 220,
                     dropdownMenuEntries: _buildMenuList(readMap),
                   ),
@@ -103,7 +114,8 @@ class SeriesDrawerState extends ConsumerState<SeriesDrawer> {
                   title: const Text("收藏状态"),
                   subtitle: DropdownMenu<int?>(
                     initialSelection: seriesParam.love,
-                    onSelected: (value) => setState(() => seriesParam.love = value),
+                    onSelected: (value) =>
+                        setState(() => seriesParam.love = value),
                     width: 220,
                     dropdownMenuEntries: _buildMenuList(loveMap),
                   ),
@@ -125,7 +137,7 @@ class SeriesDrawerState extends ConsumerState<SeriesDrawer> {
                       ),
                     ],
                   ),
-                )
+                ),
               ],
             ),
           ),
@@ -147,9 +159,15 @@ class SeriesDrawerState extends ConsumerState<SeriesDrawer> {
     ref.read(filesListStateProvider("-1").notifier).getList();
   }
 
-  void randomData()async{
-    FilesItem? filesItem = await ref.read(filesListStateProvider("-1").notifier).randomData();
-    if(filesItem != null) context.push("/books/content?seriesId=${filesItem.id}&filesId=${filesItem.filesId}&parentId=${filesItem.parentId}");
+  void randomData() async {
+    BaseResult<FilesItem> baseResult = await HttpApi.request<FilesItem>(
+      "/files/randomData",
+      (json) => FilesItem.fromJson(json),
+    );
+
+    if (baseResult.code == "2000") {
+      context.push("/books/content", extra: baseResult.result);
+    }
   }
 
   @override

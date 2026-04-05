@@ -191,18 +191,6 @@ class FilesListState extends _$FilesListState {
     }
   }
 
-  Future<FilesItem?> randomData() async {
-    BaseResult<FilesItem> baseResult = await HttpApi.request<FilesItem>(
-      "/series/randomData",
-      (json) => FilesItem.fromJson(json),
-    );
-
-    if (baseResult.code == "2000") {
-      return baseResult.result;
-    }
-    return null;
-  }
-
   void changeCover(int id, List<int> bytes, int index) async {
     FormData formData = FormData.fromMap({
       "id": id,
