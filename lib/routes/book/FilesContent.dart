@@ -596,12 +596,9 @@ class SeriesContentState extends ConsumerState<SeriesContent> {
                           onPressed: () => showDialog(
                             context: context,
                             builder: (context) {
-                              return SizedBox();
-                              // return SeriesForm(
-                              //   index: widget.index,
-                              //   seriesId: widget.seriesId,
-                              //   seriesItem: state ?,
-                              // );
+                              return FilesForm(
+                                filesId: state!.filesId,
+                              );
                             },
                           ),
                           constraints: const BoxConstraints(
