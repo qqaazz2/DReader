@@ -1,4 +1,5 @@
 import 'package:DReader/common/HttpApi.dart';
+import 'package:DReader/status/BookStatus.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -15,9 +16,6 @@ class SeriesDrawer extends ConsumerStatefulWidget {
 }
 
 class SeriesDrawerState extends ConsumerState<SeriesDrawer> {
-  Map<int, String> map = {1: "连载中", 2: "完结", 3: "弃坑", 4: "有生之年"};
-  Map<int, String> readMap = {1: "未读", 2: "已读", 3: "在读"};
-  Map<int, String> loveMap = {1: "未收藏", 2: "已收藏"};
   late SeriesParam seriesParam;
   final TextEditingController searchController = TextEditingController();
   int? over;
@@ -93,7 +91,7 @@ class SeriesDrawerState extends ConsumerState<SeriesDrawer> {
                     onSelected: (value) =>
                         setState(() => seriesParam.overStatus = value),
                     width: 220,
-                    dropdownMenuEntries: _buildMenuList(map),
+                    dropdownMenuEntries: _buildMenuList(BookStatus.overStatus),
                   ),
                 ),
                 ListTile(
@@ -105,7 +103,7 @@ class SeriesDrawerState extends ConsumerState<SeriesDrawer> {
                     onSelected: (value) =>
                         setState(() => seriesParam.status = value),
                     width: 220,
-                    dropdownMenuEntries: _buildMenuList(readMap),
+                    dropdownMenuEntries: _buildMenuList(BookStatus.readStatus),
                   ),
                 ),
                 ListTile(
@@ -117,7 +115,7 @@ class SeriesDrawerState extends ConsumerState<SeriesDrawer> {
                     onSelected: (value) =>
                         setState(() => seriesParam.love = value),
                     width: 220,
-                    dropdownMenuEntries: _buildMenuList(loveMap),
+                    dropdownMenuEntries: _buildMenuList(BookStatus.loveStatus),
                   ),
                 ),
                 Padding(
@@ -147,11 +145,8 @@ class SeriesDrawerState extends ConsumerState<SeriesDrawer> {
   }
 
   void reset() {
-    setState(() {
-      seriesParam = SeriesParam();
-      searchController.clear();
-      search();
-    });
+    ref.read(filesListStateProvider("-1").notifier).seriesParam = SeriesParam();
+    setState(() {});
   }
 
   void search() {
