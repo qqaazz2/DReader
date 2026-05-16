@@ -95,8 +95,7 @@ class BookCoverChangeState extends ConsumerState<BookCoverChange> {
                   child: ListWidget<String>(
                       list: list,
                       count: list.length,
-                      widget: (String data, index,
-                          {show = false, isPc = true}) {
+                      widget: (String data, index) {
                         List<int>? bytes = epubParsing.getImage(data);
                         return BookCover(
                           data: data,

@@ -57,8 +57,7 @@ class SideNoticeOverlay {
     return randomString;
   }
 
-  static void open(
-      {required SideNoticeLevel level, String text = "", int seconds = 5}) {
+  static void open({required SideNoticeLevel level, String text = "", int seconds = 5}) {
     String key = _generateRandomString();
     OverlayEntry overlayEntry = OverlayEntry(builder: (context) {
       double top = 40;
@@ -175,7 +174,7 @@ class SideNoticeState extends State<SideNotice>
             child: LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
                 double width =
-                    MyApp.width < constraints.maxWidth ? 400 : MyApp.width;
+                    MyApp.width < constraints.maxWidth ? 400 : MyApp.width - 50;
                 return Card(
                   clipBehavior: Clip.hardEdge,
                   elevation: 4,

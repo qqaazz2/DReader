@@ -79,7 +79,7 @@ class FilesDetailsItemState extends _$FilesDetailsItemState {
   }
 
   void updateReadStatus(String? lastReadTime) async {
-    if (lastReadTime == null || id == -1) return;
+    if (lastReadTime == null || id == "-1") return;
     BaseResult baseResult = await HttpApi.request(
       "/files/updateStatus",
       (json) => json,

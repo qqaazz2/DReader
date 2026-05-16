@@ -27,11 +27,9 @@ class FilesListState extends _$FilesListState {
     seriesParam = SeriesParam();
     final updateStream = ref.watch(filesGlobalUpdateStateProvider).stream;
     final subscription = updateStream.listen((FilesItem updatedItem) {
-      print('id$id');
       syncItem(updatedItem);
     });
-    ref.onDispose((){
-      print('id$id');
+    ref.onDispose(() {
       subscription.cancel();
     });
     return FilesList(50, 1, 0, 0, []);
@@ -148,7 +146,7 @@ class FilesListState extends _$FilesListState {
   void coverScanning() async {
     BaseResult baseResult = await HttpApi.request(
       "/task/coverScanning",
-          () => {},
+      () => {},
       params: {},
     );
     if (baseResult.code == "2000") {
@@ -157,8 +155,10 @@ class FilesListState extends _$FilesListState {
   }
 
   void syncItem(FilesItem files) {
+    print('files');
     if (!ref.mounted) return;
     int index = state.data.indexWhere((item) => item.id == files.id);
+    print('index${index}parentId$patentId');
     if (index < 0 || state.data[index] == files) return;
     state.data[index] = files;
     state = state.copyWith(
@@ -168,7 +168,6 @@ class FilesListState extends _$FilesListState {
       pages: state.pages,
       count: state.count,
     );
-    print('6');
   }
 
   Future<void> updateData(FilesItem filesItem, int index) async {
@@ -239,6 +238,37 @@ class FilesListState extends _$FilesListState {
       count: state.count,
     );
   }
+
+  final Map<String, void Function(FilesItem, int)> fieldSetters = {
+    "status": (item, value) => item.status = value,
+    "overStatus": (item, value) => item.overStatus = value,
+    "love": (item, value) => item.love = value,
+  };
+
+  void updateStatus(List<FilesItem> list, int status, String field) async {
+    if (fieldSetters[field] == null) {
+      SideNoticeOverlay.error(text: "批量更新书籍状态失败");
+      return;
+    }
+    BaseResult baseResult = await HttpApi.request(
+      "/files/updateStatusByField",
+      () => {},
+      method: "post",
+      successMsg: true,
+      params: {
+        "ids": list.map((item) => item.id).toList(),
+        "status": status,
+        "field": field,
+      },
+    );
+    if (baseResult.code == "2000") {
+      for (var item in list) {
+        FilesItem newItem = item.copyWith();
+        fieldSetters[field]!(newItem, status);
+        ref.read(filesGlobalUpdateStateProvider).add(newItem);
+      }
+    }
+  }
 }
 
 class SeriesParam {
@@ -278,5 +308,21 @@ class SeriesParam {
       sortOrder: sortOrder ?? this.sortOrder,
       flattening: flattening ?? this.flattening,
     );
+  }
+
+  @override
+  int get hashCode => Object.hash(name,overStatus,love,status,sortField,sortOrder,flattening,);
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is SeriesParam &&
+        other.name == name &&
+        other.overStatus == overStatus &&
+        other.love == love &&
+        other.status == status &&
+        other.sortField == sortField &&
+        other.sortOrder == sortOrder &&
+        other.flattening == flattening;
   }
 }

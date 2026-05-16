@@ -2,9 +2,11 @@ import 'dart:ui';
 
 import 'package:DReader/entity/book/FilesDetailsItem.dart';
 import 'package:DReader/entity/book/FilesItem.dart';
+import 'package:DReader/widgets/CheckHandleItem.dart';
 import 'package:DReader/routes/book/widgets/FilesItems.dart';
 import 'package:DReader/state/book/FilesDetailsItemState.dart';
 import 'package:DReader/state/book/FilesGlobalUpdateState.dart';
+import 'package:DReader/status/BookStatus.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -16,39 +18,33 @@ import 'package:DReader/common/ImageModule.dart';
 import 'package:DReader/entity/book/BookItem.dart';
 import 'package:DReader/main.dart';
 import 'package:DReader/routes/book/widgets/BookItems.dart';
-import 'package:DReader/routes/book/widgets/SeriesChangeCover.dart';
-import 'package:DReader/state/book/SeriesContentState.dart';
 import 'package:DReader/state/book/FilesListState.dart';
 import 'package:DReader/widgets/ListWidget.dart';
 import 'package:provider/provider.dart' hide Consumer;
 
 import 'FilesForm.dart';
 
-class SeriesContent extends ConsumerStatefulWidget {
-  const SeriesContent({
-    super.key,
-    required this.filesItem,
-  });
-
+class FilesContent extends ConsumerStatefulWidget {
+  const FilesContent({super.key, required this.filesItem});
 
   final FilesItem filesItem;
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => SeriesContentState();
+  ConsumerState<ConsumerStatefulWidget> createState() => FilesContentState();
 }
 
-class SeriesContentState extends ConsumerState<SeriesContent> {
+class FilesContentState extends ConsumerState<FilesContent> {
   bool listLoading = true;
+
   @override
   void initState() {
     super.initState();
-    ref.read(filesListStateProvider(widget.filesItem.filesId).notifier).getList();
+    ref
+        .read(filesListStateProvider(widget.filesItem.filesId).notifier)
+        .getList();
   }
 
   Map<String, String> map = {"Authorization": "Bearer ${Global.token}"};
-
-  Map<int, String> overMap = {1: "连载中", 2: "完结", 3: "弃坑", 4: "有生之年"};
-  Map<int, String> readMap = {1: "未读", 2: "已读", 3: "在读"};
 
   @override
   Widget build(BuildContext context) {
@@ -60,12 +56,25 @@ class SeriesContentState extends ConsumerState<SeriesContent> {
       data: (FilesDetailsItem? item) {
         return PopScope(
           onPopInvokedWithResult: (bool didPop, Object? result) {
-            if(item == null) return;
-            final provider = filesDetailsItemStateProvider(widget.filesItem.parentId);
+            if (item == null) return;
+            final provider = filesDetailsItemStateProvider(
+              widget.filesItem.parentId,
+            );
             if (ref.exists(provider)) {
               ref.read(provider.notifier).updateReadStatus(item.lastReadTime);
             }
-            FilesItem filesItem = FilesItem(item.id, item.love, item.cover, item.name, item.overStatus, item.status, item.filesId, item.isFolder, widget.filesItem.parentId, widget.filesItem.filePath);
+            FilesItem filesItem = FilesItem(
+              item.id,
+              item.love,
+              item.cover,
+              item.name,
+              item.overStatus,
+              item.status,
+              item.filesId,
+              item.isFolder,
+              widget.filesItem.parentId,
+              widget.filesItem.filePath,
+            );
             ref.read(filesGlobalUpdateStateProvider).add(filesItem);
           },
           child: Column(
@@ -103,26 +112,72 @@ class SeriesContentState extends ConsumerState<SeriesContent> {
                         children: [
                           Expanded(
                             child: ListWidget<FilesItem>(
-                                  list: state.data,
-                                  count: state.count,
-                                  scale: .7,
-                                  widget:
-                                      (
-                                      FilesItem data,
-                                        index, {
-                                        show = false,
-                                        isPc = true,
-                                      }) {
-                                        return FilesItems(
-                                          data: data,
-                                          index: index,
-                                          show: show,
-                                          isPc: isPc,
-                                          parentId: widget.filesItem.filesId,
-                                        );
-                                      },
-                                  getList: () => ref.read(filesListStateProvider(widget.filesItem.filesId).notifier).getList(),
-                                ),
+                              nodeKey: "id${widget.filesItem.id}",
+                              list: state.data,
+                              count: state.count,
+                              scale: .7,
+                              widget: (FilesItem data, index) {
+                                return FilesItems(
+                                  data: data,
+                                  index: index,
+                                  parentId: widget.filesItem.filesId,
+                                );
+                              },
+                              checkHandle: (List<FilesItem> selectDataList) {
+                                return [
+                                  CheckHandleItem(
+                                    map: BookStatus.readStatus,
+                                    text: "更新阅读状态",
+                                    onTap: (Object key) => ref
+                                        .read(
+                                          filesListStateProvider("-1").notifier,
+                                        )
+                                        .updateStatus(
+                                          selectDataList,
+                                          key as int,
+                                          "status",
+                                        ),
+                                    iconData: Icons.edit,
+                                  ),
+                                  CheckHandleItem(
+                                    map: BookStatus.overStatus,
+                                    text: "更新连载状态",
+                                    onTap: (Object key) => ref
+                                        .read(
+                                          filesListStateProvider("-1").notifier,
+                                        )
+                                        .updateStatus(
+                                          selectDataList,
+                                          key as int,
+                                          "overStatus",
+                                        ),
+                                    iconData: Icons.edit,
+                                    height: 200,
+                                  ),
+                                  CheckHandleItem(
+                                    map: BookStatus.loveStatus,
+                                    text: "更新收藏状态",
+                                    onTap: (Object key) => ref
+                                        .read(
+                                          filesListStateProvider("-1").notifier,
+                                        )
+                                        .updateStatus(
+                                          selectDataList,
+                                          key as int,
+                                          "love",
+                                        ),
+                                    iconData: Icons.favorite,
+                                  ),
+                                ];
+                              },
+                              getList: () => ref
+                                  .read(
+                                    filesListStateProvider(
+                                      widget.filesItem.filesId,
+                                    ).notifier,
+                                  )
+                                  .getList(),
+                            ),
                           ),
                         ],
                       ),
@@ -152,12 +207,12 @@ class SeriesContentState extends ConsumerState<SeriesContent> {
       loading: () {
         return const Center(
           child: SizedBox(
-            width: 150,
-            height: 150,
+            width: 250,
+            height: 250,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                CircularProgressIndicator(strokeWidth: 6, color: Colors.blue),
+                CircularProgressIndicator(),
                 SizedBox(height: 16), // 间距
                 Text(
                   '加载中…',
@@ -205,7 +260,7 @@ class SeriesContentState extends ConsumerState<SeriesContent> {
                         child: ImageModule.getImage(
                           state?.cover,
                           fit: BoxFit.fitHeight,
-                          isMemCache: false
+                          isMemCache: false,
                         ),
                       ),
                     ),
@@ -409,7 +464,9 @@ class SeriesContentState extends ConsumerState<SeriesContent> {
                             children: [
                               Chip(
                                 avatar: const Icon(Icons.bookmark, size: 16),
-                                label: Text(readMap[state?.status] ?? "未知"),
+                                label: Text(
+                                  BookStatus.getReadStatus(state?.status),
+                                ),
                                 visualDensity: VisualDensity.compact,
                               ),
                               Chip(
@@ -417,7 +474,9 @@ class SeriesContentState extends ConsumerState<SeriesContent> {
                                   Icons.check_circle,
                                   size: 16,
                                 ),
-                                label: Text(overMap[state?.overStatus] ?? "未知"),
+                                label: Text(
+                                  BookStatus.getOverStatus(state?.overStatus),
+                                ),
                                 visualDensity: VisualDensity.compact,
                               ),
                               IconButton(
@@ -441,9 +500,7 @@ class SeriesContentState extends ConsumerState<SeriesContent> {
                                 onPressed: () => showDialog(
                                   context: context,
                                   builder: (context) {
-                                    return FilesForm(
-                                      filesId: state!.filesId,
-                                    );
+                                    return FilesForm(filesId: state!.filesId);
                                   },
                                 ),
                                 icon: const Icon(Icons.edit_note_sharp),
@@ -472,7 +529,11 @@ class SeriesContentState extends ConsumerState<SeriesContent> {
         expandedHeight: 400,
         flexibleSpace: FlexibleSpaceBar(
           collapseMode: CollapseMode.pin,
-          background: ImageModule.getImage(state?.cover, fit: BoxFit.fitHeight,isMemCache: false),
+          background: ImageModule.getImage(
+            state?.cover,
+            fit: BoxFit.fitHeight,
+            isMemCache: false,
+          ),
         ),
       ),
       SliverPadding(
@@ -535,7 +596,9 @@ class SeriesContentState extends ConsumerState<SeriesContent> {
                         children: [
                           const Icon(Icons.bookmark_border, size: 15),
                           const SizedBox(width: 5),
-                          Text("阅读状态：${readMap[state?.status]}"),
+                          Text(
+                            "阅读状态：${BookStatus.getReadStatus(state?.status)}",
+                          ),
                         ],
                       ),
                     ),
@@ -545,7 +608,9 @@ class SeriesContentState extends ConsumerState<SeriesContent> {
                         children: [
                           const Icon(Icons.verified, size: 15),
                           const SizedBox(width: 5),
-                          Text("完结状态：${overMap[state?.overStatus]}"),
+                          Text(
+                            "完结状态：${BookStatus.getOverStatus(state?.overStatus)}",
+                          ),
                         ],
                       ),
                     ),
@@ -596,9 +661,7 @@ class SeriesContentState extends ConsumerState<SeriesContent> {
                           onPressed: () => showDialog(
                             context: context,
                             builder: (context) {
-                              return FilesForm(
-                                filesId: state!.filesId,
-                              );
+                              return FilesForm(filesId: state!.filesId);
                             },
                           ),
                           constraints: const BoxConstraints(

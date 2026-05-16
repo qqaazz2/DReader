@@ -40,12 +40,10 @@ class AuthorBookPcListState extends ConsumerState<AuthorBookPcList> {
           list: state.data,
           count: state.count,
           scale: .7,
-          widget: (FilesItem data, index, {show = false, isPc = true}) {
+          widget: (FilesItem data, index) {
             return FilesItems(
               data: data,
               index: index,
-              show: show,
-              isPc: isPc,
               parentId: widget.id.toString(),
             );
           },

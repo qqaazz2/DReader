@@ -89,15 +89,9 @@ class AuthorPageState extends ConsumerState<AuthorPage> {
                   list: state.data!,
                   count: state.count,
                   scale: 1,
-                  widget:
-                      (AuthorItem data, index, {show = false, isPc = true}) {
-                        return AuthorItems(
-                          data: data,
-                          index: index,
-                          show: show,
-                          isPc: isPc,
-                        );
-                      },
+                  widget: (AuthorItem data, index) {
+                    return AuthorItems(data: data, index: index);
+                  },
                   getList: () => ref
                       .read(authorListStateProvider.notifier)
                       .getList(name: _searchController.text),

@@ -8,6 +8,7 @@ import 'package:DReader/entity/book/FilesDetailsItem.dart';
 import 'package:DReader/entity/book/FilesDetailsTag.dart';
 import 'package:DReader/routes/book/widgets/FilesAuthorBox.dart';
 import 'package:DReader/state/book/FilesDetailsItemState.dart';
+import 'package:DReader/status/BookStatus.dart';
 import 'package:DReader/widgets/FormInput.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -29,8 +30,8 @@ class FilesForm extends ConsumerStatefulWidget {
 }
 
 class FilesFormState extends ConsumerState<FilesForm> {
-  Map<int, String> overMap = {1: "连载中", 2: "完结", 3: "弃坑", 4: "有生之年"};
-  Map<int, String> readMap = {1: "未读", 2: "已读", 3: "在读"};
+  // Map<int, String> overMap = {1: "连载中", 2: "完结", 3: "弃坑", 4: "有生之年"};
+  // Map<int, String> readMap = {1: "未读", 2: "已读", 3: "在读"};
   FilesDetailsItem? filesDetailsItem;
 
   List<DropdownMenuEntry<int>> _buildMenuList(map) {
@@ -215,7 +216,7 @@ class FilesFormState extends ConsumerState<FilesForm> {
                               ),
                             ),
                             width: 200,
-                            dropdownMenuEntries: _buildMenuList(overMap),
+                            dropdownMenuEntries: _buildMenuList(BookStatus.overStatus),
                             initialSelection: filesDetailsItem!.overStatus,
                             onSelected: (value) =>
                                 filesDetailsItem!.overStatus = value!,
@@ -239,7 +240,7 @@ class FilesFormState extends ConsumerState<FilesForm> {
                               ),
                             ),
                             width: 200,
-                            dropdownMenuEntries: _buildMenuList(readMap),
+                            dropdownMenuEntries: _buildMenuList(BookStatus.readStatus),
                             initialSelection: filesDetailsItem!.status,
                             onSelected: (value) =>
                                 filesDetailsItem!.status = value!,

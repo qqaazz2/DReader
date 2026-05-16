@@ -87,7 +87,7 @@ class _MyAppState extends ConsumerState<MyApp> {
                       builder: (context, state) {
                         // int parentId = int.parse(state.uri.queryParameters["parentId"]!);
                         FilesItem item = state.extra as FilesItem;
-                        return SeriesContent(filesItem: item);
+                        return FilesContent(filesItem: item);
                       },
                     ),
                   ],

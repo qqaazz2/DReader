@@ -23,10 +23,9 @@ class FilesItems extends ListItem<FilesItem> {
     super.key,
     required super.data,
     required super.index,
-    required super.show,
-    required super.isPc,
     required this.parentId,
   });
+
   final String parentId;
 
   @override
@@ -39,6 +38,7 @@ class FilesItemsState extends ConsumerState<FilesItems> {
   final over = ["连载中", "完结", "弃坑"];
 
   final status = [Colors.redAccent, Colors.transparent, Colors.amberAccent];
+  bool check = false;
 
   @override
   Widget build(BuildContext context) {
@@ -111,7 +111,7 @@ class FilesItemsState extends ConsumerState<FilesItems> {
                                   onEdit: editForm,
                                   onSetSeriesCover: setSeriesCover,
                                 ),
-                                onPop: () => print('Popover was popped!'),
+                                backgroundColor: Theme.of(context).cardColor,
                                 direction: PopoverDirection.right,
                                 constraints: const BoxConstraints(
                                   maxWidth: 160,
@@ -133,7 +133,9 @@ class FilesItemsState extends ConsumerState<FilesItems> {
                           ),
                           onPressed: () => ref
                               .read(
-                                filesListStateProvider(widget.parentId).notifier,
+                                filesListStateProvider(
+                                  widget.parentId,
+                                ).notifier,
                               )
                               .setLove(widget.index),
                           icon: Icon(
@@ -192,12 +194,14 @@ class FilesItemsState extends ConsumerState<FilesItems> {
     showDialog(
       context: context,
       builder: (context) {
-        return FilesForm(filesId: widget.data.filesId,);
+        return FilesForm(filesId: widget.data.filesId);
       },
     );
   }
 
-  void setSeriesCover() => ref.read(filesDetailsItemStateProvider(widget.data.parentId).notifier).updateCover(widget.data.id);
+  void setSeriesCover() => ref
+      .read(filesDetailsItemStateProvider(widget.data.parentId).notifier)
+      .updateCover(widget.data.id);
 }
 
 class PopoverItemList extends StatelessWidget {

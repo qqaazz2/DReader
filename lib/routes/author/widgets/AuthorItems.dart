@@ -21,8 +21,6 @@ class AuthorItems extends ListItem<AuthorItem> {
     super.key,
     required super.data,
     required super.index,
-    required super.show,
-    required super.isPc,
   });
 
   @override
