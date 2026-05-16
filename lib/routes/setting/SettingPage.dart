@@ -73,7 +73,6 @@ class SettingPageState extends ConsumerState<SettingPage>
                   widget: Consumer(
                     builder: (context, ref, child) {
                       UserInfo? state = ref.watch(userInfoStateProvider);
-                      print('state?.cover${state?.toJson()}');
                       return Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -201,7 +200,6 @@ class SettingPageState extends ConsumerState<SettingPage>
           child: Consumer(
             builder: (context, ref, child) {
               final state = ref.watch(userInfoStateProvider);
-              print('state?.cover${state?.toJson()}');
               return Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

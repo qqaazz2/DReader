@@ -155,10 +155,8 @@ class FilesListState extends _$FilesListState {
   }
 
   void syncItem(FilesItem files) {
-    print('files');
     if (!ref.mounted) return;
     int index = state.data.indexWhere((item) => item.id == files.id);
-    print('index${index}parentId$patentId');
     if (index < 0 || state.data[index] == files) return;
     state.data[index] = files;
     state = state.copyWith(
