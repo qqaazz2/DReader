@@ -3,6 +3,7 @@ import 'package:DReader/main.dart';
 import 'package:DReader/state/book/FilesGlobalUpdateState.dart';
 import 'package:DReader/widgets/ScanningIndicator.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:DReader/common/HttpApi.dart';
 import 'package:DReader/entity/book/FilesItem.dart';
@@ -131,11 +132,11 @@ class FilesListState extends _$FilesListState {
     }
   }
 
-  void scanning() async {
+  void scanning({isScrape = true}) async {
     BaseResult baseResult = await HttpApi.request(
       "/task/scanning",
       () => {},
-      params: {},
+      params: {"isScrape": isScrape},
     );
     if (baseResult.code == "2000") {
       SideNoticeOverlay.success(text: "开始扫描图书文件");
@@ -309,7 +310,15 @@ class SeriesParam {
   }
 
   @override
-  int get hashCode => Object.hash(name,overStatus,love,status,sortField,sortOrder,flattening,);
+  int get hashCode => Object.hash(
+    name,
+    overStatus,
+    love,
+    status,
+    sortField,
+    sortOrder,
+    flattening,
+  );
 
   @override
   bool operator ==(Object other) {

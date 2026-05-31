@@ -1,4 +1,5 @@
 import 'package:DReader/common/HttpApi.dart';
+import 'package:DReader/common/ScanningPop.dart';
 import 'package:DReader/status/BookStatus.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -7,6 +8,7 @@ import 'package:DReader/entity/BaseResult.dart';
 import 'package:DReader/entity/book/FilesItem.dart';
 import 'package:DReader/state/book/SeriesContentState.dart';
 import 'package:DReader/state/book/FilesListState.dart';
+import 'package:popover/popover.dart';
 
 class SeriesDrawer extends ConsumerStatefulWidget {
   const SeriesDrawer({super.key});
@@ -54,12 +56,12 @@ class SeriesDrawerState extends ConsumerState<SeriesDrawer> {
                   title: const Text("随机系列"),
                   onTap: () => randomData(),
                 ),
-                ListTile(
-                  leading: const Icon(Icons.adf_scanner),
-                  title: const Text("扫描系列"),
-                  onTap: () => ref
-                      .read(filesListStateProvider("-1").notifier)
-                      .scanning(),
+                Builder(
+                  builder: (context) => ListTile(
+                    leading: const Icon(Icons.adf_scanner),
+                    title: const Text("扫描系列"),
+                    onTap: () => ScanningPop.showPop(context,direction: PopoverDirection.right),
+                  ),
                 ),
                 ListTile(
                   leading: const Icon(Icons.image_search),

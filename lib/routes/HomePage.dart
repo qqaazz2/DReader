@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:DReader/common/Global.dart';
 import 'package:DReader/common/ImageModule.dart';
+import 'package:DReader/common/ScanningPop.dart';
 import 'package:DReader/entity/book/FilesItem.dart';
 import 'package:DReader/entity/book/FilesOverview.dart';
 import 'package:DReader/main.dart';
@@ -186,12 +187,12 @@ class PcHomeState extends ConsumerState<PcHome> {
               constraints: itemConstraints,
               child: Column(
                 children: [
-                  ListTile(
-                    title: const Text("扫描书籍"),
-                    onTap: () => ref
-                        .read(filesListStateProvider("-1").notifier)
-                        .scanning(),
-                  ),
+                  Builder(builder: (context){
+                    return ListTile(
+                        title: const Text("扫描书籍"),
+                        onTap: () => ScanningPop.showPop(context)
+                    );
+                  }),
                   ListTile(
                     title: const Text("扫描封面"),
                     onTap: () => ref
@@ -442,7 +443,7 @@ class PcHomeState extends ConsumerState<PcHome> {
                                 item.discardedSeriesCount,
                                 "弃坑系列",
                                 Icons.cancel,
-                                    () {},
+                                () {},
                                 Colors.grey,
                               ),
                             ];
@@ -533,32 +534,45 @@ class MobileHomeState extends ConsumerState<MobileHome> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("${currTimeText.displayName}好，祝你今天愉快！"),
-                  PopupMenuButton<String>(
-                    icon: const Icon(Icons.more_vert),
-                    onSelected: (value) {
-                      if (value == "scan") {
-                        ref
-                            .read(filesListStateProvider("-1").notifier)
-                            .scanning();
-                      }else if (value == "coverScan") {
-                        ref
-                            .read(filesListStateProvider("-1").notifier)
-                            .coverScanning();
-                      } else if (value == "logout") {
-                        Global.logout(context);
-                      }
-                    },
-                    itemBuilder: (context) => [
-                      const PopupMenuItem(value: "scan", child: Text("扫描图书")),
-                      const PopupMenuItem(value: "coverScan", child: Text("扫描封面")),
-                      const PopupMenuItem(value: "logout", child: Text("退出登录")),
+              Builder(
+                builder: (context) {
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("${currTimeText.displayName}好，祝你今天愉快！"),
+                      Builder(builder: (context){
+                        return PopupMenuButton<String>(
+                          icon: const Icon(Icons.more_vert),
+                          onSelected: (value) {
+                            if (value == "scan") {
+                              ScanningPop.showPop(context);
+                            } else if (value == "coverScan") {
+                              ref
+                                  .read(filesListStateProvider("-1").notifier)
+                                  .coverScanning();
+                            } else if (value == "logout") {
+                              Global.logout(context);
+                            }
+                          },
+                          itemBuilder: (context) => [
+                            const PopupMenuItem(
+                              value: "scan",
+                              child: Text("扫描图书"),
+                            ),
+                            const PopupMenuItem(
+                              value: "coverScan",
+                              child: Text("扫描封面"),
+                            ),
+                            const PopupMenuItem(
+                              value: "logout",
+                              child: Text("退出登录"),
+                            ),
+                          ],
+                        );
+                      })
                     ],
-                  ),
-                ],
+                  );
+                },
               ),
               titleWidget("继续阅读"),
               Consumer(
@@ -571,38 +585,41 @@ class MobileHomeState extends ConsumerState<MobileHome> {
                           if (item == null) {
                             return Text("暂无阅读记录");
                           }
-                          return GestureDetector(child: Container(
-                            constraints: const BoxConstraints(maxWidth: 350),
-                            decoration: const BoxDecoration(
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black12,
-                                  blurRadius: 20,
-                                  offset: Offset(0, 10),
-                                ),
-                              ],
-                            ),
-                            child: Card(
-                              clipBehavior: Clip.hardEdge,
-                              child: Column(
-                                children: [
-                                  AspectRatio(
-                                    aspectRatio: 2 / 3,
-                                    child: ImageModule.getImage(
-                                      item.cover,
-                                      fit: BoxFit.cover,
-                                    ),
+                          return GestureDetector(
+                            child: Container(
+                              constraints: const BoxConstraints(maxWidth: 350),
+                              decoration: const BoxDecoration(
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black12,
+                                    blurRadius: 20,
+                                    offset: Offset(0, 10),
                                   ),
-                                  const SizedBox(height: 10),
-                                  Text(
-                                    item.name,
-                                    style: const TextStyle(fontSize: 15),
-                                  ),
-                                  const SizedBox(height: 10),
                                 ],
                               ),
+                              child: Card(
+                                clipBehavior: Clip.hardEdge,
+                                child: Column(
+                                  children: [
+                                    AspectRatio(
+                                      aspectRatio: 2 / 3,
+                                      child: ImageModule.getImage(
+                                        item.cover,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Text(
+                                      item.name,
+                                      style: const TextStyle(fontSize: 15),
+                                    ),
+                                    const SizedBox(height: 10),
+                                  ],
+                                ),
+                              ),
                             ),
-                          ),onTap: () => context.push("/read?", extra: item),);
+                            onTap: () => context.push("/read?", extra: item),
+                          );
                         },
                         error: (err, stack) => Text('加载失败: $err'),
                         loading: () => const CircularProgressIndicator(),
@@ -691,7 +708,7 @@ class MobileHomeState extends ConsumerState<MobileHome> {
                           item.discardedSeriesCount,
                           "弃坑系列",
                           Icons.cancel,
-                              () {},
+                          () {},
                           Colors.grey,
                         ),
                       ];
