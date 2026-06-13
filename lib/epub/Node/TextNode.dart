@@ -53,17 +53,6 @@ class TextNode extends ReaderNode {
     if (list.isEmpty) return [];
     lastWidth = list.last.width;
 
-    if (extraLineSpacing > 0 && list.length > 1) {
-      int firstLineOffset = textPainter!
-          .getPositionForOffset(
-            Offset(list[0].left + list[0].width, list[0].baseline),
-          )
-          .offset;
-      isEnter = true;
-      currentHeight = extraLineSpacing;
-      segmentation(firstLineOffset, availableWidth);
-    }
-
     //这里是对如果文本的总高度超过了页面剩余的实际高度
     if (textPainter!.height > remainingHeight!) {
       int endOffset = 0;
@@ -89,6 +78,15 @@ class TextNode extends ReaderNode {
 
       isTurning = true;
       segmentation(endOffset, availableWidth);
+    }else if (extraLineSpacing > 0 && list.length > 1) {
+      int firstLineOffset = textPainter!
+          .getPositionForOffset(
+        Offset(list[0].left + list[0].width, list[0].baseline),
+      )
+          .offset;
+      isEnter = true;
+      currentHeight = extraLineSpacing;
+      segmentation(firstLineOffset, availableWidth);
     }
 
     double dx = list.last.width + currentOffset.dx;
