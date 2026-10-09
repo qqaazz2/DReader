@@ -336,7 +336,7 @@ class SettingPageState extends ConsumerState<SettingPage>
             ListTile(
               leading: const Icon(Icons.transform),
               title: const Text(
-                "图片适配器",
+                "图片适配器/刮削器",
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               subtitle: Text(

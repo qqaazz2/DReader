@@ -12,6 +12,7 @@ UserInfo _$UserInfoFromJson(Map<String, dynamic> json) => UserInfo(
   (json['mystery'] as num).toInt(),
   json['cover'] as String?,
   json['fileAdapter'] as String,
+  json['scraper'] as String,
 );
 
 Map<String, dynamic> _$UserInfoToJson(UserInfo instance) => <String, dynamic>{
@@ -20,4 +21,5 @@ Map<String, dynamic> _$UserInfoToJson(UserInfo instance) => <String, dynamic>{
   'mystery': instance.mystery,
   'cover': instance.cover,
   'fileAdapter': instance.fileAdapter,
+  'scraper': instance.fileAdapter,
 };

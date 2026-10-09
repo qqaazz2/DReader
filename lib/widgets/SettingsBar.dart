@@ -122,7 +122,7 @@ class SettingsBarState extends State<SettingsBar> {
                     icon: const Icon(Icons.link_outlined),
                   ),
                   IconButton(
-                    tooltip: "图片适配器",
+                    tooltip: "图片适配器/刮削器",
                     onPressed: () => showDialog(context: context, builder: (context) => const SetFileAdapter()),
                     icon: const Icon(Icons.transform),
                   ),

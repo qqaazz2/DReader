@@ -37,14 +37,17 @@ class UserInfoState extends _$UserInfoState {
     }
   }
 
-  void changeFileAdapter({required String adapter}) async {
+  void changeFileAdapter({
+    required String adapter,
+    required String scraper,
+  }) async {
     BaseResult baseResult = await HttpApi.request(
-      params: {"adapter": adapter},
+      params: {"adapter": adapter, "scraper": scraper},
       "/user/changeFileAdapter",
       (json) => json,
     );
     if ("2000" == baseResult.code) {
-      state = state?.copyWith(fileAdapter: adapter);
+      state = state?.copyWith(fileAdapter: adapter,scraper: scraper);
     }
   }
 

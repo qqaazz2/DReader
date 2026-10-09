@@ -19,10 +19,20 @@ class UserInfo extends Object {
   @JsonKey(name: 'fileAdapter')
   String fileAdapter;
 
+  @JsonKey(name: 'scraper')
+  String scraper;
 
-  UserInfo(this.name, this.email, this.mystery,this.cover,this.fileAdapter);
+  UserInfo(
+    this.name,
+    this.email,
+    this.mystery,
+    this.cover,
+    this.fileAdapter,
+    this.scraper,
+  );
 
-  factory UserInfo.fromJson(Map<String, dynamic> srcJson) => _$UserInfoFromJson(srcJson);
+  factory UserInfo.fromJson(Map<String, dynamic> srcJson) =>
+      _$UserInfoFromJson(srcJson);
 
   Map<String, dynamic> toJson() => _$UserInfoToJson(this);
 
@@ -32,13 +42,15 @@ class UserInfo extends Object {
     int? mystery,
     String? cover,
     String? fileAdapter,
+    String? scraper,
   }) {
     return UserInfo(
       name ?? this.name,
       email ?? this.email,
       mystery ?? this.mystery,
-      cover?? this.cover,
-      fileAdapter ?? this.fileAdapter
+      cover ?? this.cover,
+      fileAdapter ?? this.fileAdapter,
+      scraper ?? this.scraper,
     );
   }
 }
