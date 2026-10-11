@@ -58,7 +58,7 @@ final class FilesListStateProvider
   }
 }
 
-String _$filesListStateHash() => r'5fca02af80023fea39a2828df5a514da77387cc1';
+String _$filesListStateHash() => r'c538f79651a170aa6624fe5af219282201996cca';
 
 final class FilesListStateFamily extends $Family
     with

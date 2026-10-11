@@ -21,5 +21,5 @@ Map<String, dynamic> _$UserInfoToJson(UserInfo instance) => <String, dynamic>{
   'mystery': instance.mystery,
   'cover': instance.cover,
   'fileAdapter': instance.fileAdapter,
-  'scraper': instance.fileAdapter,
+  'scraper': instance.scraper,
 };

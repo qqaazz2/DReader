@@ -41,7 +41,7 @@ final class UserInfoStateProvider
   }
 }
 
-String _$userInfoStateHash() => r'180e6ec7c0c8dca8166b8882ee510dbd8c3e7a3f';
+String _$userInfoStateHash() => r'111956c7d217e3ea28e0f36fd9f24cbbd1afd1cf';
 
 abstract class _$UserInfoState extends $Notifier<UserInfo?> {
   UserInfo? build();

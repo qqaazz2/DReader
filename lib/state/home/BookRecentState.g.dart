@@ -13,7 +13,7 @@ part of 'BookRecentState.dart';
 const bookRecentStateProvider = BookRecentStateProvider._();
 
 final class BookRecentStateProvider
-    extends $AsyncNotifierProvider<BookRecentState, FilesItem?> {
+    extends $AsyncNotifierProvider<BookRecentState, List<FilesItem>?> {
   const BookRecentStateProvider._()
     : super(
         from: null,
@@ -33,20 +33,21 @@ final class BookRecentStateProvider
   BookRecentState create() => BookRecentState();
 }
 
-String _$bookRecentStateHash() => r'29c89bea5e96b432cb2552349610380273e58efa';
+String _$bookRecentStateHash() => r'38c99724993445457b5829e797ff0f8d953a3625';
 
-abstract class _$BookRecentState extends $AsyncNotifier<FilesItem?> {
-  FutureOr<FilesItem?> build();
+abstract class _$BookRecentState extends $AsyncNotifier<List<FilesItem>?> {
+  FutureOr<List<FilesItem>?> build();
   @$mustCallSuper
   @override
   void runBuild() {
     final created = build();
-    final ref = this.ref as $Ref<AsyncValue<FilesItem?>, FilesItem?>;
+    final ref =
+        this.ref as $Ref<AsyncValue<List<FilesItem>?>, List<FilesItem>?>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<AsyncValue<FilesItem?>, FilesItem?>,
-              AsyncValue<FilesItem?>,
+              AnyNotifier<AsyncValue<List<FilesItem>?>, List<FilesItem>?>,
+              AsyncValue<List<FilesItem>?>,
               Object?,
               Object?
             >;
