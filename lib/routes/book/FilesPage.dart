@@ -2,6 +2,7 @@ import 'package:DReader/common/ScanningPop.dart';
 import 'package:DReader/widgets/CheckHandleItem.dart';
 import 'package:DReader/status/BookStatus.dart';
 import 'package:DReader/widgets/ScanningIndicator.dart';
+import 'package:DReader/widgets/UserSelectMatch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:go_router/go_router.dart';
@@ -66,11 +67,13 @@ class SeriesPageState extends ConsumerState<SeriesPage> {
                       icon: const Icon(Icons.refresh),
                       tooltip: "刷新列表",
                     ),
-                    Builder(builder: (context) => IconButton(
-                      onPressed: ()  => ScanningPop.showPop(context),
-                      icon: const Icon(Icons.featured_play_list_sharp),
-                      tooltip: "扫描图书",
-                    )),
+                    Builder(
+                      builder: (context) => IconButton(
+                        onPressed: () => ScanningPop.showPop(context),
+                        icon: const Icon(Icons.featured_play_list_sharp),
+                        tooltip: "扫描图书",
+                      ),
+                    ),
                     IconButton(
                       onPressed: () {
                         ref
@@ -88,7 +91,8 @@ class SeriesPageState extends ConsumerState<SeriesPage> {
                 ),
               Expanded(
                 child: ListWidget<FilesItem>(
-                  nodeKey: "${ref.read(filesListStateProvider("-1").notifier).patentId}${ref.read(filesListStateProvider("-1").notifier).seriesParam.hashCode}",
+                  nodeKey:
+                      "${ref.read(filesListStateProvider("-1").notifier).patentId}${ref.read(filesListStateProvider("-1").notifier).seriesParam.hashCode}",
                   list: state.data,
                   count: state.count,
                   scale: .7,
@@ -101,6 +105,15 @@ class SeriesPageState extends ConsumerState<SeriesPage> {
                   },
                   checkHandle: (List<FilesItem> selectDataList) {
                     return [
+                      ElevatedButton.icon(
+                        onPressed: () => showDialog(
+                          context: context,
+                          builder: (context) =>
+                              UserSelectMatch(list: selectDataList.where((item) => item.isFolder == 1).toList()),
+                        ),
+                        label: const Text("刮削系列信息"),
+                        icon: const Icon(Icons.brush_outlined),
+                      ),
                       CheckHandleItem(
                         map: BookStatus.readStatus,
                         text: "更新阅读状态",
@@ -127,11 +140,7 @@ class SeriesPageState extends ConsumerState<SeriesPage> {
                         text: "更新收藏状态",
                         onTap: (Object key) => ref
                             .read(filesListStateProvider("-1").notifier)
-                            .updateStatus(
-                              selectDataList,
-                              key as int,
-                              "love",
-                            ),
+                            .updateStatus(selectDataList, key as int, "love"),
                         iconData: Icons.favorite,
                       ),
                     ];

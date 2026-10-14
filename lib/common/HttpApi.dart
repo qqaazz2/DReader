@@ -42,6 +42,7 @@ class HttpApi {
     Function fromJson, {
     String method = "get",
     Map<String, dynamic>? params,
+    List<Object>? paramsList,
     Map<String, dynamic>? headers,
     ResponseType? responseType,
     bool isLoading = false,
@@ -93,7 +94,7 @@ class HttpApi {
         response = await dio.request(
           url,
           options: optionsData,
-          data: formData ?? params,
+          data: formData ?? (params ?? paramsList),
         );
       }
       if (isLoading) EasyLoading.dismiss();

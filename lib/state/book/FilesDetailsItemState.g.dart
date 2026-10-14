@@ -51,7 +51,7 @@ final class FilesDetailsItemStateProvider
 }
 
 String _$filesDetailsItemStateHash() =>
-    r'358278f0a0f5cc4932c202ea6b6502fa169b77a5';
+    r'a1472c4598ecafc7ae35d670bc6217c5c48073c5';
 
 final class FilesDetailsItemStateFamily extends $Family
     with

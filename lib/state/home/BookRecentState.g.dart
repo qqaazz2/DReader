@@ -33,7 +33,7 @@ final class BookRecentStateProvider
   BookRecentState create() => BookRecentState();
 }
 
-String _$bookRecentStateHash() => r'38c99724993445457b5829e797ff0f8d953a3625';
+String _$bookRecentStateHash() => r'c4d1c727afb7d3b119caebc03337478cab4042d2';
 
 abstract class _$BookRecentState extends $AsyncNotifier<List<FilesItem>?> {
   FutureOr<List<FilesItem>?> build();

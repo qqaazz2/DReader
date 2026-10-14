@@ -7,6 +7,7 @@ import 'package:DReader/routes/book/widgets/FilesItems.dart';
 import 'package:DReader/state/book/FilesDetailsItemState.dart';
 import 'package:DReader/state/book/FilesGlobalUpdateState.dart';
 import 'package:DReader/status/BookStatus.dart';
+import 'package:DReader/widgets/UserSelectMatch.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -125,6 +126,15 @@ class FilesContentState extends ConsumerState<FilesContent> {
                               },
                               checkHandle: (List<FilesItem> selectDataList) {
                                 return [
+                                  ElevatedButton.icon(
+                                    onPressed: () => showDialog(
+                                      context: context,
+                                      builder: (context) =>
+                                          UserSelectMatch(list: selectDataList.where((item) => item.isFolder == 1).toList()),
+                                    ),
+                                    label: const Text("刮削系列信息"),
+                                    icon: const Icon(Icons.brush_outlined),
+                                  ),
                                   CheckHandleItem(
                                     map: BookStatus.readStatus,
                                     text: "更新阅读状态",
@@ -504,6 +514,13 @@ class FilesContentState extends ConsumerState<FilesContent> {
                                   },
                                 ),
                                 icon: const Icon(Icons.edit_note_sharp),
+                              ),
+                              IconButton(
+                                onPressed: () => showDialog(
+                                  context: context,
+                                  builder: (context) => UserSelectMatch(list: [widget.filesItem]),
+                                ),
+                                icon: const Icon(Icons.brush_outlined),
                               ),
                             ],
                           ),
