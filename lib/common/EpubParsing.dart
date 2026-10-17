@@ -15,10 +15,10 @@ class EpubParsing {
     return opfData;
   }
 
-  Future<List<String>?> parseEpubFromBytes(List<int> epubBytes) async {
+  Future<Map<String,String>?> parseEpubFromBytes(List<int> epubBytes) async {
     try {
       Map<String, dynamic> opfData = await _getOptData(epubBytes);
-      List<String> chapters = readChapters(files, opfData['manifest'], opfData['spine']);
+      Map<String,String> chapters = readChapters(files, opfData['manifest'], opfData['spine']);
       return chapters;
     } catch (e) {
       throw Exception('Error: $e');
@@ -103,9 +103,30 @@ class EpubParsing {
     return {'manifest': manifest, 'spine': spine};
   }
 
-  List<String> readChapters(Map<String, List<int>> files,Map<String, String> manifest,List<String?> spine,) {
-    final chapters = <String>[];
+  Map<String,String> setDirectory(Map<String, String> manifest) {
+    Map<String,String> directory = {};
+    if (!manifest.containsKey("ncx")) return {};
+    String ncx = manifest["ncx"]!;
+    if (!files.containsKey("$_opfDir/$ncx")) return {};
+    final containerContent = utf8.decode(files["$_opfDir/$ncx"]!);
+    final document = XmlDocument.parse(containerContent);
+    final navPoints = document.findAllElements('navPoint');
+    for (var point in navPoints) {
+      final contentElement = point.findAllElements('content').firstOrNull;
+      String? src = contentElement?.getAttribute('src');
+      final textElement = point.findElements('navLabel').firstOrNull
+          ?.findElements('text').firstOrNull;
+      if (src != null && textElement != null) {
+        directory[src] = textElement.innerText.trim();
+      }
+    }
+    return directory;
+  }
 
+  Map<String,String> readChapters(Map<String, List<int>> files,Map<String, String> manifest,List<String?> spine,) {
+    Map<String,String> chapters = {};
+    Map<String,String> directory = setDirectory(manifest);
+    int index = 1;
     for (final idref in spine) {
       String? relativePath = manifest[idref];
       if (relativePath == null) {
@@ -119,7 +140,8 @@ class EpubParsing {
       }
 
       final content = utf8.decode(chapterFile);
-      chapters.add(content);
+      chapters[(directory.containsKey(relativePath) ? directory[relativePath]! : "未定义章节名称-$index")] = content;
+      index++;
     }
 
     return chapters;

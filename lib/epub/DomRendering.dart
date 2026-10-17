@@ -26,7 +26,6 @@ class DomRendering {
   List<String> tagList = [];
   CssToTextstyle cssToTextstyle = CssToTextstyle();
   Map<String, StyleMap> cssMap = {};
-  List<List<ReaderNode>> nodeListList = [];
   late EpubParsing epubParsing;
   List<String> blockList = [
     "div",
@@ -181,10 +180,12 @@ class DomRendering {
         .toList();
   }
 
-  Future<List<List<ReaderNode>>> start(List<int> epubBytes) async {
+  Future<Map<String,List<ReaderNode>>> start(List<int> epubBytes) async {
+    Map<String,List<ReaderNode>> nodeListMap = {};
     try {
+
       epubParsing = EpubParsing();
-      List<String>? list = await epubParsing.parseEpubFromBytes(epubBytes);
+      Map<String,String>? list = await epubParsing.parseEpubFromBytes(epubBytes);
 
       Map<String, String> cssList = epubParsing.getAllCss();
       cssList.forEach((key, value) {
@@ -193,8 +194,10 @@ class DomRendering {
 
       readerThemeStyle = checkReadTheme();
       if (list != null) {
-        for (String item in list) {
-          dom.Document document = html_parser.parse(item);
+        for (var entry in list.entries) {
+          final key = entry.key;
+          final value = entry.value;
+          dom.Document document = html_parser.parse(value);
           List<String> useCss = extractExternalCssLinks(document);
           final styleTags = document.querySelectorAll('style');
           List<ReaderNode> nodeList = await domParse(
@@ -205,17 +208,16 @@ class DomRendering {
           if (nodeList.length > 1) {
             BodyNode bodyNode = BodyNode();
             bodyNode.children = nodeList;
-            nodeListList.add([bodyNode]);
+            nodeListMap[key] = [bodyNode];
           } else {
-            nodeListList.add(nodeList);
+            nodeListMap[key] = nodeList;
           }
         }
       }
-
-      return nodeListList;
     } catch (e) {
       throw Exception(e.toString());
     }
+    return nodeListMap;
   }
 
   String? getImageBytes(dom.Element element) {

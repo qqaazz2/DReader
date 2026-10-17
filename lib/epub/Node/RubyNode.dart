@@ -67,10 +67,11 @@ class RubyNode extends InlineNode {
     } else {
       final dx = textNode.currentOffset.dx +
           (textNode.currentWidth - rtNode.currentWidth) / 2;
-      rtNode.currentWidth = 0;
-      rtNode.currentLineWidth = 0;
-      rtNode.currentLineHeight = 0;
-      rtNode.currentHeight = 0;
+      rtNode.reSet();
+      for (var item in rtNode.children) {
+        item.currentWidth = 0;
+        item.currentHeight = 0;
+      }
       rtNode.layout(availableWidth, Offset(dx, rtNode.currentOffset.dy));
     }
     currentWidth = max(rtNode.currentWidth, textNode.currentWidth);
@@ -90,10 +91,9 @@ class RubyNode extends InlineNode {
 }
 
 class RtNode extends InlineNode {
+  ModelStyle modelStyle = ModelStyle(textStyle:const TextStyle(fontSize: CssToTextstyle.baseFontSize / 1.5));
+
   RtNode(super.tag, super.styleModel, super.uniqueId) {
-    ModelStyle modelStyle = ModelStyle(
-        textStyle:
-            const TextStyle(fontSize: CssToTextstyle.baseFontSize / 1.5));
     styleModel = styleModel.merge(modelStyle);
   }
 
@@ -103,5 +103,13 @@ class RtNode extends InlineNode {
     currentLineHeight = 0;
     currentHeight = 0;
     return RtNode(tag, styleModel, uniqueId);
+  }
+
+  void reSet(){
+    currentWidth = 0;
+    currentLineWidth = 0;
+    currentLineHeight = 0;
+    currentHeight = 0;
+    styleModel = styleModel.merge(modelStyle);
   }
 }

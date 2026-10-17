@@ -11,13 +11,15 @@ class PageNodes {
   double pageWidth;
   bool isColumn;
   int columnNum;
-  List<List<ReaderNode>> unallocated;
+  Map<String,List<ReaderNode>> unallocated;
   int readPage = 0;
+  Map<String,int> directory = {};
 
-  void _paginateChapter(List<ReaderNode> chapterRootNodes) {
+  void _paginateChapter(String title,List<ReaderNode> chapterRootNodes) {
+    double currentPageWidth = isColumn ? pageWidth / 2 - 20 : pageWidth;
     NodeStatus.pageHeight = pageHeight;
-    NodeStatus.pageWidth = pageWidth;
-
+    NodeStatus.pageWidth = currentPageWidth;
+    directory[title] = isColumn ? (list.length / columnNum).floor() : list.length;
     List<ReaderNode> nodesToLayout = List.from(chapterRootNodes);
     while (nodesToLayout.isNotEmpty) {
       final List<ReaderNode> currentPageNodes = [];
@@ -26,7 +28,7 @@ class PageNodes {
 
       for (int i = 0; i < nodesToLayout.length; i++) {
         final node = nodesToLayout[i];
-        List<ReaderNode> spillover = node.layout(pageWidth, currentOffset);
+        List<ReaderNode> spillover = node.layout(currentPageWidth, currentOffset);
         currentPageNodes.add(node);
         if (node.hasIndexList.contains(readRecodesIndex)) readPage = list.length + currentPageNodes.length;
         if (spillover.isNotEmpty) {
@@ -49,16 +51,16 @@ class PageNodes {
   }
 
   void _start() {
-    for (var item in unallocated) {
-      _paginateChapter(item);
-    }
+    unallocated.forEach((key,value) => _paginateChapter(key,value));
+
     pageCount = isColumn ? (list.length / columnNum).ceil() : list.length;
     readPage = isColumn ? (readPage / columnNum).ceil() : readPage;
     readPage = max(0, readPage - 1);
+
+    unallocated.clear();
   }
 
-  PageNodes(this.unallocated, this.pageWidth, this.pageHeight,
-      {this.isColumn = false, this.columnNum = 2, this.readRecodesIndex = 0}) {
+  PageNodes(this.unallocated, this.pageWidth, this.pageHeight,{this.isColumn = false, this.columnNum = 2, this.readRecodesIndex = 0}) {
     _start();
   }
 }

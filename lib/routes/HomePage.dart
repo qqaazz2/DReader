@@ -111,14 +111,14 @@ class _StatCard extends StatelessWidget {
     return GestureDetector(
       onTap: data.onTap,
       child: Card(
-        child: SizedBox(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
           width: width,
-          height: 80,
+          height: 60,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(data.icon, color: data.iconColor, size: 35),
-              SizedBox(width: width * 0.1),
+              Icon(data.icon, color: data.iconColor, size: 30),
+              const SizedBox(width: 20),
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,7 +126,7 @@ class _StatCard extends StatelessWidget {
                   Text(
                     "${data.value}",
                     style: const TextStyle(
-                      fontSize: 22,
+                      fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
