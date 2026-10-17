@@ -520,11 +520,18 @@ class PcHomeState extends ConsumerState<PcHome> {
                             }
                             return ListView.builder(
                               itemBuilder: (context, index) {
-                                return ListTile(
-                                  title: Text(list[index].name),
-                                  onTap: () => ref
-                                      .read(bookRecentStateProvider.notifier)
-                                      .updateCheckId(index),
+                                return Tooltip(
+                                  message: list[index].name,
+                                  child: ListTile(
+                                    title: Text(
+                                      list[index].name,
+                                      maxLines: 3,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    onTap: () => ref
+                                        .read(bookRecentStateProvider.notifier)
+                                        .updateCheckId(index),
+                                  ),
                                 );
                               },
                               itemCount: list.length,
