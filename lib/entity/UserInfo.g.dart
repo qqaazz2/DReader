@@ -13,6 +13,9 @@ UserInfo _$UserInfoFromJson(Map<String, dynamic> json) => UserInfo(
   json['cover'] as String?,
   json['fileAdapter'] as String,
   json['scraper'] as String,
+  (json['proxyEnabled'] as num).toInt(),
+  json['proxyHost'] as String?,
+  (json['proxyPort'] as num?)?.toInt(),
 );
 
 Map<String, dynamic> _$UserInfoToJson(UserInfo instance) => <String, dynamic>{
@@ -22,4 +25,7 @@ Map<String, dynamic> _$UserInfoToJson(UserInfo instance) => <String, dynamic>{
   'cover': instance.cover,
   'fileAdapter': instance.fileAdapter,
   'scraper': instance.scraper,
+  'proxyEnabled': instance.proxyEnabled,
+  'proxyHost': instance.proxyHost,
+  'proxyPort': instance.proxyPort,
 };

@@ -47,7 +47,7 @@ class UserInfoState extends _$UserInfoState {
       (json) => json,
     );
     if ("2000" == baseResult.code) {
-      state = state?.copyWith(fileAdapter: adapter,scraper: scraper);
+      state = state?.copyWith(fileAdapter: adapter, scraper: scraper);
     }
   }
 
@@ -66,5 +66,23 @@ class UserInfoState extends _$UserInfoState {
     if ("2000" == baseResult.code) {
       state = state?.copyWith(cover: baseResult.result);
     }
+  }
+
+  Future<bool> changeProxy(int enabled, String host, int? port) async {
+    BaseResult baseResult = await HttpApi.request(
+      method: "post",
+      params: {"proxyEnable": enabled, "proxyHost": host, "proxyPort": port},
+      "/user/changeProxy",
+      (json) => json,
+    );
+    if ("2000" == baseResult.code) {
+      state = state?.copyWith(
+        proxyEnabled: enabled,
+        proxyHost: host,
+        proxyPort: port,
+      );
+      return true;
+    }
+    return false;
   }
 }

@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:DReader/common/ImageModule.dart';
 import 'package:DReader/state/UserInfoState.dart';
 import 'package:DReader/widgets/SetFileAdapter.dart';
+import 'package:DReader/widgets/SetProxy.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:file_picker/file_picker.dart';
@@ -355,6 +356,16 @@ class SettingPageState extends ConsumerState<SettingPage>
               ),
               trailing: Text("当前：${Global.setting.light ? "暗色" : "亮色"}"),
               onTap: () => ref.read(themeStateProvider.notifier).changeTheme(),
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.settings_ethernet),
+              title: const Text(
+                "设置代理",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              trailing: Text("当前：${userInfo?.proxyEnabled == 1 ? "开启" : "关闭"}"),
+              onTap: () => showDialog(context: context, builder: (context) => const SetProxy()),
             ),
             const Divider(),
             // ListTile(

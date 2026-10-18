@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:DReader/state/UserInfoState.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -162,39 +163,40 @@ class LoginPageState extends State<LoginPage> {
                             },
                             valueListenable: _key,
                           ),
-                          Builder(builder: (context) {
-                            return ElevatedButton(
-                                onPressed: () async {
-                                  bool status = Form.of(context).validate();
-                                  if (status) {
-                                    String email = emailController.text;
-                                    String password = md5
-                                        .convert(utf8
-                                            .encode(passwordController.text))
-                                        .toString();
-                                    String verify = verifyController.text;
-                                    BaseResult baseResult =
-                                        await HttpApi.request("/user/login",
-                                            (json) => Login.fromJson(json),
-                                            method: "post",
-                                            params: {
-                                          'password': password,
-                                          'email': email,
-                                          'code': verify,
-                                          'key': _key.value
-                                        });
-                                    if (baseResult.code != "2000") {
-                                      getCodeImage();
-                                      return;
+                          Consumer(builder: (context,ref,value){
+                            return Builder(builder: (context) {
+                              return ElevatedButton(
+                                  onPressed: () async {
+                                    bool status = Form.of(context).validate();
+                                    if (status) {
+                                      String email = emailController.text;
+                                      String password = md5
+                                          .convert(utf8
+                                          .encode(passwordController.text))
+                                          .toString();
+                                      String verify = verifyController.text;
+                                      BaseResult baseResult =
+                                      await HttpApi.request("/user/login",
+                                              (json) => Login.fromJson(json),
+                                          method: "post",
+                                          params: {
+                                            'password': password,
+                                            'email': email,
+                                            'code': verify,
+                                            'key': _key.value
+                                          });
+                                      if (baseResult.code != "2000") {
+                                        getCodeImage();
+                                        return;
+                                      }
+                                      Global.saveLoginStatus( baseResult.result?.token,baseResult.result?.userInfo);
+                                      ref.read(userInfoStateProvider.notifier).getUserInfo();
+                                      context.replaceNamed("home");
                                     }
-                                    Global.saveLoginStatus(
-                                        baseResult.result?.token,
-                                        baseResult.result?.userInfo);
-                                    context.replaceNamed("home");
-                                  }
-                                },
-                                child: const Text("登录"));
-                          }),
+                                  },
+                                  child: const Text("登录"));
+                            });
+                          })
                           // Consumer(builder: (context, ref, child) {
                           //   final state = ref.watch(themeStateProvider);
                           //   return Wrap(

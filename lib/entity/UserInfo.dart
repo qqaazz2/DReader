@@ -22,6 +22,15 @@ class UserInfo extends Object {
   @JsonKey(name: 'scraper')
   String scraper;
 
+  @JsonKey(name: 'proxyEnabled')
+  int proxyEnabled;
+
+  @JsonKey(name: 'proxyHost')
+  String? proxyHost;
+
+  @JsonKey(name: 'proxyPort')
+  int? proxyPort;
+
   UserInfo(
     this.name,
     this.email,
@@ -29,6 +38,9 @@ class UserInfo extends Object {
     this.cover,
     this.fileAdapter,
     this.scraper,
+    this.proxyEnabled,
+    this.proxyHost,
+    this.proxyPort,
   );
 
   factory UserInfo.fromJson(Map<String, dynamic> srcJson) =>
@@ -43,6 +55,9 @@ class UserInfo extends Object {
     String? cover,
     String? fileAdapter,
     String? scraper,
+    int? proxyEnabled,
+    String? proxyHost,
+    int? proxyPort
   }) {
     return UserInfo(
       name ?? this.name,
@@ -51,6 +66,9 @@ class UserInfo extends Object {
       cover ?? this.cover,
       fileAdapter ?? this.fileAdapter,
       scraper ?? this.scraper,
+      proxyEnabled ?? this.proxyEnabled,
+      proxyHost ?? this.proxyHost,
+      proxyPort ?? this.proxyPort,
     );
   }
 }
