@@ -5,13 +5,16 @@ import 'dart:math';
 
 import 'package:DReader/common/ComputeLock.dart';
 import 'package:DReader/entity/BaseResult.dart';
+import 'package:DReader/entity/book/BookExtra.dart';
 import 'package:DReader/entity/book/FilesDetailsItem.dart';
 import 'package:DReader/entity/readLog/ReadLog.dart';
 import 'package:DReader/routes/book/widgets/ReaderView.dart';
 import 'package:DReader/routes/book/widgets/SettingPanel.dart';
+import 'package:DReader/state/LocalState.dart';
 import 'package:DReader/state/ThemeState.dart';
 import 'package:DReader/state/book/BookProgressState.dart';
 import 'package:DReader/state/book/FilesDetailsItemState.dart';
+import 'package:DReader/state/book/FilesDownloadState.dart';
 import 'package:DReader/state/book/FilesListState.dart';
 import 'package:DReader/theme/extensions/ReaderTheme.dart';
 import 'package:DReader/widgets/SideNotice.dart';
@@ -46,12 +49,11 @@ import 'package:DReader/routes/book/widgets/PageBar.dart';
 import 'package:DReader/state/book/SeriesContentState.dart';
 
 import '../../entity/book/FilesItem.dart';
+import '../../entity/book/ReadRecord.dart';
 
 class BookRead extends ConsumerStatefulWidget {
-  const BookRead({super.key, required this.item});
-
-  final FilesItem item;
-
+  const BookRead({super.key, required this.bookExtra});
+  final BookExtra bookExtra;
   @override
   ConsumerState<BookRead> createState() => BookReadState();
 }
@@ -67,9 +69,11 @@ class BookReadState extends ConsumerState<BookRead> {
   late ReadLog readLog;
   late DateTime recordDateTime;
 
+  bool isLocal = false;
   @override
   void initState() {
     super.initState();
+    isLocal = widget.bookExtra.isLocal;
     appLifecycleListener = AppLifecycleListener(
       onResume: () => startReadLog(),
       onHide: () => updateProgress(), //隐藏了程序会触发
@@ -78,24 +82,26 @@ class BookReadState extends ConsumerState<BookRead> {
   }
 
   void startReadLog() async {
-    if (bookItem == null) return;
+    if (bookItem == null || isLocal) return;
     recordDateTime = DateTime.now();
     BaseResult baseResult = await HttpApi.request(
       "/readLog/start",
       (json) => ReadLog.fromJson(json),
       params: {"filesId": bookItem!.filesId},
     );
-    if (baseResult.code == "2000") {
-      readLog = baseResult.result;
-    }
+    if (baseResult.code == "2000")  readLog = baseResult.result;
   }
 
   Future getData() async {
     recordDateTime = DateTime.now();
+    if(isLocal) {
+      readRecord = widget.bookExtra.readRecord ?? ReadRecord(progress: 0, readTagNum: 0);
+      return;
+    }
     BaseResult baseResult = await HttpApi.request(
       "/book/getData",
       (json) => BookItem.fromJson(json),
-      params: {"filesId": widget.item.filesId},
+      params: {"filesId": widget.bookExtra.filesItem.filesId},
     );
     if (baseResult.code == "2000") {
       bookItem = baseResult.result;
@@ -118,14 +124,16 @@ class BookReadState extends ConsumerState<BookRead> {
   }
 
   void updateProgress({isBack = false}) async {
-    if (bookItem == null) return;
-    recordReadLog();
-    if (bookItem!.progress == readRecord.progress) return;
-    bookItem!.progress = readRecord.progress;
-    bookItem!.readTagNum = readRecord.readTagNum;
-    ref
-        .read(bookProgressStateProvider.notifier)
-        .updateProgress(bookItem!, widget.item, isBack: isBack);
+    if(!isLocal){
+      if (bookItem == null) return;
+      recordReadLog();
+      if (bookItem!.progress == readRecord.progress) return;
+      bookItem!.progress = readRecord.progress;
+      bookItem!.readTagNum = readRecord.readTagNum;
+      ref.read(bookProgressStateProvider.notifier).updateProgress(bookItem!, widget.bookExtra.filesItem, isBack: isBack);
+    }else{
+      ref.read(localStateProvider.notifier).updateProgress(widget.bookExtra.filesItem.hash,readRecord,isBack);
+    }
   }
 
   // 关闭 Isolate
@@ -162,7 +170,7 @@ class BookReadState extends ConsumerState<BookRead> {
                   if (snapshot.hasError) {
                     return Text("Error: ${snapshot.error}");
                   } else {
-                    return ReaderView(item: widget.item, readRecord: readRecord);
+                    return ReaderView(bookExtra: widget.bookExtra, readRecord: readRecord);
                   }
                 } else {
                   // 请求未结束，显示loading
@@ -181,11 +189,4 @@ class BookReadState extends ConsumerState<BookRead> {
       ),
     );
   }
-}
-
-class ReadRecord {
-  int readTagNum = 0;
-  double progress = 0;
-
-  ReadRecord({required this.progress, required this.readTagNum});
 }

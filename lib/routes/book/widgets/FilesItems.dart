@@ -1,6 +1,8 @@
 import 'dart:io';
 
+import 'package:DReader/entity/book/BookExtra.dart';
 import 'package:DReader/state/book/FilesDetailsItemState.dart';
+import 'package:DReader/state/book/FilesDownloadState.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -33,12 +35,8 @@ class FilesItems extends ListItem<FilesItem> {
 }
 
 class FilesItemsState extends ConsumerState<FilesItems> {
-  Map<String, String> map = {"Authorization": "Bearer ${Global.token}"};
-
   final over = ["连载中", "完结", "弃坑"];
-
   final status = [Colors.redAccent, Colors.transparent, Colors.amberAccent];
-  bool check = false;
 
   @override
   Widget build(BuildContext context) {
@@ -110,6 +108,7 @@ class FilesItemsState extends ConsumerState<FilesItems> {
                                   onChangeCover: changeCover,
                                   onEdit: editForm,
                                   onSetSeriesCover: setSeriesCover,
+                                  onDownload: addDownloadList,
                                 ),
                                 backgroundColor: Theme.of(context).cardColor,
                                 direction: PopoverDirection.right,
@@ -162,7 +161,7 @@ class FilesItemsState extends ConsumerState<FilesItems> {
         if (data.isFolder == 1) {
           context.push("/books/content?", extra: data);
         } else {
-          context.push("/read?", extra: data);
+          context.push("/read?", extra: BookExtra(filesItem: data));
         }
       },
     );
@@ -202,12 +201,15 @@ class FilesItemsState extends ConsumerState<FilesItems> {
   void setSeriesCover() => ref
       .read(filesDetailsItemStateProvider(widget.data.parentId).notifier)
       .updateCover(widget.data.id);
+  
+  void addDownloadList() => ref.read(filesDownloadStateProvider.notifier).add(widget.data);
 }
 
 class PopoverItemList extends StatelessWidget {
   final VoidCallback? onEdit;
   final VoidCallback? onChangeCover;
   final VoidCallback? onSetSeriesCover;
+  final VoidCallback? onDownload;
   final int isFolder;
 
   const PopoverItemList({
@@ -216,6 +218,7 @@ class PopoverItemList extends StatelessWidget {
     this.onEdit,
     this.onChangeCover,
     this.onSetSeriesCover,
+    this.onDownload,
   });
 
   @override
@@ -242,6 +245,13 @@ class PopoverItemList extends StatelessWidget {
             icon: Icons.image,
             title: "设为系列封面",
             onTap: onSetSeriesCover,
+          ),
+        if (isFolder == 2)
+          _buildItem(
+            context,
+            icon: Icons.download,
+            title: "缓存书籍",
+            onTap: onDownload,
           ),
       ],
     );

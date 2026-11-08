@@ -75,6 +75,7 @@ class FilesContentState extends ConsumerState<FilesContent> {
               item.isFolder,
               widget.filesItem.parentId,
               widget.filesItem.filePath,
+              widget.filesItem.hash,
             );
             ref.read(filesGlobalUpdateStateProvider).add(filesItem);
           },

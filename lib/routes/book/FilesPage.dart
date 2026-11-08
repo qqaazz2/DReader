@@ -91,8 +91,7 @@ class SeriesPageState extends ConsumerState<SeriesPage> {
                 ),
               Expanded(
                 child: ListWidget<FilesItem>(
-                  nodeKey:
-                      "${ref.read(filesListStateProvider("-1").notifier).patentId}${ref.read(filesListStateProvider("-1").notifier).seriesParam.hashCode}",
+                  nodeKey: "${ref.read(filesListStateProvider("-1").notifier).patentId}${ref.read(filesListStateProvider("-1").notifier).seriesParam.hashCode}",
                   list: state.data,
                   count: state.count,
                   scale: .7,
@@ -145,8 +144,7 @@ class SeriesPageState extends ConsumerState<SeriesPage> {
                       ),
                     ];
                   },
-                  getList: () =>
-                      ref.read(filesListStateProvider("-1").notifier).getList(),
+                  getList: () =>  ref.read(filesListStateProvider("-1").notifier).getList(),
                 ),
               ),
             ],

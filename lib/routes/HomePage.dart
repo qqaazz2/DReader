@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:DReader/common/Global.dart';
 import 'package:DReader/common/ImageModule.dart';
 import 'package:DReader/common/ScanningPop.dart';
+import 'package:DReader/entity/book/BookExtra.dart';
 import 'package:DReader/entity/book/FilesItem.dart';
 import 'package:DReader/entity/book/FilesOverview.dart';
 import 'package:DReader/main.dart';
@@ -212,6 +213,10 @@ class PcHomeState extends ConsumerState<PcHome> {
                     title: const Text("退出登录"),
                     onTap: () => Global.logout(context),
                   ),
+                  ListTile(
+                    title: const Text("离线模式"),
+                    onTap: () => GoRouter.of(context).go("/local"),
+                  ),
                   titleWidget(
                     "书库一览",
                     action: IconButton(
@@ -380,8 +385,7 @@ class PcHomeState extends ConsumerState<PcHome> {
                                           )
                                           .currentCheckId];
                                   return GestureDetector(
-                                    onTap: () =>
-                                        context.push("/read?", extra: item),
+                                    onTap: () => context.push("/read?", extra: BookExtra(filesItem: item)),
                                     behavior: HitTestBehavior.opaque,
                                     child: Stack(
                                       fit: StackFit.expand,
@@ -618,7 +622,7 @@ class MobileHomeState extends ConsumerState<MobileHome> {
                                         .coverScanning();
                                   } else if (value == "logout") {
                                     Global.logout(context);
-                                  }
+                                  } else if(value == "local") context.go("/local");
                                 },
                                 itemBuilder: (context) => [
                                   const PopupMenuItem(
@@ -632,6 +636,9 @@ class MobileHomeState extends ConsumerState<MobileHome> {
                                   const PopupMenuItem(
                                     value: "logout",
                                     child: Text("退出登录"),
+                                  ),const PopupMenuItem(
+                                    value: "logout",
+                                    child: Text("离线模式"),
                                   ),
                                 ],
                               );
@@ -654,10 +661,7 @@ class MobileHomeState extends ConsumerState<MobileHome> {
                               if (list == null || list.isEmpty) {
                                 return Text("暂无阅读记录");
                               }
-                              FilesItem item =
-                                  list[ref
-                                      .read(bookRecentStateProvider.notifier)
-                                      .currentCheckId];
+                              FilesItem item = list[ref.read(bookRecentStateProvider.notifier).currentCheckId];
                               return GestureDetector(
                                 child: Container(
                                   constraints: const BoxConstraints(
@@ -694,7 +698,7 @@ class MobileHomeState extends ConsumerState<MobileHome> {
                                   ),
                                 ),
                                 onTap: () =>
-                                    context.push("/read?", extra: item),
+                                    context.push("/read?", extra: BookExtra(filesItem: item)),
                               );
                             },
                             error: (err, stack) => Text('加载失败: $err'),
@@ -860,7 +864,7 @@ class MobileHomeState extends ConsumerState<MobileHome> {
                       delegate: SliverChildBuilderDelegate((context, index) {
                         final item = list[index];
                         return GestureDetector(
-                          onTap: () => context.push("/read?", extra: item),
+                          onTap: () => context.push("/read?", extra: BookExtra(filesItem: item)),
                           child: SizedBox(
                             height: 120,
                             child: Card(

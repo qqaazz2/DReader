@@ -15,16 +15,17 @@ import 'package:DReader/widgets/SetBaseUrl.dart';
 
 class HttpApi {
   static final BaseOptions options = BaseOptions(
-      baseUrl:kIsWeb ? "/api" : "${Global.setting.serverConfig.baseUrl}/api",
-      // baseUrl: 'http://127.0.0.1:8081/',
-      method: 'GET',
-      connectTimeout: const Duration(seconds: 3),
-      // 设置连接超时时间为 5 秒
-      receiveTimeout: const Duration(seconds: 30),
-      validateStatus: (status) {
-        if (status != null) return status < 500;
-        return false;
-      });
+    baseUrl: kIsWeb ? "/api" : "${Global.setting.serverConfig.baseUrl}/api",
+    // baseUrl: 'http://127.0.0.1:8081/',
+    method: 'GET',
+    connectTimeout: const Duration(seconds: 3),
+    // 设置连接超时时间为 5 秒
+    receiveTimeout: const Duration(seconds: 30),
+    validateStatus: (status) {
+      if (status != null) return status < 500;
+      return false;
+    },
+  );
 
   static Dio dio = _createDio();
 
@@ -33,7 +34,9 @@ class HttpApi {
   }
 
   static void updateDio() {
-    options.baseUrl = kIsWeb ? "/api" : "${Global.setting.serverConfig.baseUrl}/api";
+    options.baseUrl = kIsWeb
+        ? "/api"
+        : "${Global.setting.serverConfig.baseUrl}/api";
     dio = _createDio();
   }
 
@@ -49,15 +52,20 @@ class HttpApi {
     bool successMsg = false,
     bool isList = false,
     FormData? formData,
+    Function(int, int)? onReceiveProgress,
+    bool original = false,
   }) async {
-    if(options.baseUrl.isEmpty)  SideNoticeOverlay.error(text: "请先设置服务端地址");
+    if (options.baseUrl.isEmpty) SideNoticeOverlay.error(text: "请先设置服务端地址");
     if (Global.token.isNotEmpty) {
       headers ??= {};
       headers["Authorization"] = "Bearer ${Global.token}";
     }
 
-    final optionsData =
-        Options(method: method, headers: headers, responseType: responseType);
+    final optionsData = Options(
+      method: method,
+      headers: headers,
+      responseType: responseType,
+    );
     Interceptor inter = InterceptorsWrapper(
       onRequest: (options, handler) {
         return handler.next(options);
@@ -89,6 +97,8 @@ class HttpApi {
           url,
           options: optionsData,
           queryParameters: params,
+          onReceiveProgress: (i, k) =>
+              onReceiveProgress != null ? onReceiveProgress.call(i, k) : {},
         );
       } else {
         response = await dio.request(
@@ -98,6 +108,7 @@ class HttpApi {
         );
       }
       if (isLoading) EasyLoading.dismiss();
+      if(original) return response;
       if (response.statusCode == 200) {
         if (response.requestOptions.responseType == ResponseType.bytes) {
           EasyLoading.dismiss();
@@ -105,13 +116,17 @@ class HttpApi {
         }
         if (response.data["code"] == "2000") {
           if (!isList) {
-            BaseResult<T> result =
-                BaseResult<T>.fromJson(response.data, (json) => fromJson(json));
+            BaseResult<T> result = BaseResult<T>.fromJson(
+              response.data,
+              (json) => fromJson(json),
+            );
             if (successMsg) SideNoticeOverlay.success(text: result.message);
             return result;
           } else {
             BaseListResult<T> result = BaseListResult<T>.fromJson(
-                response.data, (json) => fromJson(json));
+              response.data,
+              (json) => fromJson(json),
+            );
             if (successMsg) SideNoticeOverlay.success(text: result.message);
             return result;
           }

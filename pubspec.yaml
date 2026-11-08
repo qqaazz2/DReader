@@ -67,6 +67,7 @@ dependencies:
   flutter_client_sse: ^2.0.3
   sse_channel: ^0.1.1
   flutter_colorpicker: ^1.1.0
+  crypto:
 dev_dependencies:
   flutter_test:
     sdk: flutter

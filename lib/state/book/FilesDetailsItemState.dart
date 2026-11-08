@@ -40,7 +40,8 @@ class FilesDetailsItemState extends _$FilesDetailsItemState {
 
   void updateData(FilesDetailsItem item) async {
     final Set<int> authorsToReload = {};
-    if (state.value?.filesAuthors != null) authorsToReload.addAll(state.value!.filesAuthors.map((e) => e.authorId));
+    if (state.value?.filesAuthors != null)
+      authorsToReload.addAll(state.value!.filesAuthors.map((e) => e.authorId));
     authorsToReload.addAll(item.filesAuthors.map((e) => e.authorId));
     final List<int> list = authorsToReload.toList();
     BaseResult<FilesDetailsItem> baseResult =
@@ -64,6 +65,7 @@ class FilesDetailsItemState extends _$FilesDetailsItemState {
         state.value!.isFolder,
         state.value!.parentId,
         state.value!.filePath,
+        state.value!.hash,
       );
       ref.read(filesGlobalUpdateStateProvider).add(filesItem);
       if (list.isNotEmpty) {

@@ -37,6 +37,9 @@ class FilesItem extends Object {
   @JsonKey(name: "filePath")
   String filePath;
 
+  @JsonKey(name: "hash")
+  String hash;
+
   FilesItem(
     this.id,
     this.love,
@@ -48,6 +51,7 @@ class FilesItem extends Object {
     this.isFolder,
     this.parentId,
     this.filePath,
+    this.hash,
   );
 
   factory FilesItem.fromJson(Map<String, dynamic> srcJson) =>
@@ -56,14 +60,7 @@ class FilesItem extends Object {
   Map<String, dynamic> toJson() => _$FilesItemToJson(this);
 
   @override
-  int get hashCode => Object.hash(
-    id,
-    status,
-    love,
-    cover,
-    overStatus,
-    name,
-  );
+  int get hashCode => Object.hash(id, status, love, cover, overStatus, name);
 
   @override
   bool operator ==(Object other) {
@@ -88,6 +85,7 @@ class FilesItem extends Object {
     int? isFolder,
     String? parentId,
     String? filePath,
+    String? hash,
   }) {
     return FilesItem(
       id ?? this.id,
@@ -100,6 +98,7 @@ class FilesItem extends Object {
       isFolder ?? this.isFolder,
       parentId ?? this.parentId,
       filePath ?? this.filePath,
+      hash ?? this.hash,
     );
   }
 }

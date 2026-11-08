@@ -1,4 +1,5 @@
 import 'package:DReader/main.dart';
+import 'package:DReader/widgets/Download/DownloadPanel.dart';
 import 'package:DReader/widgets/SetFileAdapter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
@@ -125,6 +126,11 @@ class SettingsBarState extends State<SettingsBar> {
                     tooltip: "图片适配器/刮削器",
                     onPressed: () => showDialog(context: context, builder: (context) => const SetFileAdapter()),
                     icon: const Icon(Icons.transform),
+                  ),
+                  IconButton(
+                    tooltip: "缓存任务",
+                    onPressed: () => showDialog(context: context, builder: (context) => const DownloadPanel()),
+                    icon: const Icon(Icons.download),
                   ),
                   IconButton(
                     tooltip: "主题色选择",

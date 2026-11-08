@@ -23,6 +23,7 @@ FilesDetailsItem _$FilesDetailsItemFromJson(Map<String, dynamic> json) =>
       json['filePath'] as String,
       (json['bgmId'] as num?)?.toInt(),
       json['parentId'] as String,
+      json['hash'] as String,
       (json['filesAuthors'] as List<dynamic>)
           .map((e) => FilesDetailsAuthor.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -48,6 +49,7 @@ Map<String, dynamic> _$FilesDetailsItemToJson(FilesDetailsItem instance) =>
       'filePath': instance.filePath,
       'bgmId': instance.bgmId,
       'parentId': instance.parentId,
+      'hash': instance.hash,
       'filesAuthors': instance.filesAuthors,
       'filesTags': instance.filesTags,
     };

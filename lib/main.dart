@@ -1,5 +1,7 @@
 import 'package:DReader/entity/book/FilesDetailsItem.dart';
 import 'package:DReader/entity/book/FilesItem.dart';
+import 'package:DReader/entity/book/ReadRecord.dart';
+import 'package:DReader/routes/LocalPage.dart';
 import 'package:DReader/routes/LogPage.dart';
 import 'package:DReader/routes/author/AuthorContent.dart';
 import 'package:DReader/routes/author/AuthorPage.dart';
@@ -25,6 +27,7 @@ import 'common/Global.dart';
 import 'common/HttpApi.dart';
 import 'entity/BaseResult.dart';
 import 'entity/UserInfo.dart';
+import 'entity/book/BookExtra.dart';
 
 void main() =>
     Global.init().then((value) => runApp(const ProviderScope(child: MyApp())));
@@ -146,9 +149,14 @@ class _MyAppState extends ConsumerState<MyApp> {
           path: "/read",
           name: "read",
           builder: (context, state) {
-            FilesItem item = state.extra as FilesItem;
-            return BookRead(item: item);
+            BookExtra item = state.extra as BookExtra;
+            return BookRead(bookExtra: item);
           },
+        ),
+        GoRoute(
+          path: "/local",
+          name: "local",
+          builder: (context, state) => const LocalPage(),
         ),
       ],
       redirect: (context, state) {

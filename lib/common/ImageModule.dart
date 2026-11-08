@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:DReader/entity/BaseResult.dart';
@@ -25,6 +26,36 @@ class ImageModule {
     isMemCache = true,
   }) {
     return _RetryingCachedImage(path: objName, fit: fit, isCache: isMemCache);
+  }
+
+  static Widget getLocalImage(
+    String objName, {fit = BoxFit.contain}) {
+    return LayoutBuilder(
+      builder: (BuildContext context, constraints) {
+        final dpr = MediaQuery.of(context).devicePixelRatio;
+        int cacheWidth = (constraints.maxWidth * dpr).toInt();
+        cacheWidth = getImageCacheSize(cacheWidth);
+        return Image.file(File(objName), fit: fit, cacheWidth: cacheWidth);
+      },
+    );
+  }
+
+  static int getImageCacheSize(int width) {
+    if (width < 0) return 0;
+    return switch (width) {
+      <= 150 => 150,
+      <= 200 => 200,
+      <= 300 => 300,
+      <= 400 => 400,
+      <= 500 => 500,
+      <= 600 => 600,
+      <= 700 => 700,
+      <= 800 => 800,
+      <= 900 => 900,
+      <= 1000 => 1000,
+      <= 2000 => 2000,
+      _ => 3000,
+    };
   }
 }
 
@@ -127,7 +158,7 @@ class _RetryingCachedImageState extends ConsumerState<_RetryingCachedImage> {
       builder: (BuildContext context, constraints) {
         final dpr = MediaQuery.of(context).devicePixelRatio;
         int cacheWidth = (constraints.maxWidth * dpr).toInt();
-        cacheWidth = _getImageCacheSize(cacheWidth);
+        cacheWidth = ImageModule.getImageCacheSize(cacheWidth);
         return _getWidget(
           constraints.maxWidth,
           constraints.maxHeight,
@@ -161,7 +192,7 @@ class _RetryingCachedImageState extends ConsumerState<_RetryingCachedImage> {
             child: const Icon(Icons.broken_image, size: 80),
           );
         }
-        return Center(
+        return Align(
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [
@@ -178,22 +209,4 @@ class _RetryingCachedImageState extends ConsumerState<_RetryingCachedImage> {
       fit: widget.fit,
     );
   }
-
-int _getImageCacheSize(int width) {
-  if (width < 0) return 0;
-  return switch (width) {
-    <= 150 => 150,
-    <= 200 => 200,
-    <= 300 => 300,
-    <= 400 => 400,
-    <= 500 => 500,
-    <= 600 => 600,
-    <= 700 => 700,
-    <= 800 => 800,
-    <= 900 => 900,
-    <= 1000 => 1000,
-    <= 2000 => 2000,
-    _ => 3000,
-  };
-}
 }

@@ -52,6 +52,9 @@ class FilesDetailsItem extends Object {
   @JsonKey(name: 'parentId')
   String parentId;
 
+  @JsonKey(name: 'hash')
+  String hash;
+
   @JsonKey(name: 'filesAuthors')
   List<FilesDetailsAuthor> filesAuthors;
 
@@ -74,6 +77,7 @@ class FilesDetailsItem extends Object {
     this.filePath,
     this.bgmId,
     this.parentId,
+      this.hash,
     this.filesAuthors,
     this.filesTags,
   );
@@ -99,6 +103,7 @@ class FilesDetailsItem extends Object {
     String? filePath,
     int? bgmId,
     String? parentId,
+    String? hash,
     List<FilesDetailsAuthor>? filesAuthors,
     List<FilesDetailsTag>? filesTags,
   }) {
@@ -118,6 +123,7 @@ class FilesDetailsItem extends Object {
       filePath ?? this.filePath,
       bgmId ?? this.bgmId,
       parentId ?? this.parentId,
+      hash ?? this.hash,
       filesAuthors ?? this.filesAuthors,
       filesTags ?? this.filesTags,
     );

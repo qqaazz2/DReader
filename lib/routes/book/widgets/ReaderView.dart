@@ -1,10 +1,13 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:DReader/entity/book/BookExtra.dart';
 import 'package:DReader/entity/book/FilesItem.dart';
-import 'package:DReader/routes/book/BookRead.dart';
 import 'package:DReader/routes/book/widgets/DirectoryWidget.dart';
 import 'package:DReader/routes/book/widgets/SettingPanel.dart';
+import 'package:DReader/state/LocalState.dart';
 import 'package:DReader/state/ThemeState.dart';
+import 'package:DReader/state/book/FilesDownloadState.dart';
 import 'package:DReader/theme/extensions/ReaderTheme.dart';
 import 'package:DReader/widgets/SideNotice.dart';
 import 'package:csslib/visitor.dart' hide MediaQuery;
@@ -27,10 +30,16 @@ import 'package:DReader/epub/ReaderPainter.dart';
 import 'package:DReader/main.dart';
 import 'package:DReader/routes/book/widgets/BookPcPage.dart';
 
-class ReaderView extends ConsumerStatefulWidget {
-  const ReaderView({super.key, required this.item, required this.readRecord});
+import '../../../entity/book/ReadRecord.dart';
 
-  final FilesItem item;
+class ReaderView extends ConsumerStatefulWidget {
+  const ReaderView({
+    super.key,
+    required this.bookExtra,
+    required this.readRecord,
+  });
+
+  final BookExtra bookExtra;
   final ReadRecord readRecord;
 
   @override
@@ -88,15 +97,29 @@ class ReaderViewState extends ConsumerState<ReaderView> {
     return false;
   }
 
-  void getEpubBytes() async{
-    final encodedPath = Uri.encodeFull(
-      widget.item.filePath.replaceAll('\\', '/').substring(1),
-    );
-    bytes = await HttpApi.request(
-      "/$encodedPath",
-      responseType: ResponseType.bytes,  () => {},
-      isLoading: false,
-    );
+  void getEpubBytes() async {
+    if (!widget.bookExtra.isLocal) {
+      final encodedPath = Uri.encodeFull(
+        widget.bookExtra.filesItem.filePath.replaceAll('\\', '/').substring(1),
+      );
+      bytes = await HttpApi.request(
+        "/$encodedPath",
+        responseType: ResponseType.bytes,
+        () => {},
+        isLoading: false,
+      );
+    } else {
+      File file = File("${ref.read(localStateProvider.notifier).bookDirectory.path}/${widget.bookExtra.filesItem.hash}.epub");
+      if(!await file.exists()) {
+        setState(() {
+          isLoading = false;
+          isError = true;
+        });
+        SideNoticeOverlay.error(text: "文件不存在");
+        return;
+      }
+      bytes = await file.readAsBytes();
+    }
     init.complete(true);
   }
 
@@ -110,8 +133,10 @@ class ReaderViewState extends ConsumerState<ReaderView> {
     try {
       await init.future;
       showDirectoryWidget.value = false;
-      Map<String, List<ReaderNode>> _map = await DomRendering(readerTheme: currentReaderTheme).start(bytes);
-      if(!mounted) return;
+      Map<String, List<ReaderNode>> _map = await DomRendering(
+        readerTheme: currentReaderTheme,
+      ).start(bytes);
+      if (!mounted) return;
       pageNodes = PageNodes(
         _map,
         maxWidth,
@@ -122,7 +147,7 @@ class ReaderViewState extends ConsumerState<ReaderView> {
       );
       currentPage.value = pageNodes!.readPage;
       pageController = PageController(initialPage: currentPage.value);
-      if(!mounted) return;
+      if (!mounted) return;
       setState(() => isLoading = false);
     } catch (e, s) {
       if (!mounted) return;
@@ -145,8 +170,7 @@ class ReaderViewState extends ConsumerState<ReaderView> {
   Widget build(BuildContext context) {
     final state = ref.watch(themeStateProvider);
     currentReaderTheme = state.readerTheme;
-    final hasReaderThemeChanged =
-        lastReaderTheme != null && currentReaderTheme != lastReaderTheme!;
+    final hasReaderThemeChanged = lastReaderTheme != null && currentReaderTheme != lastReaderTheme!;
     return LayoutBuilder(
       builder: (context, constraints) {
         if (lastMaxWidth == null) {
@@ -356,7 +380,7 @@ class ReaderViewState extends ConsumerState<ReaderView> {
                     ),
                     Expanded(
                       child: Text(
-                        widget.item.name,
+                        widget.bookExtra.filesItem.name,
                         style: const TextStyle(fontSize: 18),
                         maxLines: 1,
                       ),
@@ -371,7 +395,7 @@ class ReaderViewState extends ConsumerState<ReaderView> {
           valueListenable: showActionBar,
           builder: (context, value, child) {
             return AnimatedPositioned(
-              bottom: value ? 0 : -100,
+              bottom: value ? 0 : -120,
               duration: const Duration(milliseconds: 300),
               child: Container(
                 width: constraints.maxWidth,

@@ -17,6 +17,7 @@ FilesItem _$FilesItemFromJson(Map<String, dynamic> json) => FilesItem(
   (json['isFolder'] as num).toInt(),
   json['parentId'] as String,
   json['filePath'] as String,
+  json['hash'] as String,
 );
 
 Map<String, dynamic> _$FilesItemToJson(FilesItem instance) => <String, dynamic>{
@@ -30,4 +31,5 @@ Map<String, dynamic> _$FilesItemToJson(FilesItem instance) => <String, dynamic>{
   'isFolder': instance.isFolder,
   'parentId': instance.parentId,
   'filePath': instance.filePath,
+  'hash': instance.hash,
 };
