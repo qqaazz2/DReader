@@ -7,8 +7,6 @@ import 'package:DReader/entity/book/BookExtra.dart';
 import 'package:DReader/entity/book/FilesItem.dart';
 import 'package:DReader/entity/book/FilesOverview.dart';
 import 'package:DReader/main.dart';
-import 'package:DReader/routes/book/widgets/FilesItems.dart';
-import 'package:DReader/state/UserInfoState.dart';
 import 'package:DReader/state/home/BookRecentState.dart';
 import 'package:DReader/state/home/OverviewState.dart';
 import 'package:DReader/state/book/FilesListState.dart';
@@ -637,7 +635,7 @@ class MobileHomeState extends ConsumerState<MobileHome> {
                                     value: "logout",
                                     child: Text("退出登录"),
                                   ),const PopupMenuItem(
-                                    value: "logout",
+                                    value: "local",
                                     child: Text("离线模式"),
                                   ),
                                 ],
